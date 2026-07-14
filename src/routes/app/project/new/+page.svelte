@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { config } from '$lib/config/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -373,9 +375,6 @@
 	});
 
 	function playAudio(music: Music) {
-		const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
-		const baseUrl = backendUrl.replace('/api/v1', '');
-
 		if (playingMusicId === music.id) {
 			stopAudio();
 			return;
@@ -383,7 +382,7 @@
 
 		stopAudio();
 
-		currentAudio = new Audio(`${baseUrl}${music.file_path}`);
+		currentAudio = new Audio(`${config.API_ROOT_URL}${music.file_path}`);
 
 		currentAudio.ontimeupdate = () => {
 			if (currentAudio) currentAudioTime = currentAudio.currentTime;

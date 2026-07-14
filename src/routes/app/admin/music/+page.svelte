@@ -7,6 +7,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Trash2, Play, Pause, Edit } from '@lucide/svelte';
+	import { config } from '$lib/config/index.js';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -89,9 +90,6 @@
 	});
 
 	function playAudio(music: Music) {
-		const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
-		const baseUrl = backendUrl.replace('/api/v1', '');
-
 		if (playingMusicId === music.id) {
 			stopAudio();
 			return;
@@ -99,7 +97,7 @@
 
 		stopAudio();
 
-		currentAudio = new Audio(`${baseUrl}${music.file_path}`);
+		currentAudio = new Audio(`${config.API_ROOT_URL}${music.file_path}`);
 		currentAudio.play().catch((e) => console.error(e));
 		currentAudio.onended = () => stopAudio();
 		playingMusicId = music.id;

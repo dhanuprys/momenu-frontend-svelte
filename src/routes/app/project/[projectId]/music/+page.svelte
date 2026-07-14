@@ -8,6 +8,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Play, Pause, Check, Music as MusicIcon, Search } from '@lucide/svelte';
+	import { config } from '$lib/config/index.js';
 	import { toast } from 'svelte-sonner';
 	import MusicPlayerBar from '$lib/components/invitation/music-player-bar.svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
@@ -98,9 +99,6 @@
 	}
 
 	function playAudio(music: Music) {
-		const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
-		const baseUrl = backendUrl.replace('/api/v1', '');
-
 		if (playingMusicId === music.id) {
 			stopAudio();
 			return;
@@ -108,7 +106,7 @@
 
 		stopAudio();
 
-		currentAudio = new Audio(`${baseUrl}${music.file_path}`);
+		currentAudio = new Audio(`${config.API_ROOT_URL}${music.file_path}`);
 
 		currentAudio.ontimeupdate = () => {
 			if (currentAudio) currentAudioTime = currentAudio.currentTime;

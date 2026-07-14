@@ -1,3 +1,5 @@
+import { env } from '$env/dynamic/public';
+
 /**
  * Application centralized configuration.
  *
@@ -5,7 +7,10 @@
  */
 export const config = Object.freeze({
 	/** Base URL for the API backend */
-	API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:20261/api/v1',
+	API_BASE_URL: env.PUBLIC_API_BASE_URL || 'http://localhost:20261/api/v1',
+
+	/** Root URL for the API backend (used for media/audio paths) */
+	API_ROOT_URL: (env.PUBLIC_API_BASE_URL || 'http://localhost:20261/api/v1').replace('/api/v1', ''),
 
 	/** Application name */
 	APP_NAME: 'Momenu',

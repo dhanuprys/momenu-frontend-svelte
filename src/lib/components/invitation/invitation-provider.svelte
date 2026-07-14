@@ -30,12 +30,12 @@
 	let customizerFocusSlot = $state('');
 	let audioElement: HTMLAudioElement | null = null;
 
+	import { config } from '$lib/config/index.js';
+
 	// ─── Audio Helpers (safe, centralized) ───────────────────────────
 
 	function createAudio(filePath: string): HTMLAudioElement {
-		const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
-		const baseUrl = backendUrl.replace('/api/v1', '');
-		const audio = new Audio(`${baseUrl}${filePath}`);
+		const audio = new Audio(`${config.API_ROOT_URL}${filePath}`);
 		audio.loop = true;
 		audio.preload = 'auto'; // Preload the audio metadata and data
 		return audio;
