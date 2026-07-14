@@ -6,8 +6,10 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
+	name: string;
 	email: string;
 	password?: string;
+	turnstile_token?: string;
 }
 
 export interface RefreshTokenRequest {

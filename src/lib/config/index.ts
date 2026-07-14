@@ -12,6 +12,9 @@ export const config = Object.freeze({
 	/** Root URL for the API backend (used for media/audio paths) */
 	API_ROOT_URL: (env.PUBLIC_API_BASE_URL || 'http://localhost:20261/api/v1').replace('/api/v1', ''),
 
+	/** Turnstile clietn site key */
+	TURNSTILE_SITE_KEY: env.PUBLIC_TURNSTILE_SITE_KEY || '',
+
 	/** Application name */
 	APP_NAME: 'Momenu',
 

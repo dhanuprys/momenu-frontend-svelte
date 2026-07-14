@@ -12,16 +12,71 @@
 	import { cn } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { AuthService } from '$lib/services/index.js';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
+	import { Loader2 } from '@lucide/svelte';
+	import { onMount } from 'svelte';
+	import { config } from '$lib/config';
+
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
+	let loading = $state(false);
+	let turnstileToken = $state('');
+	let turnstileWidgetId: any = $state(null);
+
+	onMount(() => {
+		const initTurnstile = () => {
+			if ((window as any).turnstile) {
+				turnstileWidgetId = (window as any).turnstile.render('#turnstile-container', {
+					sitekey: config.TURNSTILE_SITE_KEY,
+					callback: function (token: string) {
+						turnstileToken = token;
+					},
+					'error-callback': function () {
+						toast.error('Gagal memuat sistem keamanan.');
+					}
+				});
+			} else {
+				setTimeout(initTurnstile, 100);
+			}
+		};
+		initTurnstile();
+	});
 
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 
 	const id = $props.id();
+
+	async function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		if (!name || !email || !password) return;
+		if (!turnstileToken) {
+			toast.error('Harap selesaikan verifikasi keamanan.');
+			return;
+		}
+
+		loading = true;
+		try {
+			await AuthService.register({ name, email, password, turnstile_token: turnstileToken });
+			toast.success('Pendaftaran berhasil! Silakan masuk.');
+			goto('/masuk');
+		} catch (error: any) {
+			toast.error(error.response?.data?.message || 'Gagal mendaftar');
+			if ((window as any).turnstile && turnstileWidgetId !== null) {
+				(window as any).turnstile.reset(turnstileWidgetId);
+				turnstileToken = '';
+			}
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <div class={cn('flex flex-col gap-6', className)} {...restProps}>
 	<Card.Root class="overflow-hidden p-0">
 		<Card.Content class="grid p-0 md:grid-cols-2">
-			<form class="p-6 md:p-8">
+			<form class="p-6 md:p-8" onsubmit={handleSubmit}>
 				<FieldGroup>
 					<div class="flex flex-col items-center gap-2 text-center">
 						<h1 class="text-2xl font-bold">Buat Akun Baru</h1>
@@ -31,20 +86,30 @@
 					</div>
 					<Field>
 						<FieldLabel for="name-{id}">Nama</FieldLabel>
-						<Input id="name-{id}" type="text" placeholder="John Doe" required />
+						<Input id="name-{id}" type="text" placeholder="John Doe" required bind:value={name} disabled={loading} />
 					</Field>
 					<Field>
 						<FieldLabel for="email-{id}">Email</FieldLabel>
-						<Input id="email-{id}" type="email" placeholder="m@example.com" required />
+						<Input id="email-{id}" type="email" placeholder="m@example.com" required bind:value={email} disabled={loading} />
 					</Field>
 					<Field>
 						<div class="flex items-center">
 							<FieldLabel for="password-{id}">Password</FieldLabel>
 						</div>
-						<Input id="password-{id}" type="password" required />
+						<Input id="password-{id}" type="password" required bind:value={password} disabled={loading} minlength={6} />
 					</Field>
 					<Field>
-						<Button type="submit">Daftar</Button>
+						<div id="turnstile-container"></div>
+					</Field>
+					<Field>
+						<Button type="submit" disabled={loading}>
+							{#if loading}
+								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+								Mendaftar...
+							{:else}
+								Daftar
+							{/if}
+						</Button>
 					</Field>
 					<FieldSeparator class="*:data-[slot=field-separator-content]:bg-card">
 						Atau lanjutkan dengan

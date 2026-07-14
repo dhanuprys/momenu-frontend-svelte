@@ -12,16 +12,41 @@
 	import { cn } from '$lib/utils.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { AuthService } from '$lib/services/index.js';
+	import { authState } from '$lib/stores/auth.svelte.js';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
+	import { Loader2 } from '@lucide/svelte';
+
+	let email = $state('');
+	let password = $state('');
+	let loading = $state(false);
 
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 
 	const id = $props.id();
+
+	async function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		if (!email || !password) return;
+
+		loading = true;
+		try {
+			const res = await AuthService.login({ email, password });
+			authState.setSession(res.user, res.token, res.refresh_token);
+			toast.success('Berhasil masuk');
+			goto('/app');
+		} catch (error: any) {
+			toast.error(error.response?.data?.message || 'Gagal masuk');
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <div class={cn('flex flex-col gap-6', className)} {...restProps}>
 	<Card.Root class="overflow-hidden p-0">
 		<Card.Content class="grid p-0 md:grid-cols-2">
-			<form class="p-6 md:p-8">
+			<form class="p-6 md:p-8" onsubmit={handleSubmit}>
 				<FieldGroup>
 					<div class="flex flex-col items-center gap-2 text-center">
 						<h1 class="text-2xl font-bold">Selamat datang kembali</h1>
@@ -29,7 +54,7 @@
 					</div>
 					<Field>
 						<FieldLabel for="email-{id}">Email</FieldLabel>
-						<Input id="email-{id}" type="email" placeholder="m@example.com" required />
+						<Input id="email-{id}" type="email" placeholder="m@example.com" required bind:value={email} disabled={loading} />
 					</Field>
 					<Field>
 						<div class="flex items-center">
@@ -38,10 +63,17 @@
 								Lupa password Anda?
 							</a>
 						</div>
-						<Input id="password-{id}" type="password" required />
+						<Input id="password-{id}" type="password" required bind:value={password} disabled={loading} />
 					</Field>
 					<Field>
-						<Button type="submit">Masuk</Button>
+						<Button type="submit" disabled={loading}>
+							{#if loading}
+								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+								Masuk...
+							{:else}
+								Masuk
+							{/if}
+						</Button>
 					</Field>
 					<FieldSeparator class="*:data-[slot=field-separator-content]:bg-card">
 						Atau lanjutkan dengan
