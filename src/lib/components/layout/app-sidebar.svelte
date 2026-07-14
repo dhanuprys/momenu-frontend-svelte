@@ -25,7 +25,8 @@
 		ChevronRight,
 		FileText,
 		MonitorSmartphone,
-		Paintbrush
+		Paintbrush,
+		Database
 	} from '@lucide/svelte';
 	import BaseSidebar from './base-sidebar.svelte';
 	import { slide } from 'svelte/transition';
@@ -145,6 +146,12 @@
 					url: `/app/project/${projectId}/settings`,
 					icon: Settings,
 					isActive: currentPath.startsWith(`/app/project/${projectId}/settings`)
+				},
+				{
+					title: 'Penyimpanan (Storage)',
+					url: `/app/project/${projectId}/storage`,
+					icon: Database,
+					isActive: currentPath.startsWith(`/app/project/${projectId}/storage`)
 				}
 			]
 		}

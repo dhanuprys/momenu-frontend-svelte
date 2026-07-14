@@ -183,6 +183,7 @@ export interface Project {
 	project_visits?: ProjectVisit[];
 	total_viewers?: number;
 	update_count: number;
+	disk_quota_bytes: number;
 	created_at: string;
 	updated_at: string;
 }
@@ -242,4 +243,25 @@ export interface ProjectAnalytics {
 	daily_visits: DailyVisit[];
 	source_stats: SourceStats[];
 	device_stats: DeviceStats[];
+}
+
+export interface QuotaInfo {
+	used_bytes: number;
+	used_human: string;
+	limit_bytes: number;
+	limit_human: string;
+	remaining_bytes: number;
+	remaining_human: string;
+	usage_percent: number;
+}
+
+export interface FileRecord {
+	id: number;
+	url: string;
+	original_name: string;
+	content_type: string;
+	size: number;
+	is_optimized: boolean;
+	media_type: string;
+	created_at: string;
 }

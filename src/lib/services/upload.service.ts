@@ -9,9 +9,9 @@ export const UploadService = {
 		onProgress?: (percent: number) => void
 	): Promise<UploadResult> {
 		const formData = new FormData();
-		formData.append('file', file);
 		formData.append('type', type);
 		formData.append('project_id', projectId);
+		formData.append('file', file);
 
 		const response = await apiClient.post<ApiSuccessResponse<UploadResult>>('/upload', formData, {
 			headers: {
@@ -34,8 +34,8 @@ export const UploadService = {
 		onProgress?: (percent: number) => void
 	): Promise<UploadResult> {
 		const formData = new FormData();
-		formData.append('file', file);
 		formData.append('type', type);
+		formData.append('file', file);
 
 		const response = await apiClient.post<ApiSuccessResponse<UploadResult>>(
 			'/admin/upload',
