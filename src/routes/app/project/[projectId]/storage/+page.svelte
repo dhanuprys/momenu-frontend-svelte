@@ -4,7 +4,7 @@
 	import type { ProjectDiskUsageResponse } from '$lib/api/services/disk.service';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { formatBytes } from '$lib/utils';
+	import { formatBytes, getMediaUrl } from '$lib/utils';
 	import * as Card from '$lib/components/ui/card';
 	import { Progress } from '$lib/components/ui/progress';
 	import {
@@ -99,7 +99,7 @@
 											<div class="flex items-center gap-2">
 												{#if file.media_type === 'image'}
 													<img
-														src={file.url}
+														src={getMediaUrl(file.url)}
 														alt={file.original_name}
 														class="h-8 w-8 object-cover rounded"
 													/>
