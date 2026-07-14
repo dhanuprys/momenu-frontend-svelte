@@ -22,6 +22,7 @@
 		if (path.includes('/users')) return 'Users Management';
 		if (path.includes('/projects')) return 'Projects Management';
 		if (path.includes('/music')) return 'Music Management';
+		if (path.includes('/system')) return 'System Monitoring';
 		return 'Dashboard';
 	});
 </script>

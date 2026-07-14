@@ -80,5 +80,11 @@ export const AdminService = {
 	async updateTheme(id: string, data: { price: number; thumbnail: string; description: string }) {
 		const res = await api.put<any>(`/admin/themes/${id}`, data);
 		return res.data;
+	},
+
+	// System Resources
+	async getSystemResources() {
+		const res = await api.get<any>('/admin/system/resources');
+		return res.data;
 	}
 };

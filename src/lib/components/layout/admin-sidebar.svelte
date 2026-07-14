@@ -2,7 +2,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { page } from '$app/stores';
 	import type { ComponentProps } from 'svelte';
-	import { LayoutDashboard, Users, FolderGit2, Music, Palette } from '@lucide/svelte';
+	import { LayoutDashboard, Users, FolderGit2, Music, Palette, Server } from '@lucide/svelte';
 	import BaseSidebar from './base-sidebar.svelte';
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
@@ -42,6 +42,12 @@
 					url: '/app/admin/themes',
 					icon: Palette,
 					isActive: currentPath.startsWith('/app/admin/themes')
+				},
+				{
+					title: 'Sistem',
+					url: '/app/admin/system',
+					icon: Server,
+					isActive: currentPath.startsWith('/app/admin/system')
 				}
 			]
 		}
