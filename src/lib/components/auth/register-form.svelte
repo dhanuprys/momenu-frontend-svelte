@@ -31,6 +31,8 @@
 			if ((window as any).turnstile) {
 				turnstileWidgetId = (window as any).turnstile.render('#turnstile-container', {
 					sitekey: config.TURNSTILE_SITE_KEY,
+					theme: 'light',
+					size: 'flexible',
 					callback: function (token: string) {
 						turnstileToken = token;
 					},
