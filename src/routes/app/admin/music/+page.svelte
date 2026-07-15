@@ -59,6 +59,10 @@
 	// Music State
 	let createMusicOpen = $state(false);
 	let isSubmittingMusic = $state(false);
+	let isEditingMusic = $state(false);
+	let editMusicId = $state<number | null>(null);
+	let selectedCategoryFilter = $state<number | 'all'>('all');
+
 	let musicFiles = $state<FileList | undefined>(undefined);
 	let coverFiles = $state<FileList | undefined>(undefined);
 	let newMusic = $state({
@@ -88,6 +92,43 @@
 			loading = false;
 		}
 	});
+
+	function openEditMusic(music: Music) {
+		isEditingMusic = true;
+		editMusicId = music.id;
+		newMusic = {
+			category_id: music.category_id,
+			title: music.title,
+			artist: music.artist,
+			file_path: music.file_path,
+			duration_seconds: music.duration_seconds,
+			cover_image: music.cover_image || '',
+			order: music.order
+		};
+		// @ts-expect-error
+		musicFiles = null;
+		// @ts-expect-error
+		coverFiles = null;
+		createMusicOpen = true;
+	}
+
+	function resetMusicForm() {
+		isEditingMusic = false;
+		editMusicId = null;
+		newMusic = {
+			category_id: 0,
+			title: '',
+			artist: '',
+			file_path: '',
+			duration_seconds: 0,
+			cover_image: '',
+			order: 0
+		};
+		// @ts-expect-error
+		musicFiles = null;
+		// @ts-expect-error
+		coverFiles = null;
+	}
 
 	function playAudio(music: Music) {
 		if (playingMusicId === music.id) {
@@ -148,18 +189,20 @@
 
 	async function handleCreateMusic(e: Event) {
 		e.preventDefault();
-		if (!musicFiles || musicFiles.length === 0) {
+		if (!isEditingMusic && (!musicFiles || musicFiles.length === 0)) {
 			toast.error('Silakan pilih file musik');
 			return;
 		}
 
 		isSubmittingMusic = true;
 		try {
-			// Upload audio file
-			const audioUpload = await UploadService.adminUpload(musicFiles[0], 'audio');
-			newMusic.file_path = audioUpload.url;
+			// Upload audio file if new one is selected
+			if (musicFiles && musicFiles.length > 0) {
+				const audioUpload = await UploadService.adminUpload(musicFiles[0], 'audio');
+				newMusic.file_path = audioUpload.url;
+			}
 
-			// Optional cover image upload
+			// Optional cover image upload if new one is selected
 			if (coverFiles && coverFiles.length > 0) {
 				const coverUpload = await UploadService.adminUpload(coverFiles[0], 'image');
 				newMusic.cover_image = coverUpload.url;
@@ -168,25 +211,21 @@
 			newMusic.category_id = Number(newMusic.category_id);
 			newMusic.duration_seconds = Number(newMusic.duration_seconds);
 			newMusic.order = Number(newMusic.order);
-			const created = await AdminService.createMusic(newMusic);
-			musics = [created, ...musics];
-			toast.success('Musik berhasil ditambahkan');
+			
+			if (isEditingMusic && editMusicId) {
+				const updated = await AdminService.updateMusic(editMusicId, newMusic);
+				musics = musics.map((m) => (m.id === editMusicId ? updated : m));
+				toast.success('Musik berhasil diperbarui');
+			} else {
+				const created = await AdminService.createMusic(newMusic);
+				musics = [created, ...musics];
+				toast.success('Musik berhasil ditambahkan');
+			}
+			
 			createMusicOpen = false;
-			newMusic = {
-				category_id: 0,
-				title: '',
-				artist: '',
-				file_path: '',
-				duration_seconds: 0,
-				cover_image: '',
-				order: 0
-			};
-			// @ts-expect-error - DOM requires null to reset input.files, but Svelte types expect undefined
-			musicFiles = null;
-			// @ts-expect-error
-			coverFiles = null;
+			resetMusicForm();
 		} catch (error) {
-			toast.error('Gagal menambahkan musik atau upload file');
+			toast.error('Gagal menyimpan musik atau upload file');
 		} finally {
 			isSubmittingMusic = false;
 		}
@@ -205,15 +244,31 @@
 		</Tabs.List>
 
 		<Tabs.Content value="music" class="space-y-4">
-			<div class="flex justify-end mt-4">
-				<Dialog.Root bind:open={createMusicOpen}>
+			<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
+				<div class="w-full sm:w-64">
+					<select
+						bind:value={selectedCategoryFilter}
+						class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+					>
+						<option value="all">Semua Kategori</option>
+						{#each categories as cat}
+							<option value={cat.id}>{cat.name}</option>
+						{/each}
+					</select>
+				</div>
+				<Dialog.Root
+					bind:open={createMusicOpen}
+					onOpenChange={(open) => {
+						if (!open) resetMusicForm();
+					}}
+				>
 					<Dialog.Trigger>
 						<Button>Upload Musik</Button>
 					</Dialog.Trigger>
 					<Dialog.Content class="max-h-[90vh] overflow-y-auto">
 						<Dialog.Header>
-							<Dialog.Title>Upload Musik</Dialog.Title>
-							<Dialog.Description>Tambahkan musik latar baru.</Dialog.Description>
+							<Dialog.Title>{isEditingMusic ? 'Edit Musik' : 'Upload Musik'}</Dialog.Title>
+							<Dialog.Description>{isEditingMusic ? 'Perbarui data musik latar.' : 'Tambahkan musik latar baru.'}</Dialog.Description>
 						</Dialog.Header>
 						<form onsubmit={handleCreateMusic} class="space-y-4 py-4">
 							<div class="space-y-2">
@@ -245,8 +300,11 @@
 									type="file"
 									accept="audio/*"
 									bind:files={musicFiles}
-									required
+									required={!isEditingMusic}
 								/>
+								{#if isEditingMusic && newMusic.file_path}
+									<p class="text-xs text-muted-foreground mt-1">Biarkan kosong jika tidak ingin mengubah file.</p>
+								{/if}
 							</div>
 							<div class="space-y-2">
 								<Label for="music-cover">Cover Image (Opsional)</Label>
@@ -309,7 +367,7 @@
 								>
 							</Table.Row>
 						{:else}
-							{#each musics as music}
+							{#each musics.filter((m) => selectedCategoryFilter === 'all' || m.category_id === selectedCategoryFilter).sort((a, b) => a.order - b.order) as music}
 								<Table.Row>
 									<Table.Cell>
 										<Button variant="ghost" size="icon" onclick={() => playAudio(music)}>
@@ -336,6 +394,9 @@
 										).padStart(2, '0')}
 									</Table.Cell>
 									<Table.Cell class="text-right">
+										<Button variant="ghost" size="icon" onclick={() => openEditMusic(music)}>
+											<Edit class="h-4 w-4" />
+										</Button>
 										<Button variant="destructive" size="icon" onclick={() => deleteMusic(music.id)}>
 											<Trash2 class="h-4 w-4" />
 										</Button>

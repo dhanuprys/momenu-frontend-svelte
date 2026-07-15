@@ -78,6 +78,22 @@ export const AdminService = {
 		return res.data;
 	},
 
+	async updateMusic(
+		id: number,
+		data: {
+			category_id: number;
+			title: string;
+			artist: string;
+			file_path?: string;
+			duration_seconds: number;
+			cover_image?: string;
+			order: number;
+		}
+	) {
+		const res = await api.put<Music>(`/admin/music/${id}`, data);
+		return res.data;
+	},
+
 	async deleteMusic(id: number) {
 		const res = await api.delete<null>(`/admin/music/${id}`);
 		return res.data;
