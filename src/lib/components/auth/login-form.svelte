@@ -16,10 +16,35 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { Loader2 } from '@lucide/svelte';
+	import { onMount } from 'svelte';
+	import { config } from '$lib/config';
 
 	let email = $state('');
 	let password = $state('');
 	let loading = $state(false);
+	let turnstileToken = $state('');
+	let turnstileWidgetId: any = $state(null);
+
+	onMount(() => {
+		const initTurnstile = () => {
+			if ((window as any).turnstile) {
+				turnstileWidgetId = (window as any).turnstile.render('#turnstile-container-login', {
+					sitekey: config.TURNSTILE_SITE_KEY,
+					theme: 'light',
+					size: 'flexible',
+					callback: function (token: string) {
+						turnstileToken = token;
+					},
+					'error-callback': function () {
+						toast.error('Gagal memuat sistem keamanan.');
+					}
+				});
+			} else {
+				setTimeout(initTurnstile, 100);
+			}
+		};
+		initTurnstile();
+	});
 
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 
@@ -28,10 +53,14 @@
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		if (!email || !password) return;
+		if (!turnstileToken) {
+			toast.error('Harap selesaikan verifikasi keamanan.');
+			return;
+		}
 
 		loading = true;
 		try {
-			const res = await AuthService.login({ email, password });
+			const res = await AuthService.login({ email, password, turnstile_token: turnstileToken });
 			authState.setSession(res.user, res.token, res.refresh_token);
 			toast.success('Login berhasil!');
 			
@@ -43,6 +72,10 @@
 			}
 		} catch (error: any) {
 			toast.error(error.response?.data?.message || 'Gagal masuk');
+			if ((window as any).turnstile && turnstileWidgetId !== null) {
+				(window as any).turnstile.reset(turnstileWidgetId);
+				turnstileToken = '';
+			}
 		} finally {
 			loading = false;
 		}
@@ -85,10 +118,10 @@
 						/>
 					</Field>
 					<Field>
-						<Button type="submit" disabled={loading}>
+						<div id="turnstile-container-login" class="w-full flex justify-center py-2"></div>
+						<Button type="submit" class="w-full" disabled={loading}>
 							{#if loading}
-								<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-								Masuk...
+								<Loader2 class="mr-2 h-4 w-4 animate-spin" /> Memproses...
 							{:else}
 								Masuk
 							{/if}

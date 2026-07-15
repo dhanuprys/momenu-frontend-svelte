@@ -3,6 +3,7 @@ import type { GiftRegistryType, LiveStreamPlatform } from './enums';
 export interface LoginRequest {
 	email: string;
 	password?: string;
+	turnstile_token?: string;
 }
 
 export interface RegisterRequest {
