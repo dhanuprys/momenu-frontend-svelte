@@ -71,8 +71,13 @@
 		savingProject = true;
 		try {
 			// Basic frontend validation for slug
-			if (!/^[a-z0-9-]+$/.test(slug)) {
-				toast.error('Tautan hanya boleh berisi huruf kecil, angka, dan tanda hubung (-)');
+			if (slug.length < 10) {
+				toast.error('Tautan harus memiliki minimal 10 karakter');
+				savingProject = false;
+				return;
+			}
+			if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+				toast.error('Tautan hanya boleh berisi huruf kecil dan angka, dipisahkan oleh tanda hubung (-)');
 				savingProject = false;
 				return;
 			}
