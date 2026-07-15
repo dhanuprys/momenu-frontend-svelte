@@ -97,7 +97,7 @@ apiClient.interceptors.response.use(
 				if (typeof window !== 'undefined') {
 					localStorage.removeItem(config.TOKEN_KEY);
 					localStorage.removeItem(config.REFRESH_TOKEN_KEY);
-					window.location.href = '/masuk';
+					window.location.href = '/login';
 				}
 
 				return Promise.reject(ApiError.fromAxiosError(refreshError));

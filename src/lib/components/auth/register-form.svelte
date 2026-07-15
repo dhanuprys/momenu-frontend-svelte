@@ -160,7 +160,7 @@
 						</Button>
 					</Field>
 					<FieldDescription class="text-center">
-						Sudah punya akun? <a href="/masuk" class="underline hover:text-primary">Masuk</a>
+						Sudah punya akun? <a href="/login" class="underline hover:text-primary">Masuk</a>
 					</FieldDescription>
 				</FieldGroup>
 			</form>

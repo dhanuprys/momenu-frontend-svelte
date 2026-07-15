@@ -176,7 +176,7 @@
 							<Button
 								size="sm"
 								class="flex-grow h-9 text-xs rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
-								href="/buat-akun"
+								href="/register"
 							>
 								Gunakan Tema
 							</Button>

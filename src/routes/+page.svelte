@@ -56,7 +56,7 @@
 			</div>
 			
 			<div in:fade={{ duration: 600, delay: 200 }}>
-				<Button variant="ghost" class="font-normal" href="/masuk">
+				<Button variant="ghost" class="font-normal" href="/login">
 					Masuk <ArrowRight class="ml-2 w-4 h-4" />
 				</Button>
 			</div>
@@ -91,7 +91,7 @@
 					<Button 
 						size="lg"
 						class="text-lg h-14 rounded-full"
-						href="/buat-akun"
+						href="/register"
 					>
 						Mulai Sekarang <ArrowRight class="ml-2 w-4 h-4" />
 					</Button>

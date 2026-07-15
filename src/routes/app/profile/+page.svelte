@@ -50,7 +50,7 @@
 
 	function handleLogout() {
 		authState.clearSession();
-		window.location.href = '/masuk';
+		window.location.href = '/login';
 	}
 </script>
 

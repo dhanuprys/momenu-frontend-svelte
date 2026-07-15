@@ -30,10 +30,10 @@
 				// Cleanup on failure
 				localStorage.removeItem(config.TOKEN_KEY);
 				localStorage.removeItem(config.REFRESH_TOKEN_KEY);
-				goto('/masuk?error=fetch_profile_failed');
+				goto('/login?error=fetch_profile_failed');
 			}
 		} else {
-			goto('/masuk?error=missing_tokens');
+			goto('/login?error=missing_tokens');
 		}
 	});
 </script>

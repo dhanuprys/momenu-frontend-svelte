@@ -148,7 +148,7 @@
 						</Button>
 					</Field>
 					<FieldDescription class="text-center">
-						Belum punya akun? <a href="/buat-akun" class="underline hover:text-primary">Buat akun</a
+						Belum punya akun? <a href="/register" class="underline hover:text-primary">Buat akun</a
 						>
 					</FieldDescription>
 				</FieldGroup>

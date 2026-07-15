@@ -29,7 +29,7 @@
 
 	function handleLogout() {
 		authState.clearSession();
-		goto('/masuk');
+		goto('/login');
 	}
 </script>
 

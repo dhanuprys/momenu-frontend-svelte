@@ -35,7 +35,7 @@
 			</p>
 
 			<div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4">
-				<Button size="lg" class="h-12 px-8 text-base group" href="/buat-akun">
+				<Button size="lg" class="h-12 px-8 text-base group" href="/register">
 					Buat Undangan Gratis
 					<ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 				</Button>

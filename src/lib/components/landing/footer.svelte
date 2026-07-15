@@ -22,7 +22,7 @@
 					Bergabung dengan ribuan pasangan yang telah mempercayakan undangan digital mereka kepada
 					Momenu. Mulai gratis sekarang, tanpa kartu kredit.
 				</p>
-				<Button size="lg" class="h-12 px-8 text-base group" href="/buat-akun">
+				<Button size="lg" class="h-12 px-8 text-base group" href="/register">
 					Mulai Sekarang
 					<ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
 				</Button>

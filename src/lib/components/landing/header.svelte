@@ -44,11 +44,11 @@
 				</Button>
 			{:else}
 				<a
-					href="/masuk"
+					href="/login"
 					class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary hidden sm:block"
 					>Masuk</a
 				>
-				<Button href="/buat-akun">Buat Akun</Button>
+				<Button href="/register">Buat Akun</Button>
 			{/if}
 		</div>
 	</div>

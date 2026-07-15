@@ -113,7 +113,7 @@
 								<div
 									class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]"
 								>
-									<Button class="rounded-full shadow-lg" href="/masuk?redirect=/app/project/new">
+									<Button class="rounded-full shadow-lg" href="/login?redirect=/app/project/new">
 										Gunakan Tema Ini
 									</Button>
 								</div>
