@@ -248,11 +248,11 @@
 			{#each gifts as gift (gift.id)}
 				{#if gift.type === 'bank'}
 					<div
-						class="relative group h-48 rounded-xl overflow-hidden shadow-lg dark:shadow-xl hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-slate-200 to-slate-300 dark:from-slate-700 dark:via-slate-800 dark:to-slate-950 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-white/10 hover:-translate-y-1"
+						class="relative group h-48 rounded-xl overflow-hidden shadow-lg dark:shadow-xl hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-slate-100 via-slate-200 to-slate-300 dark:from-slate-700 dark:via-slate-800 dark:to-slate-950 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-white/10 hover:-translate-y-1"
 					>
 						<!-- Hover Shine Effect -->
 						<div
-							class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-0"
+							class="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/40 dark:via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-0"
 						></div>
 
 						<!-- Action buttons -->
@@ -341,7 +341,7 @@
 					>
 						<!-- Elegant Top Accent Line -->
 						<div
-							class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-cyan-400 opacity-80"
+							class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-indigo-500 to-cyan-400 opacity-80"
 						></div>
 
 						<!-- Action buttons -->
@@ -416,7 +416,7 @@
 					>
 						<!-- Hover Shine Effect -->
 						<div
-							class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-stone-500/5 dark:via-stone-400/5 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-0"
+							class="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-stone-500/5 dark:via-stone-400/5 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-0"
 						></div>
 
 						<!-- Action buttons -->
@@ -450,7 +450,7 @@
 
 						<!-- Delivery Info -->
 						<div
-							class="absolute top-6 left-[5.5rem] right-[4.5rem] text-stone-800 dark:text-stone-200 z-10"
+							class="absolute top-6 left-22 right-18 text-stone-800 dark:text-stone-200 z-10"
 						>
 							<div
 								class="text-[0.65rem] font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-0.5"

@@ -16,3 +16,4 @@ export * from './music.service';
 export * from './analytics.service';
 export * from './text-override.service';
 export * from './style-override.service';
+export * from './share.service.js';

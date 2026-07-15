@@ -23,6 +23,7 @@
 		Shield,
 		ChevronDown,
 		ChevronRight,
+		Share2,
 		FileText,
 		MonitorSmartphone,
 		Paintbrush,
@@ -80,6 +81,12 @@
 					url: `/app/project/${projectId}/analytics`,
 					icon: Activity,
 					isActive: currentPath.startsWith(`/app/project/${projectId}/analytics`)
+				},
+				{
+					title: 'Bagikan Akses',
+					url: `/app/project/${projectId}/share`,
+					icon: Share2,
+					isActive: currentPath.startsWith(`/app/project/${projectId}/share`)
 				}
 			]
 		},
@@ -234,7 +241,7 @@
 		<Sidebar.Group>
 			<button
 				type="button"
-				class="w-full flex items-center justify-between cursor-pointer px-2 py-1.5 text-sm font-semibold text-sidebar-foreground/70 hover:text-sidebar-foreground"
+				class="w-full flex h-10 items-center justify-between cursor-pointer px-2 py-1.5 text-sm font-semibold text-sidebar-foreground/70 hover:text-sidebar-foreground"
 				onclick={() => toggleGroup(group.id)}
 			>
 				<span>{group.title}</span>
@@ -251,10 +258,10 @@
 						<Sidebar.Menu>
 							{#each group.items as item}
 								<Sidebar.MenuItem>
-									<Sidebar.MenuButton isActive={item.isActive}>
+									<Sidebar.MenuButton isActive={item.isActive} class="h-10!">
 										{#snippet child({ props })}
 											<a href={item.url} {...props}>
-												<item.icon class="size-4" />
+												<item.icon class="size-6" />
 												<span>{item.title}</span>
 											</a>
 										{/snippet}
