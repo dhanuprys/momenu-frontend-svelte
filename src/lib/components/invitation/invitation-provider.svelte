@@ -31,11 +31,12 @@
 	let audioElement: HTMLAudioElement | null = null;
 
 	import { config } from '$lib/config/index.js';
+	import { getMediaUrl } from '$lib/utils.js';
 
 	// ─── Audio Helpers (safe, centralized) ───────────────────────────
 
 	function createAudio(filePath: string): HTMLAudioElement {
-		const audio = new Audio(`${config.API_ROOT_URL}${filePath}`);
+		const audio = new Audio(getMediaUrl(filePath));
 		audio.loop = true;
 		audio.preload = 'auto'; // Preload the audio metadata and data
 		return audio;

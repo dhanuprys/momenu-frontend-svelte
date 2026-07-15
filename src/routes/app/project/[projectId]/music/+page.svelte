@@ -9,6 +9,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Play, Pause, Check, Music as MusicIcon, Search } from '@lucide/svelte';
 	import { config } from '$lib/config/index.js';
+	import { getMediaUrl } from '$lib/utils.js';
 	import { toast } from 'svelte-sonner';
 	import MusicPlayerBar from '$lib/components/invitation/music-player-bar.svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
@@ -106,7 +107,7 @@
 
 		stopAudio();
 
-		currentAudio = new Audio(`${config.API_ROOT_URL}${music.file_path}`);
+		currentAudio = new Audio(getMediaUrl(music.file_path));
 
 		currentAudio.ontimeupdate = () => {
 			if (currentAudio) currentAudioTime = currentAudio.currentTime;

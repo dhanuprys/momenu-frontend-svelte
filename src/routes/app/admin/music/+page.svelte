@@ -8,6 +8,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Trash2, Play, Pause, Edit } from '@lucide/svelte';
 	import { config } from '$lib/config/index.js';
+	import { getMediaUrl } from '$lib/utils.js';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -62,6 +63,9 @@
 	let isEditingMusic = $state(false);
 	let editMusicId = $state<number | null>(null);
 	let selectedCategoryFilter = $state<number | 'all'>('all');
+	
+	let audioSourceType = $state<'file' | 'link'>('file');
+	let audioExternalUrl = $state('');
 
 	let musicFiles = $state<FileList | undefined>(undefined);
 	let coverFiles = $state<FileList | undefined>(undefined);
@@ -105,6 +109,15 @@
 			cover_image: music.cover_image || '',
 			order: music.order
 		};
+		
+		if (music.file_path.startsWith('http://') || music.file_path.startsWith('https://')) {
+			audioSourceType = 'link';
+			audioExternalUrl = music.file_path;
+		} else {
+			audioSourceType = 'file';
+			audioExternalUrl = '';
+		}
+
 		// @ts-expect-error
 		musicFiles = null;
 		// @ts-expect-error
@@ -124,6 +137,8 @@
 			cover_image: '',
 			order: 0
 		};
+		audioSourceType = 'file';
+		audioExternalUrl = '';
 		// @ts-expect-error
 		musicFiles = null;
 		// @ts-expect-error
@@ -138,7 +153,7 @@
 
 		stopAudio();
 
-		currentAudio = new Audio(`${config.API_ROOT_URL}${music.file_path}`);
+		currentAudio = new Audio(getMediaUrl(music.file_path));
 		currentAudio.play().catch((e) => console.error(e));
 		currentAudio.onended = () => stopAudio();
 		playingMusicId = music.id;
@@ -189,15 +204,22 @@
 
 	async function handleCreateMusic(e: Event) {
 		e.preventDefault();
-		if (!isEditingMusic && (!musicFiles || musicFiles.length === 0)) {
+		if (audioSourceType === 'file' && !isEditingMusic && (!musicFiles || musicFiles.length === 0)) {
 			toast.error('Silakan pilih file musik');
+			return;
+		}
+		
+		if (audioSourceType === 'link' && !audioExternalUrl) {
+			toast.error('Silakan masukkan URL tautan musik');
 			return;
 		}
 
 		isSubmittingMusic = true;
 		try {
-			// Upload audio file if new one is selected
-			if (musicFiles && musicFiles.length > 0) {
+			// Process audio source
+			if (audioSourceType === 'link') {
+				newMusic.file_path = audioExternalUrl;
+			} else if (musicFiles && musicFiles.length > 0) {
 				const audioUpload = await UploadService.adminUpload(musicFiles[0], 'audio');
 				newMusic.file_path = audioUpload.url;
 			}
@@ -294,16 +316,40 @@
 								</select>
 							</div>
 							<div class="space-y-2">
-								<Label for="music-file">File Musik (Audio)</Label>
-								<Input
-									id="music-file"
-									type="file"
-									accept="audio/*"
-									bind:files={musicFiles}
-									required={!isEditingMusic}
-								/>
-								{#if isEditingMusic && newMusic.file_path}
-									<p class="text-xs text-muted-foreground mt-1">Biarkan kosong jika tidak ingin mengubah file.</p>
+								<Label>Sumber Audio</Label>
+								<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
+									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => audioSourceType = 'file'}>
+										Upload File
+									</button>
+									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => audioSourceType = 'link'}>
+										Tautan Eksternal
+									</button>
+								</div>
+								
+								{#if audioSourceType === 'file'}
+									<div class="pt-2">
+										<Input
+											id="music-file"
+											type="file"
+											accept="audio/*"
+											bind:files={musicFiles}
+											required={!isEditingMusic}
+										/>
+										{#if isEditingMusic && newMusic.file_path && audioSourceType === 'file'}
+											<p class="text-xs text-muted-foreground mt-1">Biarkan kosong jika tidak ingin mengubah file.</p>
+										{/if}
+									</div>
+								{:else}
+									<div class="pt-2 space-y-1">
+										<Input
+											id="music-link"
+											type="url"
+											placeholder="https://example.com/audio.mp3"
+											bind:value={audioExternalUrl}
+											required
+										/>
+										<p class="text-xs text-muted-foreground mt-1">Masukkan URL langsung (direct link) ke file audio (mp3, wav, dll).</p>
+									</div>
 								{/if}
 							</div>
 							<div class="space-y-2">

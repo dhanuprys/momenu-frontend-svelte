@@ -37,13 +37,17 @@
 		Baby,
 		Scissors,
 		Presentation,
-		Plus,
-		Trash2,
 		Upload,
 		Play,
 		Pause,
 		Search,
-		Music as MusicIcon
+		Music as MusicIcon,
+
+		Trash2,
+
+		Plus
+
+
 	} from '@lucide/svelte';
 	import { UploadService } from '$lib/services/index.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
@@ -382,7 +386,7 @@
 
 		stopAudio();
 
-		currentAudio = new Audio(`${config.API_ROOT_URL}${music.file_path}`);
+		currentAudio = new Audio(getMediaUrl(music.file_path));
 
 		currentAudio.ontimeupdate = () => {
 			if (currentAudio) currentAudioTime = currentAudio.currentTime;
