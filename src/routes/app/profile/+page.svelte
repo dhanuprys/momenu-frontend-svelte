@@ -3,11 +3,41 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { Mail, Calendar, User, Key, LogOut } from '@lucide/svelte';
+	import { Mail, Calendar, User, Key, LogOut, Loader2, Edit2, Check, X } from '@lucide/svelte';
 	import { authState } from '$lib/stores/auth.svelte';
 	import AppHeader from '$lib/components/layout/app-header.svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { toast } from 'svelte-sonner';
+	import { AuthService } from '$lib/services/index.js';
 
 	let user = $derived(authState.user);
+	let isEditingName = $state(false);
+	let editName = $state('');
+	let isSavingName = $state(false);
+
+	$effect(() => {
+		if (user && !isEditingName) {
+			editName = user.name || '';
+		}
+	});
+
+	async function saveName() {
+		if (!editName.trim()) {
+			toast.error('Nama tidak boleh kosong');
+			return;
+		}
+		isSavingName = true;
+		try {
+			const updatedUser = await AuthService.updateProfile({ name: editName.trim() });
+			authState.updateUser(updatedUser);
+			isEditingName = false;
+			toast.success('Profil berhasil diperbarui');
+		} catch (error: any) {
+			toast.error(error.response?.data?.message || 'Gagal memperbarui profil');
+		} finally {
+			isSavingName = false;
+		}
+	}
 
 	function formatDate(dateString: string | undefined) {
 		if (!dateString) return '-';
@@ -60,8 +90,8 @@
 							</Avatar.Root>
 						</div>
 						
-						<h3 class="text-2xl font-bold mb-1 truncate w-full px-4 text-stone-900 dark:text-stone-100" title={user.email}>
-							{user.email.split('@')[0]}
+						<h3 class="text-2xl font-bold mb-1 truncate w-full px-4 text-stone-900 dark:text-stone-100" title={user.name || user.email}>
+							{user.name || user.email.split('@')[0]}
 						</h3>
 						<p class="text-sm text-muted-foreground mb-6 truncate w-full px-4">{user.email}</p>
 
@@ -92,6 +122,45 @@
 					</Card.Header>
 					<Card.Content class="space-y-2 pt-6">
 						<!-- Info Row 1 -->
+						<div class="group flex items-start sm:items-center gap-4 p-4 md:p-5 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors duration-300">
+							<div class="p-3 bg-stone-100 dark:bg-stone-800 rounded-xl shrink-0 group-hover:scale-110 group-hover:bg-blue-500/10 group-hover:text-blue-500 transition-all duration-300">
+								<User class="h-6 w-6 text-stone-500 group-hover:text-blue-500 transition-colors" />
+							</div>
+							<div class="space-y-1 w-full flex-1">
+								<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-0">
+									<div class="flex-1 mr-4">
+										<p class="text-sm font-semibold text-stone-500 dark:text-stone-400">Nama Lengkap</p>
+										{#if isEditingName}
+											<div class="mt-2 flex items-center gap-2 max-w-sm">
+												<Input bind:value={editName} disabled={isSavingName} placeholder="Masukkan nama Anda" class="h-9" />
+											</div>
+										{:else}
+											<p class="text-base font-medium text-stone-900 dark:text-stone-100 mt-0.5 truncate">{user.name || '-'}</p>
+										{/if}
+									</div>
+									<div class="flex items-center gap-2">
+										{#if isEditingName}
+											<Button variant="outline" size="sm" class="h-9 w-9 p-0 hover:bg-red-50 hover:text-red-600" disabled={isSavingName} onclick={() => { isEditingName = false; editName = user?.name || ''; }}>
+												<X class="h-4 w-4" />
+											</Button>
+											<Button variant="default" size="sm" class="h-9" disabled={isSavingName} onclick={saveName}>
+												{#if isSavingName}
+													<Loader2 class="mr-2 h-4 w-4 animate-spin" /> Menyimpan
+												{:else}
+													<Check class="mr-2 h-4 w-4" /> Simpan
+												{/if}
+											</Button>
+										{:else}
+											<Button variant="outline" size="sm" class="w-full sm:w-auto transition-colors" onclick={() => isEditingName = true}>
+												<Edit2 class="mr-2 h-4 w-4" /> Ubah Nama
+											</Button>
+										{/if}
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Info Row 2 -->
 						<div class="group flex items-start sm:items-center gap-4 p-4 md:p-5 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors duration-300">
 							<div class="p-3 bg-stone-100 dark:bg-stone-800 rounded-xl shrink-0 group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300">
 								<Mail class="h-6 w-6 text-stone-500 group-hover:text-primary transition-colors" />

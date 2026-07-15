@@ -12,12 +12,20 @@ export const AuthService = {
 	},
 
 	async register(data: RegisterRequest) {
-		const res = await api.post<User>('/auth/register', data);
+		const res = await api.post<{ token: string; refresh_token: string; user: User }>(
+			'/auth/register',
+			data
+		);
 		return res.data;
 	},
 
 	async getMe() {
 		const res = await api.get<User>('/auth/me');
+		return res.data;
+	},
+
+	async updateProfile(data: { name: string }) {
+		const res = await api.put<User>('/auth/me', data);
 		return res.data;
 	},
 

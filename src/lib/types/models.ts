@@ -33,6 +33,7 @@ export interface MediaBucket {
 
 export interface User {
 	id: number;
+	name?: string;
 	email: string;
 	google_id?: string;
 	is_admin: boolean;

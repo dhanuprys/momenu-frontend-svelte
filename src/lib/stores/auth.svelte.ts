@@ -17,7 +17,7 @@ class AuthStore {
 			this.token = localStorage.getItem(config.TOKEN_KEY);
 			this.refreshToken = localStorage.getItem(config.REFRESH_TOKEN_KEY);
 
-			const storedUser = localStorage.getItem('momenu_user');
+			const storedUser = localStorage.getItem(config.USER_KEY);
 			if (storedUser) {
 				try {
 					this.user = JSON.parse(storedUser);
@@ -37,7 +37,14 @@ class AuthStore {
 		if (typeof window !== 'undefined') {
 			localStorage.setItem(config.TOKEN_KEY, token);
 			localStorage.setItem(config.REFRESH_TOKEN_KEY, refreshToken);
-			localStorage.setItem('momenu_user', JSON.stringify(user));
+			localStorage.setItem(config.USER_KEY, JSON.stringify(user));
+		}
+	}
+
+	updateUser(user: User) {
+		this.user = user;
+		if (typeof window !== 'undefined') {
+			localStorage.setItem(config.USER_KEY, JSON.stringify(user));
 		}
 	}
 
@@ -49,7 +56,7 @@ class AuthStore {
 		if (typeof window !== 'undefined') {
 			localStorage.removeItem(config.TOKEN_KEY);
 			localStorage.removeItem(config.REFRESH_TOKEN_KEY);
-			localStorage.removeItem('momenu_user');
+			localStorage.removeItem(config.USER_KEY);
 		}
 	}
 }

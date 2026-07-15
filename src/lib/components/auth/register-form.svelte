@@ -61,10 +61,9 @@
 
 		loading = true;
 		try {
-			await AuthService.register({ name, email, password, turnstile_token: turnstileToken });
+			const res = await AuthService.register({ name, email, password, turnstile_token: turnstileToken });
 			
 			// Auto-login after successful registration
-			const res = await AuthService.login({ email, password });
 			authState.setSession(res.user, res.token, res.refresh_token);
 
 			toast.success('Pendaftaran berhasil!');

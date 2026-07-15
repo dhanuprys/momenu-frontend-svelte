@@ -17,6 +17,10 @@ export interface RefreshTokenRequest {
 	refresh_token: string;
 }
 
+export interface UpdateProfileRequest {
+	name: string;
+}
+
 export interface CreateProjectRequest {
 	title: string;
 	theme_id: string;

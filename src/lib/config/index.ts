@@ -25,5 +25,8 @@ export const config = Object.freeze({
 	TOKEN_KEY: 'momenu_access_token',
 
 	/** Local storage key for the JWT refresh token */
-	REFRESH_TOKEN_KEY: 'momenu_refresh_token'
+	REFRESH_TOKEN_KEY: 'momenu_refresh_token',
+
+	/** Local storage key for the user object */
+	USER_KEY: 'momenu_user'
 });
