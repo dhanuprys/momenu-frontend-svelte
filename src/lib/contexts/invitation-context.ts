@@ -1,4 +1,4 @@
-import { setContext, getContext } from 'svelte';
+import { getContext, setContext } from 'svelte';
 import type { InvitationData } from '../types';
 
 const INVITATION_KEY = Symbol('invitation');

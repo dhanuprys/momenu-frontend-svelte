@@ -1,5 +1,5 @@
+import type { Music, MusicCategory } from '../types';
 import { api } from '../utils/api';
-import type { MusicCategory, Music } from '../types';
 
 export const MusicService = {
 	async listCategories() {

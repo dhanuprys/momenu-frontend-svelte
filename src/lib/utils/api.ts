@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { config } from '../config';
-import { ApiError } from './api-error';
 import type { ApiSuccessResponse } from '../types';
+import { ApiError } from './api-error';
 
 export const apiClient: AxiosInstance = axios.create({
 	baseURL: config.API_BASE_URL,

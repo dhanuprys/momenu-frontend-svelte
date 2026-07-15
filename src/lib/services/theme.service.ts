@@ -1,5 +1,5 @@
-import { api } from '../utils/api';
 import type { Theme } from '../types';
+import { api } from '../utils/api';
 
 export const ThemeService = {
 	async list() {

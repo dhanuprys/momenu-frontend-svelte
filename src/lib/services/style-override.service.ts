@@ -1,5 +1,5 @@
-import { api } from '../utils/api';
 import type { StyleOverride } from '../types';
+import { api } from '../utils/api';
 
 export const StyleOverrideService = {
 	async list(projectId: string) {

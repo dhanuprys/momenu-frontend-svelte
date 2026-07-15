@@ -1,5 +1,5 @@
+import type { MediaMapping, MediaMappingRequest } from '../types';
 import { api } from '../utils/api';
-import type { MediaMappingRequest, MediaMapping } from '../types';
 
 export const MediaService = {
 	async list(projectId: string) {

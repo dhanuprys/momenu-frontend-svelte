@@ -18,7 +18,7 @@
 			try {
 				const user = await AuthService.getMe();
 				authState.setSession(user, token, refreshToken);
-				
+
 				const isNewUser = new Date().getTime() - new Date(user.created_at).getTime() < 60000;
 				if (isNewUser) {
 					goto('/app/project/new');

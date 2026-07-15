@@ -77,7 +77,9 @@
 				return;
 			}
 			if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-				toast.error('Tautan hanya boleh berisi huruf kecil dan angka, dipisahkan oleh tanda hubung (-)');
+				toast.error(
+					'Tautan hanya boleh berisi huruf kecil dan angka, dipisahkan oleh tanda hubung (-)'
+				);
 				savingProject = false;
 				return;
 			}

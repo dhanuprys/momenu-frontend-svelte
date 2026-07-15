@@ -1,5 +1,5 @@
+import type { GiftRegistry, GiftRegistryRequest } from '../types';
 import { api } from '../utils/api';
-import type { GiftRegistryRequest, GiftRegistry } from '../types';
 
 export const GiftRegistryService = {
 	async list(projectId: string) {

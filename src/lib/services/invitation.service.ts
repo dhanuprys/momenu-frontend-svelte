@@ -1,5 +1,5 @@
+import type { Guestbook, GuestbookRequest, Pagination, Project, RSVP, RSVPRequest } from '../types';
 import { api } from '../utils/api';
-import type { Project, RSVPRequest, RSVP, GuestbookRequest, Guestbook, Pagination } from '../types';
 
 export const InvitationService = {
 	// --- Old Authenticated Methods ---

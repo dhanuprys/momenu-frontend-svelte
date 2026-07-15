@@ -1,20 +1,19 @@
-import type {
-	Project,
-	Schedule,
-	GiftRegistry,
-	MediaMapping,
-	DressCode,
-	LiveStream,
-	FeatureToggle,
-	RSVP,
-	Guestbook,
-	Music,
-	TextOverride,
-	StyleOverride
-} from './models';
 import type { EventType } from './enums';
-import type { RSVPRequest, GuestbookRequest } from './requests';
-import type { Pagination } from './api';
+import type {
+	DressCode,
+	FeatureToggle,
+	GiftRegistry,
+	Guestbook,
+	LiveStream,
+	MediaMapping,
+	Music,
+	Project,
+	RSVP,
+	Schedule,
+	StyleOverride,
+	TextOverride
+} from './models';
+import type { GuestbookRequest, RSVPRequest } from './requests';
 
 export interface PernikahanPayload {
 	nama_mempelai_pria?: string;

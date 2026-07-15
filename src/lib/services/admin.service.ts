@@ -1,5 +1,5 @@
+import type { Music, MusicCategory, Project, User } from '../types';
 import { api } from '../utils/api';
-import type { User, Project, Music, MusicCategory } from '../types';
 
 export const AdminService = {
 	// Users
@@ -19,7 +19,9 @@ export const AdminService = {
 	},
 
 	async loginAs(id: number) {
-		const res = await api.post<{ token: string; refresh_token: string; user: User }>(`/admin/users/${id}/login-as`);
+		const res = await api.post<{ token: string; refresh_token: string; user: User }>(
+			`/admin/users/${id}/login-as`
+		);
 		return res.data;
 	},
 

@@ -1,5 +1,5 @@
+import type { Schedule, ScheduleRequest } from '../types';
 import { api } from '../utils/api';
-import type { ScheduleRequest, Schedule } from '../types';
 
 export const ScheduleService = {
 	async list(projectId: string) {

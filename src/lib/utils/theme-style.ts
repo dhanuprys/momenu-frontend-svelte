@@ -1,5 +1,5 @@
-import type { StyleSlotDefinitions, StyleProperties } from '../types/theme-manifest';
 import type { StyleOverride } from '../types/models';
+import type { StyleProperties, StyleSlotDefinitions } from '../types/theme-manifest';
 
 export function createStyleHelper<TSlots extends StyleSlotDefinitions>(
 	slots: TSlots | undefined,

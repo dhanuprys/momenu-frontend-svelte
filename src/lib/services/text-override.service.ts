@@ -1,5 +1,5 @@
-import { api } from '../utils/api';
 import type { TextOverride } from '../types';
+import { api } from '../utils/api';
 
 export const TextOverrideService = {
 	async list(projectId: string) {

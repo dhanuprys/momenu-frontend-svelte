@@ -29,12 +29,14 @@
 	<title>Momenu | Segera Hadir</title>
 </svelte:head>
 
-<div class="relative min-h-screen overflow-hidden bg-background text-foreground flex flex-col justify-between selection:bg-primary/20">
+<div
+	class="relative min-h-screen overflow-hidden bg-background text-foreground flex flex-col justify-between selection:bg-primary/20"
+>
 	<!-- Animated Particles Background -->
 	<div class="absolute inset-0 pointer-events-none flex items-center justify-center">
 		{#if mounted}
 			{#each particles as p}
-				<div 
+				<div
 					class="particle absolute w-1.5 h-1.5 bg-foreground/20 rounded-full"
 					style="
 						--px: {p.x}vw; 
@@ -54,7 +56,7 @@
 			<div in:fade={{ duration: 600, delay: 100 }}>
 				<AppLogo textClass="text-xl tracking-tight" />
 			</div>
-			
+
 			<div in:fade={{ duration: 600, delay: 200 }}>
 				<Button variant="ghost" class="font-normal" href="/login">
 					Masuk <ArrowRight class="ml-2 w-4 h-4" />
@@ -68,31 +70,24 @@
 		{#if mounted}
 			<div class="max-w-2xl w-full mx-auto space-y-12">
 				<div class="space-y-6">
-					<h1 
+					<h1
 						in:fly={{ y: 15, duration: 800, delay: 300 }}
 						class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-balance leading-tight"
 					>
 						Sesuatu yang luar biasa segera hadir.
 					</h1>
 
-					<p 
+					<p
 						in:fly={{ y: 15, duration: 800, delay: 400 }}
 						class="text-lg text-muted-foreground text-balance"
 					>
-						Momenu membantu Anda membuat dan membagikan momen spesial dengan mudah. 
-						Sistem kami kini terbuka untuk pengguna akses awal (early tester).
+						Momenu membantu Anda membuat dan membagikan momen spesial dengan mudah. Sistem kami kini
+						terbuka untuk pengguna akses awal (early tester).
 					</p>
 				</div>
 
-				<div 
-					in:fly={{ y: 15, duration: 800, delay: 500 }}
-					class="pt-4 flex justify-center"
-				>
-					<Button 
-						size="lg"
-						class="text-lg h-14 rounded-full"
-						href="/register"
-					>
+				<div in:fly={{ y: 15, duration: 800, delay: 500 }} class="pt-4 flex justify-center">
+					<Button size="lg" class="text-lg h-14 rounded-full" href="/register">
 						Mulai Sekarang <ArrowRight class="ml-2 w-4 h-4" />
 					</Button>
 				</div>
@@ -101,13 +96,19 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="p-8 md:px-16 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+	<footer
+		class="p-8 md:px-16 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground"
+	>
 		{#if mounted}
 			<p in:fade={{ duration: 600, delay: 600 }}>
 				&copy; {new Date().getFullYear()} Momenu.
 			</p>
 			<div in:fade={{ duration: 600, delay: 700 }} class="flex gap-6">
-				<a href="https://instagram.com/momenu.id" target="_blank" class="hover:text-foreground transition-colors">Instagram</a>
+				<a
+					href="https://instagram.com/momenu.id"
+					target="_blank"
+					class="hover:text-foreground transition-colors">Instagram</a
+				>
 			</div>
 		{/if}
 	</footer>

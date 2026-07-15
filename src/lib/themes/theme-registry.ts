@@ -1,10 +1,10 @@
-import type { Component } from 'svelte';
-import type { ThemeManifest } from '$lib/types/theme-manifest';
-import { MANIFEST as PERNIKAHAN_BALI_SIMPLE_1 } from '$lib/components/themes/pernikahan/pernikahan_bali_simple_1/manifest.js';
-import { MANIFEST as ULANG_TAHUN_FESTIVE_1 } from '$lib/components/themes/ulang_tahun/ulang_tahun_festive_1/manifest.js';
 import { MANIFEST as METATAH_SAKRAL_1 } from '$lib/components/themes/metatah/metatah_sakral_1/manifest.js';
-import { MANIFEST as TIGANG_SASIH_PASTEL_1 } from '$lib/components/themes/tigang_sasih/tigang_sasih_pastel_1/manifest.js';
+import { MANIFEST as PERNIKAHAN_BALI_SIMPLE_1 } from '$lib/components/themes/pernikahan/pernikahan_bali_simple_1/manifest.js';
 import { MANIFEST as SEMINAR_PROFESSIONAL_1 } from '$lib/components/themes/seminar/seminar_professional_1/manifest.js';
+import { MANIFEST as TIGANG_SASIH_PASTEL_1 } from '$lib/components/themes/tigang_sasih/tigang_sasih_pastel_1/manifest.js';
+import { MANIFEST as ULANG_TAHUN_FESTIVE_1 } from '$lib/components/themes/ulang_tahun/ulang_tahun_festive_1/manifest.js';
+import type { ThemeManifest } from '$lib/types/theme-manifest';
+import type { Component } from 'svelte';
 
 interface RegistryEntry {
 	manifest: ThemeManifest;

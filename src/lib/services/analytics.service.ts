@@ -1,5 +1,5 @@
-import { api } from '../utils/api';
 import type { ProjectAnalytics } from '../types';
+import { api } from '../utils/api';
 
 export const AnalyticsService = {
 	async recordVisit(projectId: string, guestName?: string, source?: string) {

@@ -1,5 +1,5 @@
+import type { LiveStream, LiveStreamRequest } from '../types';
 import { api } from '../utils/api';
-import type { LiveStreamRequest, LiveStream } from '../types';
 
 export const LiveStreamService = {
 	async list(projectId: string) {

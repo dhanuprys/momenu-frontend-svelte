@@ -1,10 +1,10 @@
 import type {
 	EventType,
+	FieldType,
 	GiftRegistryType,
-	ProjectStatus,
-	MediaType,
 	LiveStreamPlatform,
-	FieldType
+	MediaType,
+	ProjectStatus
 } from './enums';
 
 export interface FieldDefinition {

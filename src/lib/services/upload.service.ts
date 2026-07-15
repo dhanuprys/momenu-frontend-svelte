@@ -1,5 +1,5 @@
+import type { ApiSuccessResponse, UploadResult } from '../types';
 import { apiClient } from '../utils/api';
-import type { UploadResult, ApiSuccessResponse } from '../types';
 
 export const UploadService = {
 	async upload(

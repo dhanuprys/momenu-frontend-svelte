@@ -449,9 +449,7 @@
 						</div>
 
 						<!-- Delivery Info -->
-						<div
-							class="absolute top-6 left-22 right-18 text-stone-800 dark:text-stone-200 z-10"
-						>
+						<div class="absolute top-6 left-22 right-18 text-stone-800 dark:text-stone-200 z-10">
 							<div
 								class="text-[0.65rem] font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-0.5"
 							>

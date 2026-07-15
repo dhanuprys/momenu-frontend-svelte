@@ -1,5 +1,5 @@
-import type { ValidationError, ApiErrorResponse } from '../types';
 import axios from 'axios';
+import type { ApiErrorResponse, ValidationError } from '../types';
 
 const ErrorTranslations: Record<string, string> = {
 	INVALID_PAYLOAD: 'Data yang dikirimkan tidak valid',

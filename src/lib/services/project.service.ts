@@ -1,13 +1,13 @@
-import { api } from '../utils/api';
 import type {
 	CreateProjectRequest,
-	UpdateProjectRequest,
-	Project,
-	UpdateProjectStatusRequest,
 	FeatureToggle,
+	Pagination,
+	Project,
 	UpdateFeatureToggleRequest,
-	Pagination
+	UpdateProjectRequest,
+	UpdateProjectStatusRequest
 } from '../types';
+import { api } from '../utils/api';
 
 export const ProjectService = {
 	async list(page: number = 1, limit: number = 10, status?: string) {

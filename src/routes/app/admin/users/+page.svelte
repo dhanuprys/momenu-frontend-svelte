@@ -234,10 +234,20 @@
 							</Table.Cell>
 							<Table.Cell class="text-right">
 								<div class="flex items-center justify-end gap-2">
-									<Button variant="ghost" size="sm" onclick={() => promptLoginAs(user)} class="hover:bg-primary/10 hover:text-primary">
+									<Button
+										variant="ghost"
+										size="sm"
+										onclick={() => promptLoginAs(user)}
+										class="hover:bg-primary/10 hover:text-primary"
+									>
 										<LogIn class="h-4 w-4 mr-2" /> Login
 									</Button>
-									<Button variant="ghost" size="icon" onclick={() => promptDeleteUser(user)} class="text-destructive hover:bg-destructive/10 hover:text-destructive w-8 h-8">
+									<Button
+										variant="ghost"
+										size="icon"
+										onclick={() => promptDeleteUser(user)}
+										class="text-destructive hover:bg-destructive/10 hover:text-destructive w-8 h-8"
+									>
 										<Trash2 class="h-4 w-4" />
 									</Button>
 								</div>
@@ -254,7 +264,7 @@
 			<Dialog.Header>
 				<Dialog.Title>Konfirmasi Login As</Dialog.Title>
 				<Dialog.Description>
-					Anda akan beralih sesi dan login sebagai <strong>{selectedUserToLoginAs?.email}</strong>. 
+					Anda akan beralih sesi dan login sebagai <strong>{selectedUserToLoginAs?.email}</strong>.
 					Tindakan ini akan menghentikan sesi admin Anda saat ini.
 				</Dialog.Description>
 			</Dialog.Header>
@@ -262,7 +272,12 @@
 				<Button type="button" variant="outline" onclick={() => (loginAsUserOpen = false)}>
 					Batal
 				</Button>
-				<Button type="button" variant="default" onclick={handleLoginAs} disabled={isLoginAsSubmitting}>
+				<Button
+					type="button"
+					variant="default"
+					onclick={handleLoginAs}
+					disabled={isLoginAsSubmitting}
+				>
 					{isLoginAsSubmitting ? 'Mengalihkan Sesi...' : 'Ya, Lanjutkan'}
 				</Button>
 			</Dialog.Footer>
@@ -274,15 +289,22 @@
 			<Dialog.Header>
 				<Dialog.Title>Hapus Pengguna</Dialog.Title>
 				<Dialog.Description>
-					Apakah Anda yakin ingin menghapus pengguna <strong class="text-foreground">{selectedUserToDelete?.email}</strong>? 
-					Tindakan ini tidak dapat dibatalkan dan semua data terkait pengguna ini akan dihapus secara permanen.
+					Apakah Anda yakin ingin menghapus pengguna <strong class="text-foreground"
+						>{selectedUserToDelete?.email}</strong
+					>? Tindakan ini tidak dapat dibatalkan dan semua data terkait pengguna ini akan dihapus
+					secara permanen.
 				</Dialog.Description>
 			</Dialog.Header>
 			<Dialog.Footer class="pt-4">
 				<Button type="button" variant="outline" onclick={() => (deleteUserOpen = false)}>
 					Batal
 				</Button>
-				<Button type="button" variant="destructive" onclick={handleDeleteUser} disabled={isDeletingUser}>
+				<Button
+					type="button"
+					variant="destructive"
+					onclick={handleDeleteUser}
+					disabled={isDeletingUser}
+				>
 					{isDeletingUser ? 'Menghapus...' : 'Ya, Hapus'}
 				</Button>
 			</Dialog.Footer>

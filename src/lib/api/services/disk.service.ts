@@ -1,5 +1,4 @@
 import type { FileRecord, QuotaInfo } from '$lib/types/models';
-import type { ApiResponse } from '$lib/types/api';
 import { api } from '$lib/utils/api';
 
 export interface ProjectDiskUsageResponse {

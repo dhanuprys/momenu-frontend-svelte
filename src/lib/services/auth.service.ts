@@ -1,6 +1,6 @@
-import { api } from '../utils/api';
 import { config } from '../config';
 import type { LoginRequest, RegisterRequest, User } from '../types';
+import { api } from '../utils/api';
 
 export const AuthService = {
 	async login(data: LoginRequest) {

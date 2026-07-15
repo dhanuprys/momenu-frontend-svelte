@@ -1,5 +1,5 @@
+import type { DressCode, DressCodeRequest } from '../types';
 import { api } from '../utils/api';
-import type { DressCodeRequest, DressCode } from '../types';
 
 export const DressCodeService = {
 	async list(projectId: string) {

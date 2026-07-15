@@ -1,5 +1,5 @@
+import type { OwnerRSVPRequest, Pagination, RSVP, RSVPStats } from '../types';
 import { api, apiClient } from '../utils/api';
-import type { RSVP, RSVPStats, Pagination, OwnerRSVPRequest } from '../types';
 
 export const RSVPService = {
 	async list(projectId: string, page: number = 1, limit: number = 10) {

@@ -1,5 +1,5 @@
-import type { TextSlotDefinitions } from '../types/theme-manifest';
 import type { TextOverride } from '../types/models';
+import type { TextSlotDefinitions } from '../types/theme-manifest';
 
 export function createTextHelper<TSlots extends TextSlotDefinitions>(
 	slots: TSlots | undefined,

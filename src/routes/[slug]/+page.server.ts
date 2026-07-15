@@ -1,7 +1,7 @@
 import { InvitationService } from '$lib/services/invitation.service';
+import { getMediaUrl } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getMediaUrl } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
