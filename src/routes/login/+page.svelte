@@ -1,5 +1,14 @@
 <script lang="ts">
 	import LoginForm from '$lib/components/auth/login-form.svelte';
+	import { authState } from '$lib/stores/auth.svelte.js';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+
+	$effect(() => {
+		if (authState.isInitialized && authState.isAuthenticated) {
+			goto('/app');
+		}
+	});
 </script>
 
 <div
