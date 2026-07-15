@@ -12,6 +12,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { Share2, Plus, Copy, Trash2, RefreshCw } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
@@ -28,6 +29,7 @@
 	let isMaxLimitReached = $derived(activeSessionsCount >= 5);
 
 	let isCreateDialogOpen = $state(false);
+	let newSessionName = $state('');
 	let selectedExpiry = $state("never"); // never, 1d, 7d, 30d
 
 	onMount(async () => {
@@ -51,10 +53,16 @@
 			return;
 		}
 		selectedExpiry = "never";
+		newSessionName = "";
 		isCreateDialogOpen = true;
 	}
 
 	async function submitCreateSession() {
+		if (!newSessionName.trim()) {
+			toast.error('Nama atau Catatan wajib diisi');
+			return;
+		}
+
 		isCreating = true;
 		
 		let expiresAt: string | null = null;
@@ -66,7 +74,7 @@
 		}
 
 		try {
-			const newSession = await ShareService.createSession(projectId, expiresAt);
+			const newSession = await ShareService.createSession(projectId, newSessionName.trim(), expiresAt);
 			sessions = [newSession, ...sessions];
 			toast.success('Tautan akses berhasil dibuat');
 			isCreateDialogOpen = false;
@@ -166,6 +174,7 @@
 					<Table.Root>
 						<Table.Header>
 							<Table.Row>
+								<Table.Head>Nama/Catatan</Table.Head>
 								<Table.Head>Tautan Akses</Table.Head>
 								<Table.Head>Status</Table.Head>
 								<Table.Head>Dibuat Pada</Table.Head>
@@ -177,7 +186,10 @@
 						<Table.Body>
 							{#each sessions as session (session.id)}
 								<Table.Row class={session.is_revoked ? "opacity-60 bg-muted/30" : ""}>
-									<Table.Cell class="font-medium">
+									<Table.Cell class="font-medium truncate max-w-[150px]" title={session.name}>
+										{session.name}
+									</Table.Cell>
+									<Table.Cell>
 										<div class="flex items-center space-x-2">
 											<code class="px-2 py-1 bg-muted rounded text-xs {session.is_revoked ? 'line-through text-muted-foreground' : ''}">{session.session_id}</code>
 											{#if !session.is_revoked}
@@ -234,6 +246,10 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="grid gap-4 py-4">
+			<div class="grid gap-2">
+				<Label for="name">Nama / Catatan <span class="text-destructive">*</span></Label>
+				<Input id="name" bind:value={newSessionName} placeholder="Misal: Wedding Organizer" autocomplete="off" />
+			</div>
 			<div class="grid gap-2">
 				<Label for="expiry">Batas Waktu</Label>
 				<Select.Root type="single" name="expiry" bind:value={selectedExpiry}>

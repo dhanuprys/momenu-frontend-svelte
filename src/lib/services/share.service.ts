@@ -4,6 +4,7 @@ import type { Project, RSVP } from '$lib/types/index.js';
 export interface ShareSession {
 	id: string;
 	project_id: string;
+	name: string;
 	session_id: string;
 	expires_at: string | null;
 	is_revoked: boolean;
@@ -40,8 +41,8 @@ export interface SharedDataResponse {
 }
 
 export const ShareService = {
-	async createSession(projectId: string, expiresAt: string | null = null) {
-		const res = await api.post<ShareSession>(`/projects/${projectId}/share`, { expires_at: expiresAt });
+	async createSession(projectId: string, name: string, expiresAt: string | null = null) {
+		const res = await api.post<ShareSession>(`/projects/${projectId}/share`, { name, expires_at: expiresAt });
 		return res.data;
 	},
 
