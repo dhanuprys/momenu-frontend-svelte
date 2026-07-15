@@ -7,7 +7,8 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { toast } from 'svelte-sonner';
-	import { CheckCircle2, XCircle } from '@lucide/svelte';
+	import { CheckCircle2, XCircle, LogIn, Trash2 } from '@lucide/svelte';
+	import { authState } from '$lib/stores/auth.svelte';
 
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -62,6 +63,54 @@
 			toast.success('Status pengguna berhasil diperbarui');
 		} catch (error) {
 			toast.error('Gagal memperbarui status');
+		}
+	}
+
+	let loginAsUserOpen = $state(false);
+	let selectedUserToLoginAs = $state<User | null>(null);
+	let isLoginAsSubmitting = $state(false);
+
+	function promptLoginAs(user: User) {
+		selectedUserToLoginAs = user;
+		loginAsUserOpen = true;
+	}
+
+	async function handleLoginAs() {
+		if (!selectedUserToLoginAs) return;
+		isLoginAsSubmitting = true;
+		try {
+			const res = await AdminService.loginAs(selectedUserToLoginAs.id);
+			authState.setSession(res.user, res.token, res.refresh_token);
+			toast.success(`Berhasil login sebagai ${selectedUserToLoginAs.email}`);
+			window.location.href = '/app';
+		} catch (error) {
+			toast.error('Gagal login sebagai pengguna');
+			isLoginAsSubmitting = false;
+			loginAsUserOpen = false;
+		}
+	}
+
+	let deleteUserOpen = $state(false);
+	let selectedUserToDelete = $state<User | null>(null);
+	let isDeletingUser = $state(false);
+
+	function promptDeleteUser(user: User) {
+		selectedUserToDelete = user;
+		deleteUserOpen = true;
+	}
+
+	async function handleDeleteUser() {
+		if (!selectedUserToDelete) return;
+		isDeletingUser = true;
+		try {
+			await AdminService.deleteUser(selectedUserToDelete.id);
+			users = users.filter((u) => u.id !== selectedUserToDelete!.id);
+			toast.success('Pengguna berhasil dihapus');
+			deleteUserOpen = false;
+		} catch (error) {
+			toast.error('Gagal menghapus pengguna');
+		} finally {
+			isDeletingUser = false;
 		}
 	}
 </script>
@@ -136,6 +185,7 @@
 					<Table.Head>Terkonfirmasi</Table.Head>
 					<Table.Head>Akses Admin</Table.Head>
 					<Table.Head>Tanggal Daftar</Table.Head>
+					<Table.Head class="text-right">Aksi</Table.Head>
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
@@ -147,11 +197,12 @@
 							<Table.Cell><Skeleton class="h-6 w-10" /></Table.Cell>
 							<Table.Cell><Skeleton class="h-6 w-10" /></Table.Cell>
 							<Table.Cell><Skeleton class="h-4 w-24" /></Table.Cell>
+							<Table.Cell><Skeleton class="h-8 w-20 float-right" /></Table.Cell>
 						</Table.Row>
 					{/each}
 				{:else if users.length === 0}
 					<Table.Row>
-						<Table.Cell colspan={5} class="text-center py-6 text-muted-foreground"
+						<Table.Cell colspan={6} class="text-center py-6 text-muted-foreground"
 							>Tidak ada pengguna ditemukan.</Table.Cell
 						>
 					</Table.Row>
@@ -181,10 +232,60 @@
 							<Table.Cell class="text-muted-foreground text-sm">
 								{new Date(user.created_at).toLocaleDateString('id-ID')}
 							</Table.Cell>
+							<Table.Cell class="text-right">
+								<div class="flex items-center justify-end gap-2">
+									<Button variant="ghost" size="sm" onclick={() => promptLoginAs(user)} class="hover:bg-primary/10 hover:text-primary">
+										<LogIn class="h-4 w-4 mr-2" /> Login
+									</Button>
+									<Button variant="ghost" size="icon" onclick={() => promptDeleteUser(user)} class="text-destructive hover:bg-destructive/10 hover:text-destructive w-8 h-8">
+										<Trash2 class="h-4 w-4" />
+									</Button>
+								</div>
+							</Table.Cell>
 						</Table.Row>
 					{/each}
 				{/if}
 			</Table.Body>
 		</Table.Root>
 	</div>
+
+	<Dialog.Root bind:open={loginAsUserOpen}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>Konfirmasi Login As</Dialog.Title>
+				<Dialog.Description>
+					Anda akan beralih sesi dan login sebagai <strong>{selectedUserToLoginAs?.email}</strong>. 
+					Tindakan ini akan menghentikan sesi admin Anda saat ini.
+				</Dialog.Description>
+			</Dialog.Header>
+			<Dialog.Footer class="pt-4">
+				<Button type="button" variant="outline" onclick={() => (loginAsUserOpen = false)}>
+					Batal
+				</Button>
+				<Button type="button" variant="default" onclick={handleLoginAs} disabled={isLoginAsSubmitting}>
+					{isLoginAsSubmitting ? 'Mengalihkan Sesi...' : 'Ya, Lanjutkan'}
+				</Button>
+			</Dialog.Footer>
+		</Dialog.Content>
+	</Dialog.Root>
+
+	<Dialog.Root bind:open={deleteUserOpen}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title>Hapus Pengguna</Dialog.Title>
+				<Dialog.Description>
+					Apakah Anda yakin ingin menghapus pengguna <strong class="text-foreground">{selectedUserToDelete?.email}</strong>? 
+					Tindakan ini tidak dapat dibatalkan dan semua data terkait pengguna ini akan dihapus secara permanen.
+				</Dialog.Description>
+			</Dialog.Header>
+			<Dialog.Footer class="pt-4">
+				<Button type="button" variant="outline" onclick={() => (deleteUserOpen = false)}>
+					Batal
+				</Button>
+				<Button type="button" variant="destructive" onclick={handleDeleteUser} disabled={isDeletingUser}>
+					{isDeletingUser ? 'Menghapus...' : 'Ya, Hapus'}
+				</Button>
+			</Dialog.Footer>
+		</Dialog.Content>
+	</Dialog.Root>
 </PageComposer>

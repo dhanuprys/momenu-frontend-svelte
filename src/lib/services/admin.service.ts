@@ -18,6 +18,16 @@ export const AdminService = {
 		return res.data;
 	},
 
+	async loginAs(id: number) {
+		const res = await api.post<{ token: string; refresh_token: string; user: User }>(`/admin/users/${id}/login-as`);
+		return res.data;
+	},
+
+	async deleteUser(id: number) {
+		const res = await api.delete<null>(`/admin/users/${id}`);
+		return res.data;
+	},
+
 	// Projects
 	async listProjects() {
 		const res = await api.get<Project[]>('/admin/projects');

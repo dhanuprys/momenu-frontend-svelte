@@ -268,11 +268,7 @@
 		class="flex gap-3 flex-col sm:flex-row items-center justify-end border-t border-stone-100 pt-5 mt-auto bg-white/50"
 	>
 		{@render cancel?.()}
-		<Button
-			onclick={handleSave}
-			disabled={saving}
-			class="w-full sm:w-auto h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-md px-8"
-		>
+		<Button onclick={handleSave} disabled={saving} class="w-full sm:w-auto">
 			{#if saving}
 				<Loader2 class="mr-2 h-5 w-5 animate-spin" /> Menyimpan...
 			{:else}

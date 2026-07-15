@@ -82,7 +82,7 @@
 			if (thumbnailMode === 'file' && thumbnailFile) {
 				const uploadRes = await UploadService.upload(
 					thumbnailFile,
-					'image',
+					'thumbnail',
 					projectId,
 					(percent) => {
 						uploadProgress = percent;
@@ -108,6 +108,7 @@
 			const errorMsg =
 				e.response?.data?.errors?.[0]?.message ||
 				e.response?.data?.message ||
+				e.message ||
 				'Gagal menyimpan informasi acara';
 			toast.error(errorMsg);
 		} finally {

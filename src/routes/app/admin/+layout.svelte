@@ -3,6 +3,7 @@
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import ModeToggle from '$lib/components/mode-toggle.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { authState } from '$lib/stores/auth.svelte.js';
@@ -45,6 +46,9 @@
 						</Breadcrumb.Item>
 					</Breadcrumb.List>
 				</Breadcrumb.Root>
+				<div class="ml-auto flex items-center">
+					<ModeToggle />
+				</div>
 			</header>
 			<!-- Yield nested page content here -->
 			{@render children()}

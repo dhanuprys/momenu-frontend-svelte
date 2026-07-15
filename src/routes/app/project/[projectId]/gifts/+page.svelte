@@ -246,84 +246,243 @@
 	{:else}
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#each gifts as gift (gift.id)}
-				{@const Icon = getGiftIcon(gift.type)}
-				<Card.Root class="relative group border-2 hover:border-primary/50 transition-colors">
+				{#if gift.type === 'bank'}
 					<div
-						class="absolute top-4 right-4 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+						class="relative group h-48 rounded-xl overflow-hidden shadow-lg dark:shadow-xl hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-100 via-slate-200 to-slate-300 dark:from-slate-700 dark:via-slate-800 dark:to-slate-950 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-white/10 hover:-translate-y-1"
 					>
-						<Button
-							variant="secondary"
-							size="icon"
-							class="h-8 w-8"
-							onclick={() => openEditDialog(gift)}
+						<!-- Hover Shine Effect -->
+						<div
+							class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-0"
+						></div>
+
+						<!-- Action buttons -->
+						<div
+							class="absolute top-4 right-4 z-20 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
 						>
-							<Edit2 class="h-4 w-4" />
-						</Button>
-						<Button
-							variant="destructive"
-							size="icon"
-							class="h-8 w-8"
-							onclick={() => confirmDelete(gift.id)}
-						>
-							<Trash2 class="h-4 w-4" />
-						</Button>
-					</div>
-					<Card.Header class="pb-2">
-						<div class="flex items-center gap-2">
-							<Icon class="h-5 w-5 text-primary" />
-							<Card.Title class="text-lg">{getGiftLabel(gift.type)}</Card.Title>
+							<Button
+								variant="secondary"
+								size="icon"
+								class="h-8 w-8 bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-white border-0 backdrop-blur-md"
+								onclick={() => openEditDialog(gift)}
+							>
+								<Edit2 class="h-4 w-4" />
+							</Button>
+							<Button
+								variant="destructive"
+								size="icon"
+								class="h-8 w-8 bg-red-500/80 hover:bg-red-500 text-white border-0 backdrop-blur-md"
+								onclick={() => confirmDelete(gift.id)}
+							>
+								<Trash2 class="h-4 w-4" />
+							</Button>
 						</div>
-					</Card.Header>
-					<Card.Content>
-						{#if gift.type === 'physical'}
-							<div class="mt-2 space-y-1">
-								<div class="text-sm text-muted-foreground font-medium">Alamat Pengiriman</div>
-								<div class="text-sm leading-relaxed">{gift.mailing_address}</div>
+
+						<!-- Card Chip -->
+						<div
+							class="absolute top-6 left-6 opacity-80 text-yellow-600 dark:text-yellow-500/90 z-10"
+						>
+							<svg
+								class="h-9 w-9"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.2"
+							>
+								<rect x="2" y="6" width="20" height="12" rx="3" fill="currentColor" opacity="0.2" />
+								<path d="M7 6v12M12 6v12M17 6v12M2 10h20M2 14h20" stroke-linecap="round" />
+							</svg>
+						</div>
+
+						<!-- Bank Name -->
+						<div class="absolute top-6 right-6 z-10 flex flex-col items-end">
+							<div
+								class="font-bold text-xl italic opacity-90 tracking-widest drop-shadow-sm dark:drop-shadow-md"
+							>
+								{gift.provider_name}
 							</div>
-						{:else if gift.type === 'ewallet'}
-							<div class="mt-2 space-y-3">
-								<div>
-									<div class="text-sm text-muted-foreground font-medium">E-Wallet / QRIS</div>
-									<div class="font-medium">{gift.provider_name}</div>
+						</div>
+
+						<!-- Account Number -->
+						<div class="absolute top-20 left-6 right-6 z-10">
+							<div
+								class="text-xl sm:text-2xl font-mono tracking-widest drop-shadow-sm dark:drop-shadow-md flex items-center gap-3"
+							>
+								{gift.account_number}
+								<button
+									class="hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 bg-white/40 dark:bg-black/20 p-1.5 rounded-md"
+									onclick={() => copyToClipboard(gift.account_number!)}
+								>
+									<Copy class="h-4 w-4" />
+								</button>
+							</div>
+						</div>
+
+						<!-- Account Name & Label -->
+						<div class="absolute bottom-6 left-6 right-6 flex justify-between items-end z-10">
+							<div>
+								<div class="text-[0.65rem] uppercase tracking-widest opacity-60 mb-1">
+									Cardholder Name
 								</div>
-								<div class="mt-2">
-									<div class="aspect-square w-full max-w-[200px] rounded-lg overflow-hidden border">
-										<img
-											src={getMediaUrl(gift.qr_code_image!)}
-											alt="QRIS"
-											class="w-full h-full object-cover"
-										/>
-									</div>
+								<div
+									class="font-medium tracking-widest uppercase truncate max-w-[180px] sm:max-w-[200px] text-sm drop-shadow-sm dark:drop-shadow-md text-slate-800 dark:text-slate-200"
+								>
+									{gift.account_name}
 								</div>
 							</div>
-						{:else}
-							<div class="mt-2 space-y-3">
-								<div>
-									<div class="text-sm text-muted-foreground font-medium">Bank</div>
-									<div class="font-medium">{gift.provider_name}</div>
+							<div class="flex items-center gap-1.5 opacity-80">
+								<CreditCard class="h-5 w-5" />
+								<span class="text-xs font-bold uppercase tracking-widest">Debit</span>
+							</div>
+						</div>
+					</div>
+				{:else if gift.type === 'ewallet'}
+					<div
+						class="relative group h-48 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:-translate-y-1 flex flex-col justify-between p-5"
+					>
+						<!-- Elegant Top Accent Line -->
+						<div
+							class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-cyan-400 opacity-80"
+						></div>
+
+						<!-- Action buttons -->
+						<div
+							class="absolute top-4 right-4 z-20 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+						>
+							<Button
+								variant="secondary"
+								size="icon"
+								class="h-8 w-8 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 border-0 shadow-sm"
+								onclick={() => openEditDialog(gift)}
+							>
+								<Edit2 class="h-4 w-4" />
+							</Button>
+							<Button
+								variant="destructive"
+								size="icon"
+								class="h-8 w-8 border-0 shadow-sm"
+								onclick={() => confirmDelete(gift.id)}
+							>
+								<Trash2 class="h-4 w-4" />
+							</Button>
+						</div>
+
+						<!-- Top Header -->
+						<div class="flex items-center justify-between z-10 w-full mt-1">
+							<div
+								class="flex items-center gap-3 font-semibold text-lg tracking-wide text-stone-800 dark:text-stone-200"
+							>
+								<div
+									class="p-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl shadow-sm border border-indigo-100 dark:border-indigo-500/20"
+								>
+									<Wallet class="h-5 w-5" />
 								</div>
-								<div>
-									<div class="text-sm text-muted-foreground font-medium">No. Rekening</div>
-									<div class="font-medium text-lg tracking-wide flex items-center gap-2">
-										{gift.account_number}
-										<Button
-											variant="ghost"
-											size="icon"
-											class="h-6 w-6 text-muted-foreground"
-											onclick={() => copyToClipboard(gift.account_number!)}
-										>
-											<Copy class="h-3 w-3" />
-										</Button>
-									</div>
+								{gift.provider_name}
+							</div>
+						</div>
+
+						<!-- Bottom section with QR -->
+						<div class="flex items-end justify-between z-10 w-full mt-auto">
+							<div class="flex flex-col gap-1.5 mb-1">
+								<div
+									class="text-[0.65rem] uppercase tracking-widest font-bold text-stone-400 dark:text-stone-500"
+								>
+									Digital Payment
 								</div>
-								<div>
-									<div class="text-sm text-muted-foreground font-medium">Atas Nama</div>
-									<div class="font-medium">{gift.account_name}</div>
+								<div class="text-xs text-stone-500 dark:text-stone-400 font-medium">
+									Scan QR Code via app
 								</div>
 							</div>
-						{/if}
-					</Card.Content>
-				</Card.Root>
+
+							<!-- QR Code floating -->
+							<div
+								class="h-20 w-20 bg-white p-1.5 rounded-xl shadow-sm border border-stone-200 dark:border-stone-700 overflow-hidden transform group-hover:scale-[1.8] group-hover:-translate-y-4 group-hover:-translate-x-4 transition-all duration-500 origin-bottom-right cursor-pointer group/qr ring-1 ring-black/5 dark:ring-white/10 z-20"
+							>
+								<img
+									src={getMediaUrl(gift.qr_code_image!)}
+									alt="QRIS"
+									class="w-full h-full object-cover rounded-lg"
+								/>
+								<div
+									class="absolute inset-0 bg-black/60 text-white opacity-0 group-hover/qr:opacity-100 flex items-center justify-center text-[0.4rem] font-bold text-center transition-opacity backdrop-blur-[2px]"
+								>
+									SCAN ME
+								</div>
+							</div>
+						</div>
+					</div>
+				{:else}
+					<div
+						class="relative group h-48 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 bg-[#FAF7F2] dark:bg-stone-900 border-2 border-dashed border-[#e6d5c3] dark:border-stone-700 hover:-translate-y-1"
+					>
+						<!-- Hover Shine Effect -->
+						<div
+							class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-stone-500/5 dark:via-stone-400/5 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none z-0"
+						></div>
+
+						<!-- Action buttons -->
+						<div
+							class="absolute top-4 right-4 z-20 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+						>
+							<Button
+								variant="secondary"
+								size="icon"
+								class="h-8 w-8 bg-stone-200/60 hover:bg-stone-200 dark:bg-stone-800/60 dark:hover:bg-stone-800 border-0 backdrop-blur-md shadow-sm"
+								onclick={() => openEditDialog(gift)}
+							>
+								<Edit2 class="h-4 w-4" />
+							</Button>
+							<Button
+								variant="destructive"
+								size="icon"
+								class="h-8 w-8 border-0 shadow-sm"
+								onclick={() => confirmDelete(gift.id)}
+							>
+								<Trash2 class="h-4 w-4" />
+							</Button>
+						</div>
+
+						<!-- Postage Stamp / Icon -->
+						<div
+							class="absolute top-5 left-5 p-2.5 bg-white dark:bg-stone-950 rounded-md border border-stone-200 dark:border-stone-800 shadow-md transform -rotate-6 group-hover:rotate-0 transition-transform duration-500 z-10"
+						>
+							<GiftIcon class="h-6 w-6 text-stone-600 dark:text-stone-400" />
+						</div>
+
+						<!-- Delivery Info -->
+						<div
+							class="absolute top-6 left-[5.5rem] right-[4.5rem] text-stone-800 dark:text-stone-200 z-10"
+						>
+							<div
+								class="text-[0.65rem] font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500 mb-0.5"
+							>
+								To:
+							</div>
+							<div
+								class="font-bold text-sm drop-shadow-sm truncate text-stone-700 dark:text-stone-300"
+							>
+								Tuan Rumah / Mempelai
+							</div>
+						</div>
+
+						<!-- Address Label Glassmorphism -->
+						<div
+							class="absolute bottom-5 left-5 right-5 bg-white/70 dark:bg-black/40 backdrop-blur-md border border-white/50 dark:border-stone-700/50 rounded-xl p-3.5 shadow-sm z-10 group-hover:bg-white/90 dark:group-hover:bg-black/60 transition-colors"
+						>
+							<div class="flex items-center gap-1.5 mb-1.5 text-stone-500 dark:text-stone-400">
+								<div
+									class="text-[0.65rem] font-bold uppercase tracking-widest bg-stone-200/50 dark:bg-stone-800/50 px-2 py-0.5 rounded-sm"
+								>
+									Delivery Address
+								</div>
+							</div>
+							<div
+								class="text-sm font-medium leading-relaxed line-clamp-2 text-stone-800 dark:text-stone-200"
+							>
+								{gift.mailing_address}
+							</div>
+						</div>
+					</div>
+				{/if}
 			{/each}
 		</div>
 	{/if}

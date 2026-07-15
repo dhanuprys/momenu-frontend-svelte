@@ -3,6 +3,7 @@
 	import { authState } from '$lib/stores/auth.svelte.js';
 	import { User, LogOut, ShieldAlert, LayoutDashboard } from '@lucide/svelte';
 	import AppLogo from '$lib/components/brand/app-logo.svelte';
+	import ModeToggle from '$lib/components/mode-toggle.svelte';
 
 	let user = $derived(authState.user);
 
@@ -50,6 +51,8 @@
 					<LogOut class="mr-2 h-4 w-4" />
 					<span class="hidden sm:inline">Keluar</span>
 				</Button>
+
+				<ModeToggle />
 			{/if}
 		</div>
 	</div>

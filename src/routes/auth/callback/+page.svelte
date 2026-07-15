@@ -18,7 +18,13 @@
 			try {
 				const user = await AuthService.getMe();
 				authState.setSession(user, token, refreshToken);
-				goto('/');
+				
+				const isNewUser = new Date().getTime() - new Date(user.created_at).getTime() < 60000;
+				if (isNewUser) {
+					goto('/app/project/new');
+				} else {
+					goto('/app');
+				}
 			} catch (error) {
 				console.error('Failed to fetch user profile', error);
 				// Cleanup on failure

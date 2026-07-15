@@ -171,11 +171,10 @@
 					{#if analytics.daily_visits && analytics.daily_visits.length > 0}
 						<div class="flex items-end justify-between h-48 gap-2 w-full">
 							{#each analytics.daily_visits as day}
-								<div class="flex flex-col items-center gap-2 flex-1 group">
+								<div class="flex flex-col items-center gap-2 flex-1 group h-full">
 									<!-- Tooltip could be added here -->
 									<div
-										class="w-full relative bg-primary/10 rounded-t-sm transition-all overflow-hidden flex items-end"
-										style="height: 100%"
+										class="w-full relative bg-primary/10 rounded-t-sm transition-all overflow-hidden flex items-end flex-1"
 									>
 										<div
 											class="w-full bg-primary rounded-t-sm transition-all duration-700 ease-out group-hover:bg-primary/80"

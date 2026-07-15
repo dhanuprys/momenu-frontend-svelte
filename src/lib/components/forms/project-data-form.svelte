@@ -493,12 +493,7 @@
 	{/each}
 
 	<div class="flex justify-end pt-4 pb-12">
-		<Button
-			size="lg"
-			disabled={!isDirty || saving}
-			onclick={saveDetails}
-			class="h-12 px-8 min-w-[180px] bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-md text-white font-semibold"
-		>
+		<Button disabled={!isDirty || saving} onclick={saveDetails}>
 			{#if saving}
 				<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
 				Menyimpan...

@@ -4,7 +4,7 @@ import type { UploadResult, ApiSuccessResponse } from '../types';
 export const UploadService = {
 	async upload(
 		file: File,
-		type: 'image' | 'video' | 'audio',
+		type: 'image' | 'video' | 'audio' | 'thumbnail',
 		projectId: string,
 		onProgress?: (percent: number) => void
 	): Promise<UploadResult> {

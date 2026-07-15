@@ -261,6 +261,7 @@ export interface FileRecord {
 	original_name: string;
 	content_type: string;
 	size: number;
+	optimized_size?: number;
 	is_optimized: boolean;
 	media_type: string;
 	created_at: string;

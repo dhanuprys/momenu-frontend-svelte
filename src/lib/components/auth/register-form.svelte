@@ -17,6 +17,7 @@
 	import { Loader2 } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { config } from '$lib/config';
+	import { authState } from '$lib/stores/auth.svelte';
 
 	let name = $state('');
 	let email = $state('');
@@ -59,8 +60,13 @@
 		loading = true;
 		try {
 			await AuthService.register({ name, email, password, turnstile_token: turnstileToken });
-			toast.success('Pendaftaran berhasil! Silakan masuk.');
-			goto('/masuk');
+			
+			// Auto-login after successful registration
+			const res = await AuthService.login({ email, password });
+			authState.setSession(res.user, res.token, res.refresh_token);
+
+			toast.success('Pendaftaran berhasil!');
+			goto('/app/project/new');
 		} catch (error: any) {
 			toast.error(error.response?.data?.message || 'Gagal mendaftar');
 			if ((window as any).turnstile && turnstileWidgetId !== null) {
@@ -74,7 +80,7 @@
 </script>
 
 <div class={cn('flex flex-col gap-6', className)} {...restProps}>
-	<Card.Root class="overflow-hidden p-0">
+	<Card.Root class="overflow-hidden p-0 border-0 shadow-none! rounded-none md:border md:shadow-sm md:rounded-xl bg-transparent md:bg-card">
 		<Card.Content class="grid p-0 md:grid-cols-2">
 			<form class="p-6 md:p-8" onsubmit={handleSubmit}>
 				<FieldGroup>
@@ -86,17 +92,38 @@
 					</div>
 					<Field>
 						<FieldLabel for="name-{id}">Nama</FieldLabel>
-						<Input id="name-{id}" type="text" placeholder="John Doe" required bind:value={name} disabled={loading} />
+						<Input
+							id="name-{id}"
+							type="text"
+							placeholder="John Doe"
+							required
+							bind:value={name}
+							disabled={loading}
+						/>
 					</Field>
 					<Field>
 						<FieldLabel for="email-{id}">Email</FieldLabel>
-						<Input id="email-{id}" type="email" placeholder="m@example.com" required bind:value={email} disabled={loading} />
+						<Input
+							id="email-{id}"
+							type="email"
+							placeholder="m@example.com"
+							required
+							bind:value={email}
+							disabled={loading}
+						/>
 					</Field>
 					<Field>
 						<div class="flex items-center">
 							<FieldLabel for="password-{id}">Password</FieldLabel>
 						</div>
-						<Input id="password-{id}" type="password" required bind:value={password} disabled={loading} minlength={6} />
+						<Input
+							id="password-{id}"
+							type="password"
+							required
+							bind:value={password}
+							disabled={loading}
+							minlength={6}
+						/>
 					</Field>
 					<Field>
 						<div id="turnstile-container"></div>

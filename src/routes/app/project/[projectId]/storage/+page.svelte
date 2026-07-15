@@ -7,6 +7,8 @@
 	import { formatBytes, getMediaUrl } from '$lib/utils';
 	import * as Card from '$lib/components/ui/card';
 	import { Progress } from '$lib/components/ui/progress';
+	import { Info } from '@lucide/svelte';
+	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import {
 		Table,
 		TableBody,
@@ -38,11 +40,10 @@
 	});
 </script>
 
-<div class="flex-1 space-y-4 p-4 md:p-8 pt-6">
-	<div class="flex items-center justify-between space-y-2">
-		<h2 class="text-3xl font-bold tracking-tight">Penyimpanan (Storage)</h2>
-	</div>
-
+<PageComposer
+	title="Penyimpanan (Storage)"
+	description="Kelola dan pantau penggunaan ruang disk untuk proyek acara ini."
+>
 	{#if loading}
 		<div class="flex h-[400px] items-center justify-center">
 			<div class="text-muted-foreground animate-pulse">Memuat data...</div>
@@ -55,13 +56,32 @@
 					<Card.Description>Ringkasan penggunaan ruang disk untuk acara ini.</Card.Description>
 				</Card.Header>
 				<Card.Content>
+					<div
+						class="mb-6 rounded-md bg-blue-500/10 p-4 border border-blue-500/20 text-sm flex gap-3 items-start"
+					>
+						<Info class="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+						<div>
+							<p class="font-medium text-blue-700 dark:text-blue-400 mb-1">
+								Batas Ukuran Upload File
+							</p>
+							<p class="text-blue-600/80 dark:text-blue-300/80">
+								Untuk menjaga performa, ukuran maksimal setiap file yang diunggah dibatasi hingga <strong
+									>10 MB</strong
+								>
+								untuk gambar dan <strong>50 MB</strong> untuk video. Semua gambar juga akan dikompresi
+								otomatis tanpa mengurangi kualitas secara signifikan agar lebih menghemat kuota Anda.
+							</p>
+						</div>
+					</div>
+
 					<div class="mb-2 flex items-center justify-between text-sm">
 						<span class="text-muted-foreground">Digunakan: {data.quota.used_human}</span>
 						<span class="font-medium text-foreground">Batas: {data.quota.limit_human}</span>
 					</div>
 					<Progress
 						value={data.quota.usage_percent}
-						class="h-2 {data.quota.usage_percent > 90 ? 'bg-destructive' : 'bg-primary'}"
+						class="h-2"
+						indicatorClass={data.quota.usage_percent > 90 ? 'bg-destructive' : 'bg-primary'}
 					/>
 					<div class="mt-2 text-xs text-muted-foreground">
 						Sisa: {data.quota.remaining_human} ({data.quota.usage_percent.toFixed(1)}% terpakai)
@@ -122,7 +142,21 @@
 											</div>
 										</TableCell>
 										<TableCell>{file.content_type}</TableCell>
-										<TableCell>{formatBytes(file.size)}</TableCell>
+										<TableCell>
+											{#if file.is_optimized && file.optimized_size}
+												<div class="flex flex-col">
+													<span class="font-medium text-green-600 dark:text-green-400"
+														>{formatBytes(file.optimized_size)}</span
+													>
+													<span
+														class="text-xs text-muted-foreground line-through"
+														title="Ukuran Asli">{formatBytes(file.size)}</span
+													>
+												</div>
+											{:else}
+												<span>{formatBytes(file.size)}</span>
+											{/if}
+										</TableCell>
 										<TableCell>
 											{#if file.media_type === 'image'}
 												{#if file.is_optimized}
@@ -160,4 +194,4 @@
 			</Card.Content>
 		</Card.Root>
 	{/if}
-</div>
+</PageComposer>

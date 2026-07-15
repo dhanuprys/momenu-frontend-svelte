@@ -33,8 +33,14 @@
 		try {
 			const res = await AuthService.login({ email, password });
 			authState.setSession(res.user, res.token, res.refresh_token);
-			toast.success('Berhasil masuk');
-			goto('/app');
+			toast.success('Login berhasil!');
+			
+			const isNewUser = new Date().getTime() - new Date(res.user.created_at).getTime() < 60000;
+			if (isNewUser) {
+				goto('/app/project/new');
+			} else {
+				goto('/app');
+			}
 		} catch (error: any) {
 			toast.error(error.response?.data?.message || 'Gagal masuk');
 		} finally {
@@ -44,17 +50,24 @@
 </script>
 
 <div class={cn('flex flex-col gap-6', className)} {...restProps}>
-	<Card.Root class="overflow-hidden p-0">
+	<Card.Root class="overflow-hidden p-0 border-0 shadow-none rounded-none md:border md:shadow-sm md:rounded-xl bg-transparent md:bg-card">
 		<Card.Content class="grid p-0 md:grid-cols-2">
 			<form class="p-6 md:p-8" onsubmit={handleSubmit}>
 				<FieldGroup>
-					<div class="flex flex-col items-center gap-2 text-center">
-						<h1 class="text-2xl font-bold">Selamat datang kembali</h1>
+					<div class="flex flex-col items-center gap-2 text-center py-10">
+						<h1 class="text-2xl font-bold">MOMENU</h1>
 						<p class="text-muted-foreground text-balance">Masuk ke akun Anda untuk melanjutkan</p>
 					</div>
 					<Field>
 						<FieldLabel for="email-{id}">Email</FieldLabel>
-						<Input id="email-{id}" type="email" placeholder="m@example.com" required bind:value={email} disabled={loading} />
+						<Input
+							id="email-{id}"
+							type="email"
+							placeholder="m@example.com"
+							required
+							bind:value={email}
+							disabled={loading}
+						/>
 					</Field>
 					<Field>
 						<div class="flex items-center">
@@ -63,7 +76,13 @@
 								Lupa password Anda?
 							</a>
 						</div>
-						<Input id="password-{id}" type="password" required bind:value={password} disabled={loading} />
+						<Input
+							id="password-{id}"
+							type="password"
+							required
+							bind:value={password}
+							disabled={loading}
+						/>
 					</Field>
 					<Field>
 						<Button type="submit" disabled={loading}>

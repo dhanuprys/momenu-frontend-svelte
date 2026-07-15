@@ -4,24 +4,36 @@
 	import type { Project } from '$lib/types/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Plus, Calendar, LayoutDashboard, Users } from '@lucide/svelte';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { Plus, Calendar, LayoutDashboard, Users, ExternalLink } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { getMediaUrl } from '$lib/utils.js';
 	import AppHeader from '$lib/components/layout/app-header.svelte';
 
 	let projects: Project[] = $state([]);
 	let loading = $state(true);
+	let statusFilter: string = $state('all');
 
-	onMount(async () => {
+	async function loadProjects(status: string) {
+		loading = true;
 		try {
-			const response = await ProjectService.list(1, 50);
+			const response = await ProjectService.list(1, 50, status);
 			projects = response.data || [];
 		} catch (error) {
 			console.error('Failed to load projects', error);
 		} finally {
 			loading = false;
 		}
+	}
+
+	onMount(() => {
+		loadProjects(statusFilter);
 	});
+
+	function handleTabChange(value: string) {
+		statusFilter = value;
+		loadProjects(value);
+	}
 
 	function formatDate(dateString: string) {
 		return new Date(dateString).toLocaleDateString('id-ID', {
@@ -44,12 +56,20 @@
 			<h1 class="text-3xl font-bold tracking-tight">Acara Saya</h1>
 			<p class="text-muted-foreground mt-1">Kelola semua undangan dan acara Anda.</p>
 		</div>
-		{#if projects.length > 0}
+		{#if projects.length > 0 || statusFilter !== 'all'}
 			<Button onclick={() => goto('/app/project/new')}>
 				<Plus class="mr-2 h-4 w-4" /> Buat Acara Baru
 			</Button>
 		{/if}
 	</div>
+
+	<Tabs.Root value={statusFilter} onValueChange={handleTabChange} class="w-full mb-8">
+		<Tabs.List>
+			<Tabs.Trigger value="all">Semua</Tabs.Trigger>
+			<Tabs.Trigger value="published">Aktif</Tabs.Trigger>
+			<Tabs.Trigger value="draft">Draft</Tabs.Trigger>
+		</Tabs.List>
+	</Tabs.Root>
 
 	{#if loading}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -68,7 +88,11 @@
 			</div>
 			<h2 class="text-2xl font-bold tracking-tight mb-2">Belum Ada Acara</h2>
 			<p class="text-muted-foreground mb-8 max-w-md">
-				Anda belum membuat acara apa pun. Mulai buat undangan digital pertama Anda sekarang!
+				{#if statusFilter === 'all'}
+					Anda belum membuat acara apa pun. Mulai buat undangan digital pertama Anda sekarang!
+				{:else}
+					Tidak ada acara dengan status tersebut.
+				{/if}
 			</p>
 			<Button size="lg" onclick={() => goto('/app/project/new')}>
 				<Plus class="mr-2 h-4 w-4" /> Buat Acara Baru
@@ -77,64 +101,110 @@
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each projects as project}
-				<Card.Root
-					class="overflow-hidden flex flex-col hover:border-primary/50 transition-colors cursor-pointer group"
-					onclick={() => goto(`/app/project/${project.id}`)}
+				<a
+					class="bg-white dark:bg-stone-900 rounded-[1.25rem] p-5 border border-stone-200 dark:border-stone-800 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col"
+					href="/app/project/{project.id}"
 				>
-					<div class="h-40 w-full bg-muted/50 border-b border-border relative overflow-hidden">
-						{#if project.sharing_thumbnail}
-							<img
-								src={getMediaUrl(project.sharing_thumbnail)}
-								alt={project.title}
-								class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-							/>
-						{:else}
-							<div
-								class="absolute inset-0 flex items-center justify-center text-muted-foreground/30 bg-linear-to-br from-muted to-muted/20"
+					<div class="flex justify-between items-start mb-1.5">
+						<h3 class="font-bold text-lg text-stone-900 dark:text-stone-100 line-clamp-1">
+							{project.title}
+						</h3>
+						<span
+							class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-3
+							{project.status === 'published'
+								? 'bg-emerald-100/80 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+								: project.status === 'draft'
+									? 'bg-amber-100/80 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
+									: 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-400'}"
+						>
+							{project.status === 'published'
+								? 'Aktif'
+								: project.status === 'draft'
+									? 'Draft'
+									: 'Arsip'}
+						</span>
+					</div>
+					<div class="text-sm text-stone-500 dark:text-stone-400 font-medium capitalize">
+						Undangan {project.event_type || 'Digital'}
+					</div>
+
+					<div class="flex justify-between items-center mt-6 mb-4">
+						<div class="flex items-center text-sm text-stone-600 dark:text-stone-400 font-medium">
+							<Calendar class="w-4 h-4 mr-2" /> Dibuat: {formatDate(project.created_at)}
+						</div>
+						<div
+							class="p-1 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-md transition-colors text-stone-400"
+						>
+							<svg
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle
+									cx="5"
+									cy="12"
+									r="1"
+								/></svg
 							>
-								<LayoutDashboard class="h-12 w-12" />
+						</div>
+					</div>
+
+					<div class="border-t border-stone-100 dark:border-stone-800 my-4"></div>
+
+					<div class="grid grid-cols-2 gap-y-5 gap-x-4 mt-1">
+						<!-- Grid Item 1 -->
+						<div>
+							<div class="text-[0.8rem] text-stone-500 dark:text-stone-400 mb-1 font-medium">
+								Tema
 							</div>
-						{/if}
-						<div class="absolute top-3 right-3">
-							<span
-								class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-background/80 backdrop-blur-md text-foreground shadow-sm"
+							<div class="text-sm font-bold text-stone-800 dark:text-stone-200 truncate">
+								{project.theme?.name || 'Bawaan'}
+							</div>
+						</div>
+						<!-- Grid Item 2 -->
+						<div class="text-right flex flex-col items-end">
+							<div class="text-[0.8rem] text-stone-500 dark:text-stone-400 mb-1 font-medium">
+								Viewers
+							</div>
+							<div class="text-sm font-bold text-stone-800 dark:text-stone-200">
+								{project.project_visits?.length || project.total_viewers || 0}
+							</div>
+						</div>
+						<!-- Grid Item 3 -->
+						<div>
+							<div class="text-[0.8rem] text-stone-500 dark:text-stone-400 mb-1 font-medium">
+								Link URL
+							</div>
+							<div
+								class="inline-flex items-center gap-1.5 px-2 py-1 -ml-2 rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+								role="button"
+								tabindex="0"
+								onclick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									window.open(`/${project.slug}`, '_blank');
+								}}
+								onkeydown={(e) => {
+									if (e.key === 'Enter' || e.key === ' ') {
+										e.preventDefault();
+										e.stopPropagation();
+										window.open(`/${project.slug}`, '_blank');
+									}
+								}}
 							>
-								{project.status === 'published'
-									? 'Aktif'
-									: project.status === 'draft'
-										? 'Draft'
-										: 'Arsip'}
-							</span>
+								<span
+									class="text-sm font-bold text-stone-800 dark:text-stone-200 truncate max-w-[90px]"
+									>/{project.slug}</span
+								>
+								<ExternalLink class="w-3.5 h-3.5 text-stone-500" />
+							</div>
 						</div>
 					</div>
-
-					<Card.Header class="pb-4">
-						<Card.Title class="text-xl line-clamp-1 group-hover:text-primary transition-colors"
-							>{project.title}</Card.Title
-						>
-						<Card.Description class="flex items-center gap-1.5 mt-2">
-							<Calendar class="h-3.5 w-3.5" /> Dibuat pada {formatDate(project.created_at)}
-						</Card.Description>
-					</Card.Header>
-
-					<div class="mt-auto p-6 pt-0 flex items-center justify-between">
-						<div class="flex items-center gap-1.5 text-muted-foreground text-sm font-medium">
-							<Users class="h-4 w-4" />
-							<span>{project.project_visits?.length || project.total_viewers || 0} Viewers</span>
-						</div>
-						<Button
-							variant="default"
-							size="sm"
-							class="h-8"
-							onclick={(e) => {
-								e.stopPropagation();
-								goto(`/app/project/${project.id}`);
-							}}
-						>
-							Detail
-						</Button>
-					</div>
-				</Card.Root>
+				</a>
 			{/each}
 		</div>
 	{/if}

@@ -10,8 +10,15 @@ import type {
 } from '../types';
 
 export const ProjectService = {
-	async list(page: number = 1, limit: number = 10) {
-		const res = await api.get<Project[]>(`/projects?page=${page}&limit=${limit}`);
+	async list(page: number = 1, limit: number = 10, status?: string) {
+		const queryParams = new URLSearchParams({
+			page: page.toString(),
+			limit: limit.toString()
+		});
+		if (status && status !== 'all') {
+			queryParams.append('status', status);
+		}
+		const res = await api.get<Project[]>(`/projects?${queryParams.toString()}`);
 		return { data: res.data, pagination: res.meta.pagination as Pagination };
 	},
 

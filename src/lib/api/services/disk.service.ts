@@ -19,9 +19,7 @@ export interface GlobalDiskStats {
 
 export const diskService = {
 	getProjectDiskUsage: async (projectId: string) => {
-		const response = await api.get<ProjectDiskUsageResponse>(
-			`/projects/${projectId}/disk-usage`
-		);
+		const response = await api.get<ProjectDiskUsageResponse>(`/projects/${projectId}/disk-usage`);
 		return response.data;
 	},
 

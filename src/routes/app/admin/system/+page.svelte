@@ -17,7 +17,7 @@
 		// Initial fetch for system resources
 		await fetchSystemResources();
 		loading = false;
-		
+
 		// Start polling every 5 seconds
 		pollingInterval = setInterval(fetchSystemResources, 5000);
 	});
@@ -47,7 +47,10 @@
 	<title>Momenu | Sistem & Sumber Daya</title>
 </svelte:head>
 
-<PageComposer title="Statistik Server" description="Pantau penggunaan sumber daya server secara real-time.">
+<PageComposer
+	title="Statistik Server"
+	description="Pantau penggunaan sumber daya server secara real-time."
+>
 	{#if loading && !systemResources}
 		<div class="grid gap-4 md:grid-cols-4">
 			{#each Array(4) as _}
@@ -72,7 +75,9 @@
 				</Card.Header>
 				<Card.Content>
 					<div class="text-2xl font-bold">{systemResources.memory_alloc_mb.toFixed(2)} MB</div>
-					<p class="text-xs text-muted-foreground mt-1">Sistem: {systemResources.memory_sys_mb.toFixed(2)} MB</p>
+					<p class="text-xs text-muted-foreground mt-1">
+						Sistem: {systemResources.memory_sys_mb.toFixed(2)} MB
+					</p>
 				</Card.Content>
 			</Card.Root>
 
@@ -117,7 +122,9 @@
 				<Card.Content>
 					<div class="text-2xl font-bold">{systemResources.disk_usage_percent.toFixed(1)}%</div>
 					<p class="text-xs text-muted-foreground mt-1">
-						Sisa: {systemResources.disk_free_gb.toFixed(1)} GB dari {systemResources.disk_total_gb.toFixed(1)} GB
+						Sisa: {systemResources.disk_free_gb.toFixed(1)} GB dari {systemResources.disk_total_gb.toFixed(
+							1
+						)} GB
 					</p>
 				</Card.Content>
 			</Card.Root>
