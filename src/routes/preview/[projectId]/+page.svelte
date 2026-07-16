@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import InvitationProvider from '$lib/components/invitation/invitation-provider.svelte';
+	import InvitationProvider from '$lib/theme-engine/components/invitation-provider.svelte';
 
 	let projectId = $derived($page.params.projectId!);
 </script>

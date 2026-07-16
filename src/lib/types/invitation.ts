@@ -80,13 +80,6 @@ export interface InvitationData<T extends EventType = EventType> {
 	textOverrides: Record<string, TextOverride>;
 	styleOverrides: Record<string, StyleOverride>;
 	firstScheduleDate?: Date | null;
-	countdown?: {
-		days: number;
-		hours: number;
-		minutes: number;
-		seconds: number;
-		isExpired: boolean;
-	} | null;
 	initialGuestbook?: {
 		data: Guestbook[];
 	};

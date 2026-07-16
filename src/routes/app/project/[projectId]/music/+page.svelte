@@ -11,7 +11,7 @@
 	import { config } from '$lib/config/index.js';
 	import { getMediaUrl } from '$lib/utils.js';
 	import { toast } from 'svelte-sonner';
-	import MusicPlayerBar from '$lib/components/invitation/music-player-bar.svelte';
+	import MusicPlayerBar from '$lib/theme-engine/components/music-player-bar.svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 
 	let projectId = $derived($page.params.projectId!);
@@ -21,7 +21,7 @@
 
 	let loading = $state(true);
 
-	let selectedCategoryId = $state<number | null>(null);
+	let selectedCategoryId = $state<number | 'all' | null>(null);
 	let selectedMusicId = $state<number | null>(null);
 	let savedMusicId = $state<number | null>(null);
 	let savedMusicObj = $state<Music | null>(null);
@@ -60,8 +60,8 @@
 			const matchingCat = cats.find((c) => c.slug === proj.event_type);
 			if (matchingCat) {
 				selectedCategoryId = matchingCat.id;
-			} else if (cats.length > 0) {
-				selectedCategoryId = cats[0].id;
+			} else {
+				selectedCategoryId = 'all';
 			}
 
 			if (selectedCategoryId) {
@@ -75,9 +75,13 @@
 		}
 	}
 
-	async function loadMusics(categoryId: number) {
+	async function loadMusics(categoryId: number | 'all') {
 		try {
-			musics = await MusicService.listMusics(categoryId);
+			if (categoryId === 'all') {
+				musics = await MusicService.listMusics();
+			} else {
+				musics = await MusicService.listMusics(categoryId);
+			}
 		} catch (e) {
 			toast.error('Gagal memuat daftar musik');
 		}
@@ -91,7 +95,7 @@
 		};
 	});
 
-	async function handleCategoryChange(categoryId: number) {
+	async function handleCategoryChange(categoryId: number | 'all') {
 		if (selectedCategoryId === categoryId) return;
 		stopAudio();
 		selectedCategoryId = categoryId;
@@ -353,6 +357,15 @@
 			<!-- Category Tabs & Search -->
 			<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 				<div class="flex flex-wrap gap-2">
+					<button
+						class="px-4 py-2 rounded-full text-sm font-medium transition-colors border {selectedCategoryId ===
+						'all'
+							? 'bg-primary text-primary-foreground border-primary'
+							: 'bg-background hover:bg-muted border-input'}"
+						onclick={() => handleCategoryChange('all')}
+					>
+						Semua
+					</button>
 					{#each categories as category}
 						<button
 							class="px-4 py-2 rounded-full text-sm font-medium transition-colors border {selectedCategoryId ===
@@ -402,31 +415,35 @@
 						onclick={() => selectMusic(music.id)}
 					>
 						<div class="flex p-3 sm:p-4 items-center gap-3 sm:gap-4">
-							<!-- Play Button always visible -->
-							<button
-								class="h-10 w-10 sm:h-12 sm:w-12 rounded-full shrink-0 flex items-center justify-center transition-all bg-secondary hover:bg-secondary/80 text-secondary-foreground shadow-sm {playingMusicId ===
-								music.id
-									? 'bg-primary text-primary-foreground hover:bg-primary/90'
-									: ''}"
-								onclick={(e) => {
-									e.stopPropagation();
-									playAudio(music);
-								}}
-								title={playingMusicId === music.id ? 'Pause' : 'Play'}
-							>
-								{#if playingMusicId === music.id}
-									<div class="flex items-center gap-0.5 h-4 justify-center">
-										<span class="w-1 h-3 bg-current animate-[bounce_1s_infinite_0.1s] rounded-full"
-										></span>
-										<span class="w-1 h-4 bg-current animate-[bounce_1s_infinite_0.3s] rounded-full"
-										></span>
-										<span class="w-1 h-2 bg-current animate-[bounce_1s_infinite_0.5s] rounded-full"
-										></span>
-									</div>
+							<!-- Cover Image / Play Button -->
+							<div class="relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-lg overflow-hidden bg-muted transition-shadow group-hover:shadow-sm">
+								{#if music.cover_image}
+									<img src={getMediaUrl(music.cover_image)} alt={music.title} class="h-full w-full object-cover" />
 								{:else}
-									<Play class="h-4 w-4 ml-0.5" />
+									<div class="h-full w-full flex items-center justify-center bg-primary/10">
+										<MusicIcon class="h-5 w-5 sm:h-6 sm:w-6 text-primary/50" />
+									</div>
 								{/if}
-							</button>
+								
+								<button
+									class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId === music.id ? 'opacity-100! bg-black/60' : ''} text-white"
+									onclick={(e) => {
+										e.stopPropagation();
+										playAudio(music);
+									}}
+									title={playingMusicId === music.id ? 'Pause' : 'Play'}
+								>
+									{#if playingMusicId === music.id}
+										<div class="flex items-center gap-0.5 h-4 justify-center">
+											<span class="w-1 h-3 bg-white animate-[bounce_1s_infinite_0.1s] rounded-full"></span>
+											<span class="w-1 h-4 bg-white animate-[bounce_1s_infinite_0.3s] rounded-full"></span>
+											<span class="w-1 h-2 bg-white animate-[bounce_1s_infinite_0.5s] rounded-full"></span>
+										</div>
+									{:else}
+										<Play class="h-5 w-5 sm:h-6 sm:w-6 ml-1" fill="currentColor" />
+									{/if}
+								</button>
+							</div>
 
 							<div class="flex-1 min-w-0">
 								<h3 class="font-semibold text-sm truncate">{music.title}</h3>

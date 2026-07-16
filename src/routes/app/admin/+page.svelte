@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AdminService } from '$lib/services/index.js';
+	import { AdminService, MusicService } from '$lib/services/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Users, FolderGit2, Music } from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -17,15 +17,15 @@
 		try {
 			// In a real scenario, there might be a dedicated stats endpoint.
 			// For now, we fetch lists and count.
-			const [users, projects] = await Promise.all([
+			const [users, projects, musics] = await Promise.all([
 				AdminService.listUsers(),
-				AdminService.listProjects()
+				AdminService.listProjects(),
+				MusicService.listMusics()
 			]);
 
 			stats.users = users?.length || 0;
 			stats.projects = projects?.length || 0;
-			// We don't have listMusic in admin service yet, so we'll just put a placeholder
-			stats.music = 0;
+			stats.music = musics?.length || 0;
 		} catch (error) {
 			console.error('Failed to load admin stats', error);
 		} finally {

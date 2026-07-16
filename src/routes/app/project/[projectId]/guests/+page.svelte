@@ -27,7 +27,9 @@
 		MessageSquare,
 		Trash2,
 		Share2,
-		QrCode
+		QrCode,
+		Edit,
+		AlertTriangle
 	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
@@ -48,6 +50,7 @@
 	let newGuestMessage = $state('');
 	let newGuestWhatsapp = $state('');
 	let isAddingGuest = $state(false);
+	let editingGuestId = $state<number | null>(null);
 
 	let project = $state<Project | null>(null);
 	let featureToggle = $state<FeatureToggle | null>(null);
@@ -117,21 +120,53 @@
 		if (!newGuestName.trim()) return;
 		isAddingGuest = true;
 		try {
-			await RSVPService.upsertGuest(projectId, {
-				name: newGuestName,
-				special_message: newGuestMessage,
-				whatsapp: newGuestWhatsapp || undefined
-			});
+			const sanitizedWa = newGuestWhatsapp ? sanitizePhone(newGuestWhatsapp) : undefined;
+			
+			if (editingGuestId) {
+				await RSVPService.updateGuest(projectId, editingGuestId, {
+					name: newGuestName,
+					special_message: newGuestMessage,
+					whatsapp: sanitizedWa
+				});
+				toast.success('Tamu berhasil diubah');
+			} else {
+				await RSVPService.upsertGuest(projectId, {
+					name: newGuestName,
+					special_message: newGuestMessage,
+					whatsapp: sanitizedWa
+				});
+				toast.success('Tamu berhasil ditambahkan');
+			}
+			
 			isAddGuestOpen = false;
-			newGuestName = '';
-			newGuestMessage = '';
-			newGuestWhatsapp = '';
+			resetGuestForm();
 			loadRSVPs();
 		} catch (e) {
-			console.error('Failed to add guest', e);
+			console.error('Failed to add/update guest', e);
+			toast.error('Gagal menyimpan tamu');
 		} finally {
 			isAddingGuest = false;
 		}
+	}
+
+	function resetGuestForm() {
+		newGuestName = '';
+		newGuestMessage = '';
+		newGuestWhatsapp = '';
+		editingGuestId = null;
+	}
+
+	function openAddGuest() {
+		resetGuestForm();
+		isAddGuestOpen = true;
+	}
+
+	function openEditGuest(guest: RSVP) {
+		editingGuestId = guest.id;
+		newGuestName = guest.name;
+		newGuestMessage = guest.special_message || '';
+		newGuestWhatsapp = guest.whatsapp || '';
+		isAddGuestOpen = true;
 	}
 
 	async function handleExportXLSX() {
@@ -170,6 +205,17 @@
 		}
 	}
 
+	function sanitizePhone(phone: string) {
+		if (!phone) return '';
+		let clean = phone.replace(/\D/g, '');
+		if (clean.startsWith('0')) {
+			clean = '62' + clean.slice(1);
+		} else if (clean.startsWith('8')) {
+			clean = '62' + clean;
+		}
+		return clean;
+	}
+
 	function openWhatsApp(guest: RSVP) {
 		if (!guest.whatsapp) {
 			toast.error('Nomor WhatsApp tidak tersedia');
@@ -182,7 +228,8 @@
 			.replace(/\[Nama Tamu\]/gi, guest.name)
 			.replace(/\[Link\]/gi, link);
 
-		const waUrl = `https://wa.me/${guest.whatsapp.replace(/^0/, '62')}?text=${encodeURIComponent(message)}`;
+		const cleanPhone = sanitizePhone(guest.whatsapp);
+		const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 		window.open(waUrl, '_blank');
 	}
 
@@ -318,18 +365,16 @@
 				<RefreshCw class="mr-2 h-4 w-4 {loading ? 'animate-spin' : ''}" />
 				Segarkan
 			</Button>
-			<Dialog.Root bind:open={isAddGuestOpen}>
-				<Dialog.Trigger>
-					<Button variant="default">
-						<Plus class="mr-2 h-4 w-4" />
-						Tambah Tamu
-					</Button>
-				</Dialog.Trigger>
+			<Button variant="default" onclick={openAddGuest}>
+				<Plus class="mr-2 h-4 w-4" />
+				Tambah Tamu
+			</Button>
+			<Dialog.Root bind:open={isAddGuestOpen} onOpenChange={(open) => !open && resetGuestForm()}>
 				<Dialog.Content class="sm:max-w-[425px]">
 					<Dialog.Header>
-						<Dialog.Title>Tambah Tamu</Dialog.Title>
+						<Dialog.Title>{editingGuestId ? 'Ubah Tamu' : 'Tambah Tamu'}</Dialog.Title>
 						<Dialog.Description>
-							Tambahkan tamu ke daftar Anda dan berikan pesan spesial jika diinginkan.
+							{editingGuestId ? 'Ubah detail tamu Anda.' : 'Tambahkan tamu ke daftar Anda dan berikan pesan spesial jika diinginkan.'}
 						</Dialog.Description>
 					</Dialog.Header>
 					<form onsubmit={handleAddGuest} class="space-y-4 py-4">
@@ -342,6 +387,14 @@
 								disabled={isAddingGuest}
 								required
 							/>
+							{#if editingGuestId}
+								<div class="flex items-start gap-1.5 mt-1.5 text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200">
+									<AlertTriangle class="h-4 w-4 shrink-0 mt-0.5" />
+									<p class="text-xs leading-relaxed">
+										<strong>Peringatan:</strong> Mengubah nama tamu akan menyebabkan <strong>URL undangan sebelumnya menjadi tidak valid</strong>. Tamu harus menggunakan URL baru yang dibagikan.
+									</p>
+								</div>
+							{/if}
 						</div>
 						<div class="space-y-2">
 							<Label for="whatsapp">No. WhatsApp (Opsional)</Label>
@@ -363,10 +416,7 @@
 						</div>
 						<Dialog.Footer>
 							<Button type="submit" disabled={isAddingGuest}>
-								{#if isAddingGuest}
-									<RefreshCw class="mr-2 h-4 w-4 animate-spin" />
-								{/if}
-								Simpan Tamu
+								{isAddingGuest ? 'Menyimpan...' : 'Simpan'}
 							</Button>
 						</Dialog.Footer>
 					</form>
@@ -540,6 +590,15 @@
 												title="QR Code"
 											>
 												<QrCode class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="icon"
+												class="h-8 w-8 hover:bg-muted"
+												onclick={() => openEditGuest(rsvp)}
+												title="Ubah Tamu"
+											>
+												<Edit class="h-4 w-4" />
 											</Button>
 											<Button
 												variant="ghost"

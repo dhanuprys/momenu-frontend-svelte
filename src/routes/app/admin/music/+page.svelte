@@ -6,9 +6,9 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Trash2, Play, Pause, Edit } from '@lucide/svelte';
-	import { config } from '$lib/config/index.js';
 	import { getMediaUrl } from '$lib/utils.js';
+	import { Music as MusicIcon, Plus, Edit, Trash2, Play, Pause, Image as ImageIcon } from '@lucide/svelte';
+	import { config } from '$lib/config/index.js';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -67,6 +67,9 @@
 	let audioSourceType = $state<'file' | 'link'>('file');
 	let audioExternalUrl = $state('');
 
+	let coverSourceType = $state<'file' | 'link'>('file');
+	let coverExternalUrl = $state('');
+
 	let musicFiles = $state<FileList | undefined>(undefined);
 	let coverFiles = $state<FileList | undefined>(undefined);
 	let newMusic = $state({
@@ -118,6 +121,14 @@
 			audioExternalUrl = '';
 		}
 
+		if (music.cover_image && (music.cover_image.startsWith('http://') || music.cover_image.startsWith('https://'))) {
+			coverSourceType = 'link';
+			coverExternalUrl = music.cover_image;
+		} else {
+			coverSourceType = 'file';
+			coverExternalUrl = '';
+		}
+
 		// @ts-expect-error
 		musicFiles = null;
 		// @ts-expect-error
@@ -139,6 +150,8 @@
 		};
 		audioSourceType = 'file';
 		audioExternalUrl = '';
+		coverSourceType = 'file';
+		coverExternalUrl = '';
 		// @ts-expect-error
 		musicFiles = null;
 		// @ts-expect-error
@@ -225,7 +238,9 @@
 			}
 
 			// Optional cover image upload if new one is selected
-			if (coverFiles && coverFiles.length > 0) {
+			if (coverSourceType === 'link' && coverExternalUrl) {
+				newMusic.cover_image = coverExternalUrl;
+			} else if (coverSourceType === 'file' && coverFiles && coverFiles.length > 0) {
 				const coverUpload = await UploadService.adminUpload(coverFiles[0], 'image');
 				newMusic.cover_image = coverUpload.url;
 			}
@@ -353,8 +368,39 @@
 								{/if}
 							</div>
 							<div class="space-y-2">
-								<Label for="music-cover">Cover Image (Opsional)</Label>
-								<Input id="music-cover" type="file" accept="image/*" bind:files={coverFiles} />
+								<Label>Cover Image (Opsional)</Label>
+								<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
+									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => coverSourceType = 'file'}>
+										Upload File
+									</button>
+									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => coverSourceType = 'link'}>
+										Tautan Eksternal
+									</button>
+								</div>
+								
+								{#if coverSourceType === 'file'}
+									<div class="pt-2">
+										<Input
+											id="music-cover"
+											type="file"
+											accept="image/*"
+											bind:files={coverFiles}
+										/>
+										{#if isEditingMusic && newMusic.cover_image && coverSourceType === 'file'}
+											<p class="text-xs text-muted-foreground mt-1">Biarkan kosong jika tidak ingin mengubah cover.</p>
+										{/if}
+									</div>
+								{:else}
+									<div class="pt-2 space-y-1">
+										<Input
+											id="cover-link"
+											type="url"
+											placeholder="https://example.com/cover.jpg"
+											bind:value={coverExternalUrl}
+										/>
+										<p class="text-xs text-muted-foreground mt-1">Masukkan URL langsung (direct link) ke gambar cover (jpg, png, dll).</p>
+									</div>
+								{/if}
 							</div>
 							<div class="space-y-2">
 								<Label for="music-dur">Durasi (Detik)</Label>
@@ -416,13 +462,28 @@
 							{#each musics.filter((m) => selectedCategoryFilter === 'all' || m.category_id === selectedCategoryFilter).sort((a, b) => a.order - b.order) as music}
 								<Table.Row>
 									<Table.Cell>
-										<Button variant="ghost" size="icon" onclick={() => playAudio(music)}>
-											{#if playingMusicId === music.id}
-												<Pause class="h-4 w-4" />
+										<div class="relative h-10 w-10 shrink-0 rounded overflow-hidden bg-muted transition-shadow">
+											{#if music.cover_image}
+												<img src={getMediaUrl(music.cover_image)} alt={music.title} class="h-full w-full object-cover" />
 											{:else}
-												<Play class="h-4 w-4" />
+												<div class="h-full w-full flex items-center justify-center bg-primary/10">
+													<MusicIcon class="h-4 w-4 text-primary/50" />
+												</div>
 											{/if}
-										</Button>
+											<button
+												class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId === music.id ? 'opacity-100! bg-black/60' : ''}"
+												onclick={(e) => {
+													e.stopPropagation();
+													playAudio(music);
+												}}
+											>
+												{#if playingMusicId === music.id}
+													<Pause class="h-4 w-4 text-white" />
+												{:else}
+													<Play class="h-4 w-4 text-white ml-0.5" />
+												{/if}
+											</button>
+										</div>
 									</Table.Cell>
 									<Table.Cell class="font-medium">{music.title}</Table.Cell>
 									<Table.Cell>{music.artist}</Table.Cell>

@@ -87,6 +87,7 @@ export interface GiftRegistry {
 	account_number: string;
 	account_name: string;
 	qr_code_image: string;
+	phone_number?: string;
 	mailing_address: string;
 }
 

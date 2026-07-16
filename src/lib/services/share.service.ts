@@ -37,6 +37,12 @@ export interface SharedDataResponse {
 			device_type: string;
 			created_at: string;
 		}[];
+		wishes?: {
+			name: string;
+			message: string;
+			is_attending: boolean;
+			created_at: string;
+		}[];
 	};
 }
 

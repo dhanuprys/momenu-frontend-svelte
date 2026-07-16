@@ -36,7 +36,8 @@
 		account_number: '',
 		account_name: '',
 		mailing_address: '',
-		qr_code_image: ''
+		qr_code_image: '',
+		phone_number: ''
 	});
 
 	let uploadMode = $state<'file' | 'url'>('file');
@@ -73,7 +74,8 @@
 			account_number: '',
 			account_name: '',
 			mailing_address: '',
-			qr_code_image: ''
+			qr_code_image: '',
+			phone_number: ''
 		};
 		uploadMode = 'file';
 		selectedFile = null;
@@ -89,7 +91,8 @@
 			account_number: gift.account_number || '',
 			account_name: gift.account_name || '',
 			mailing_address: gift.mailing_address || '',
-			qr_code_image: gift.qr_code_image || ''
+			qr_code_image: gift.qr_code_image || '',
+			phone_number: gift.phone_number || ''
 		};
 		uploadMode = gift.qr_code_image ? 'url' : 'file';
 		selectedFile = null;
@@ -114,8 +117,8 @@
 					);
 					formData.qr_code_image = uploadRes.url;
 				}
-				if (!formData.qr_code_image) {
-					toast.error('Harap upload atau masukkan URL gambar QRIS');
+				if (!formData.qr_code_image && !formData.phone_number) {
+					toast.error('Harap upload gambar QRIS atau masukkan nomor telepon');
 					submitting = false;
 					return;
 				}
@@ -127,6 +130,7 @@
 				account_number: formData.type === 'bank' ? formData.account_number : undefined,
 				account_name: formData.type === 'bank' ? formData.account_name : undefined,
 				qr_code_image: formData.type === 'ewallet' ? formData.qr_code_image : undefined,
+				phone_number: formData.type === 'ewallet' ? formData.phone_number : undefined,
 				mailing_address: formData.type === 'physical' ? formData.mailing_address : undefined
 			};
 
@@ -380,34 +384,48 @@
 							</div>
 						</div>
 
-						<!-- Bottom section with QR -->
+						<!-- Bottom section with QR or Phone -->
 						<div class="flex items-end justify-between z-10 w-full mt-auto">
-							<div class="flex flex-col gap-1.5 mb-1">
+							<div class="flex flex-col gap-1.5 mb-1 max-w-[65%]">
 								<div
 									class="text-[0.65rem] uppercase tracking-widest font-bold text-stone-400 dark:text-stone-500"
 								>
 									Digital Payment
 								</div>
-								<div class="text-xs text-stone-500 dark:text-stone-400 font-medium">
-									Scan QR Code via app
-								</div>
+								{#if gift.phone_number}
+									<div class="text-sm font-bold text-stone-700 dark:text-stone-300 flex items-center gap-2 drop-shadow-sm">
+										{gift.phone_number}
+										<button
+											class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 bg-stone-100 dark:bg-stone-800 p-1 rounded-md"
+											onclick={() => copyToClipboard(gift.phone_number!)}
+										>
+											<Copy class="h-3 w-3" />
+										</button>
+									</div>
+								{:else}
+									<div class="text-xs text-stone-500 dark:text-stone-400 font-medium">
+										Scan QR Code via app
+									</div>
+								{/if}
 							</div>
 
-							<!-- QR Code floating -->
-							<div
-								class="h-20 w-20 bg-white p-1.5 rounded-xl shadow-sm border border-stone-200 dark:border-stone-700 overflow-hidden transform group-hover:scale-[1.8] group-hover:-translate-y-4 group-hover:-translate-x-4 transition-all duration-500 origin-bottom-right cursor-pointer group/qr ring-1 ring-black/5 dark:ring-white/10 z-20"
-							>
-								<img
-									src={getMediaUrl(gift.qr_code_image!)}
-									alt="QRIS"
-									class="w-full h-full object-cover rounded-lg"
-								/>
+							{#if gift.qr_code_image}
+								<!-- QR Code floating -->
 								<div
-									class="absolute inset-0 bg-black/60 text-white opacity-0 group-hover/qr:opacity-100 flex items-center justify-center text-[0.4rem] font-bold text-center transition-opacity backdrop-blur-[2px]"
+									class="h-20 w-20 bg-white p-1.5 rounded-xl shadow-sm border border-stone-200 dark:border-stone-700 overflow-hidden transform group-hover:scale-[1.8] group-hover:-translate-y-4 group-hover:-translate-x-4 transition-all duration-500 origin-bottom-right cursor-pointer group/qr ring-1 ring-black/5 dark:ring-white/10 z-20 shrink-0"
 								>
-									SCAN ME
+									<img
+										src={getMediaUrl(gift.qr_code_image)}
+										alt="QRIS"
+										class="w-full h-full object-cover rounded-lg"
+									/>
+									<div
+										class="absolute inset-0 bg-black/60 text-white opacity-0 group-hover/qr:opacity-100 flex items-center justify-center text-[0.4rem] font-bold text-center transition-opacity backdrop-blur-[2px]"
+									>
+										SCAN ME
+									</div>
 								</div>
-							</div>
+							{/if}
 						</div>
 					</div>
 				{:else}
@@ -538,7 +556,15 @@
 					/>
 				</div>
 				<div class="space-y-2">
-					<Label>Upload QRIS *</Label>
+					<Label for="phone_number">Nomor Telepon (Opsional)</Label>
+					<Input
+						id="phone_number"
+						bind:value={formData.phone_number}
+						placeholder="Jika mendukung transfer nomor telepon"
+					/>
+				</div>
+				<div class="space-y-2">
+					<Label>Upload QRIS (Opsional jika no. HP diisi)</Label>
 					<MediaInput
 						mediaType="image"
 						bind:mode={uploadMode}

@@ -21,6 +21,11 @@ export const RSVPService = {
 		return res.data;
 	},
 
+	async updateGuest(projectId: string, id: number, data: OwnerRSVPRequest) {
+		const res = await api.put<RSVP>(`/projects/${projectId}/rsvps/${id}`, data);
+		return res.data;
+	},
+
 	async exportToExcel(projectId: string): Promise<Blob> {
 		const res = await apiClient.get(`/projects/${projectId}/rsvps/export`, {
 			responseType: 'blob'

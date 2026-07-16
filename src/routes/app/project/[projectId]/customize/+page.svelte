@@ -6,7 +6,7 @@
 		StyleOverrideService
 	} from '$lib/services/index.js';
 	import type { Project } from '$lib/types/models.js';
-	import { getThemeManifest } from '$lib/themes/theme-registry.js';
+	import { getThemeManifest } from '$lib/theme-engine/registry.js';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
