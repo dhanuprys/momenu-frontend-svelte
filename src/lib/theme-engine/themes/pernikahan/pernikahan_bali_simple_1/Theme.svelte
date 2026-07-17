@@ -183,7 +183,8 @@
 							.toLocaleDateString('id-ID', {
 								day: '2-digit',
 								month: '2-digit',
-								year: 'numeric'
+								year: 'numeric',
+								timeZone: schedules[0].timezone || 'Asia/Jakarta'
 							})
 							.replace(/\//g, ' / ')}
 					</p>
@@ -308,14 +309,16 @@
 										weekday: 'long',
 										day: 'numeric',
 										month: 'long',
-										year: 'numeric'
+										year: 'numeric',
+										timeZone: schedule.timezone || 'Asia/Jakarta'
 									})}
 								</p>
 								<p class="text-stone-300">
 									{new Date(schedule.start_time).toLocaleTimeString('id-ID', {
 										hour: '2-digit',
-										minute: '2-digit'
-									})} WITA - Selesai
+										minute: '2-digit',
+										timeZone: schedule.timezone || 'Asia/Jakarta'
+									})} {schedule.timezone === 'Asia/Makassar' ? 'WITA' : schedule.timezone === 'Asia/Jayapura' ? 'WIT' : 'WIB'} - Selesai
 								</p>
 							{/if}
 							<div class="mt-4 text-stone-300">

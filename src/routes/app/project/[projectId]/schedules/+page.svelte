@@ -68,12 +68,41 @@
 		dialogOpen = true;
 	}
 
+	function toDatetimeLocal(isoString: string, timeZone: string) {
+		if (!isoString) return '';
+		const d = new Date(isoString);
+		
+		const formatter = new Intl.DateTimeFormat('en-CA', {
+			timeZone,
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		});
+		
+		const parts = formatter.formatToParts(d);
+		let year, month, day, hour, minute;
+		for (const part of parts) {
+			if (part.type === 'year') year = part.value;
+			if (part.type === 'month') month = part.value;
+			if (part.type === 'day') day = part.value;
+			if (part.type === 'hour') hour = part.value;
+			if (part.type === 'minute') minute = part.value;
+		}
+		
+		if (hour === '24') hour = '00';
+		
+		return `${year}-${month}-${day}T${hour}:${minute}`;
+	}
+
 	function openEditDialog(schedule: Schedule) {
 		editingId = schedule.id;
 		formData = {
 			title: schedule.title,
-			start_time: schedule.start_time.slice(0, 16), // Format for datetime-local
-			end_time: schedule.end_time ? schedule.end_time.slice(0, 16) : '',
+			start_time: toDatetimeLocal(schedule.start_time, schedule.timezone || 'Asia/Jakarta'),
+			end_time: schedule.end_time && !schedule.end_time.startsWith('000') ? toDatetimeLocal(schedule.end_time, schedule.timezone || 'Asia/Jakarta') : '',
 			timezone: schedule.timezone,
 			location: schedule.location || '',
 			map_url: schedule.map_url || ''
@@ -86,11 +115,17 @@
 		submitting = true;
 
 		try {
-			// Convert empty strings to undefined for optional fields
+			const tzOffsets: Record<string, string> = {
+				'Asia/Jakarta': '+07:00',
+				'Asia/Makassar': '+08:00',
+				'Asia/Jayapura': '+09:00'
+			};
+			const offset = tzOffsets[formData.timezone] || '+07:00';
+
 			const payload: ScheduleRequest = {
 				title: formData.title,
-				start_time: new Date(formData.start_time).toISOString(),
-				end_time: formData.end_time ? new Date(formData.end_time).toISOString() : undefined,
+				start_time: formData.start_time + ':00' + offset,
+				end_time: formData.end_time ? formData.end_time + ':00' + offset : undefined,
 				timezone: formData.timezone,
 				location: formData.location || undefined,
 				map_url: formData.map_url || undefined
@@ -134,13 +169,17 @@
 	}
 
 	function formatDate(dateStr: string) {
+		const schedule = schedules.find((s) => s.start_time === dateStr || s.end_time === dateStr);
+		const tz = schedule?.timezone || 'Asia/Jakarta';
+
 		return new Date(dateStr).toLocaleString('id-ID', {
 			weekday: 'long',
 			day: 'numeric',
 			month: 'long',
 			year: 'numeric',
 			hour: '2-digit',
-			minute: '2-digit'
+			minute: '2-digit',
+			timeZone: tz
 		});
 	}
 </script>
@@ -222,7 +261,7 @@
 							<Clock class="h-5 w-5 text-muted-foreground shrink-0" />
 							<div>
 								<div class="font-medium text-foreground">{formatDate(schedule.start_time)}</div>
-								{#if schedule.end_time}
+								{#if schedule.end_time && !schedule.end_time.startsWith('000')}
 									<div class="text-muted-foreground">s/d {formatDate(schedule.end_time)}</div>
 								{/if}
 								<div class="text-muted-foreground text-xs mt-0.5">{schedule.timezone}</div>
