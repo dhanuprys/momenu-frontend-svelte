@@ -419,20 +419,14 @@
 					Momen Bahagia
 				</h2>
 
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[150px] md:auto-rows-[250px] grid-flow-dense">
-					{#each galleryImages as image, i}
-						{@const pattern = i % 7}
-						<div
-							class="overflow-hidden rounded-xl shadow-sm group relative 
-							{pattern === 0 ? 'col-span-2 row-span-2' : ''}
-							{pattern === 3 ? 'md:col-span-2 row-span-1' : ''}
-							{pattern === 6 ? 'col-span-2 md:col-span-1 row-span-2' : ''}"
-						>
+				<div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+					{#each galleryImages as image}
+						<div class="break-inside-avoid overflow-hidden rounded-xl shadow-sm group relative">
 							<div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10 pointer-events-none"></div>
 							<img
 								src={getMediaUrl(image.url)}
 								alt="Gallery"
-								class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+								class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
 								loading="lazy"
 							/>
 						</div>
