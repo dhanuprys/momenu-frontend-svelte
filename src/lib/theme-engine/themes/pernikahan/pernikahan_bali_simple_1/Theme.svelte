@@ -124,6 +124,30 @@
 	}
 
 	import { getMediaUrl } from '$lib/utils.js';
+
+	function reveal(node: HTMLElement) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						node.classList.add('opacity-100', 'translate-y-0');
+						node.classList.remove('opacity-0', 'translate-y-10');
+						observer.unobserve(node);
+					}
+				});
+			},
+			{ threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+		);
+
+		node.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <svelte:head>
@@ -210,7 +234,7 @@
 
 			<div class="grid md:grid-cols-2 gap-12 md:gap-8">
 				<!-- Groom -->
-				<div class="flex flex-col items-center">
+				<div use:reveal class="flex flex-col items-center">
 					<div
 						class="w-48 h-64 overflow-hidden rounded-t-full rounded-b-md shadow-xl mb-6 ring-4 ring-stone-100"
 					>
@@ -236,7 +260,7 @@
 				</div>
 
 				<!-- Bride -->
-				<div class="flex flex-col items-center">
+				<div use:reveal class="flex flex-col items-center">
 					<div
 						class="w-48 h-64 overflow-hidden rounded-t-full rounded-b-md shadow-xl mb-6 ring-4 ring-stone-100"
 					>
@@ -280,6 +304,7 @@
 			<div class="max-w-4xl mx-auto relative z-10">
 				<h3 class="font-script text-5xl md:text-6xl mb-12">{text.render(TEXT.schedule_title)}</h3>
 				<div
+					use:reveal
 					class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl shadow-2xl max-w-lg mx-auto"
 				>
 					<!-- Ornate Icon -->
@@ -395,6 +420,7 @@
 		/>
 		<div class="max-w-3xl mx-auto text-center">
 			<div
+				use:reveal
 				class="relative p-10 md:p-16 rounded-2xl shadow-xl border border-stone-100"
 				style={style.css(STYLE.quote_card)}
 			>
@@ -436,7 +462,7 @@
 
 				<div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
 					{#each galleryImages as image}
-						<div class="break-inside-avoid overflow-hidden rounded-xl shadow-sm group relative">
+						<div use:reveal class="break-inside-avoid overflow-hidden rounded-xl shadow-sm group relative">
 							<div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10 pointer-events-none"></div>
 							<img
 								src={getMediaUrl(image.url)}
@@ -456,7 +482,7 @@
 		<section class="relative py-20 px-6 bg-stone-100">
 			<div class="max-w-4xl mx-auto text-center">
 				<h2 class="font-script text-4xl md:text-5xl text-stone-800 mb-12">Cerita Kami</h2>
-				<div class="rounded-2xl overflow-hidden shadow-2xl bg-black">
+				<div use:reveal class="rounded-2xl overflow-hidden shadow-2xl bg-black">
 					<!-- svelte-ignore a11y_media_has_caption -->
 					<video controls class="w-full aspect-video" src={getMediaUrl(promoVideo)}></video>
 				</div>
@@ -470,6 +496,7 @@
 			<div class="max-w-2xl mx-auto text-center">
 				<h2 class="font-script text-4xl md:text-5xl text-stone-800 mb-8">Mohon Doa Restu</h2>
 				<div
+					use:reveal
 					class="bg-stone-50 p-8 md:p-10 rounded-3xl shadow-sm border border-stone-100 text-left"
 				>
 					<form onsubmit={submitRSVP} class="space-y-6">
@@ -614,6 +641,7 @@
 					{#each giftRegistries as gift}
 						{#if gift.type !== 'physical'}
 							<div
+								use:reveal
 								class="bg-white p-8 rounded-2xl shadow-md border border-stone-100 flex flex-col h-full"
 							>
 								<h3
