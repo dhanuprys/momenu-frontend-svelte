@@ -251,7 +251,6 @@
 				audioElement = createAudio(musicUrl);
 			}
 
-			// 4. Resolve the theme component dynamically
 			if (isInitial || ThemeComponent === null) {
 				const themeLoader = resolveTheme(project.theme_id);
 				if (!themeLoader) {
@@ -261,6 +260,45 @@
 
 				const loaded = await themeLoader;
 				ThemeComponent = loaded.default;
+			}
+
+			// 5. Preload all image assets before revealing the UI
+			//    Uses Promise.race with a timeout so the user is never stuck waiting
+			//    longer than 5 seconds on a slow connection.
+			if (isInitial) {
+				const imageUrls = new Set<string>();
+
+				// Collect image URLs from media mappings (skip videos)
+				if (project.media_mappings) {
+					for (const m of project.media_mappings) {
+						if (m.media_type === 'image' && m.url) {
+							imageUrls.add(getMediaUrl(m.url));
+						}
+					}
+				}
+
+				// Collect QR code images from gift registries
+				if (project.gift_registries) {
+					for (const g of project.gift_registries) {
+						if (g.qr_code_image) {
+							imageUrls.add(getMediaUrl(g.qr_code_image));
+						}
+					}
+				}
+
+				if (imageUrls.size > 0) {
+					const preloadPromises = [...imageUrls].map(
+						(url) =>
+							new Promise<void>((resolve) => {
+								const img = new Image();
+								img.onload = () => resolve();
+								img.onerror = () => resolve(); // Don't block UI on broken images
+								img.src = url;
+							})
+					);
+					const timeout = new Promise<void>((resolve) => setTimeout(resolve, 5000));
+					await Promise.race([Promise.all(preloadPromises), timeout]);
+				}
 			}
 		} catch (err: any) {
 			console.error('Failed to load invitation', err);
