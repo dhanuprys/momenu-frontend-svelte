@@ -283,8 +283,15 @@
 
 	// ─── Lifecycle ───────────────────────────────────────────────────
 
+	function handleVisibilityChange() {
+		if (document.hidden && isPlaying) {
+			pauseAudio();
+		}
+	}
+
 	onMount(() => {
 		loadData(true);
+		document.addEventListener('visibilitychange', handleVisibilityChange);
 
 		if (isPreview && projectId) {
 			pollInterval = setInterval(async () => {
@@ -302,6 +309,7 @@
 
 		return () => {
 			if (pollInterval) clearInterval(pollInterval);
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
 			destroyAudio();
 		};
 	});

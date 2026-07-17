@@ -6,7 +6,6 @@
 	import { createCountdown } from '$lib/theme-engine/helpers/countdown.svelte.js';
 	import { MANIFEST, BUCKET, TEXT, STYLE } from './manifest.js';
 	import { fade, fly } from 'svelte/transition';
-	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import type { Guestbook } from '$lib/types/index.js';
 	import { onMount } from 'svelte';
 
@@ -124,9 +123,7 @@
 		}, 2000);
 	}
 
-	import type { EmblaOptionsType } from 'embla-carousel';
 	import { getMediaUrl } from '$lib/utils.js';
-	let options: EmblaOptionsType = { loop: true };
 </script>
 
 <svelte:head>
@@ -416,27 +413,30 @@
 
 	<!-- GALLERY SECTION -->
 	{#if featureToggle.show_gallery && galleryImages.length > 0}
-		<section class="relative py-20 px-6 bg-white">
-			<div class="max-w-5xl mx-auto">
-				<h2 class="font-script text-4xl md:text-5xl text-center text-stone-800 mb-12">
+		<section class="relative py-24 px-6 bg-white">
+			<div class="max-w-6xl mx-auto">
+				<h2 class="font-script text-4xl md:text-5xl text-center text-stone-800 mb-16">
 					Momen Bahagia
 				</h2>
 
-				<div class="overflow-hidden" use:emblaCarouselSvelte={{ options, plugins: [] }}>
-					<div class="flex -ml-4">
-						{#each galleryImages as image}
-							<div class="flex-[0_0_100%] md:flex-[0_0_33.33%] pl-4">
-								<div class="overflow-hidden rounded-xl shadow-md h-[400px]">
-									<img
-										src={getMediaUrl(image.url)}
-										alt="Gallery"
-										class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-										loading="lazy"
-									/>
-								</div>
-							</div>
-						{/each}
-					</div>
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 auto-rows-[150px] md:auto-rows-[250px] grid-flow-dense">
+					{#each galleryImages as image, i}
+						{@const pattern = i % 7}
+						<div
+							class="overflow-hidden rounded-xl shadow-sm group relative 
+							{pattern === 0 ? 'col-span-2 row-span-2' : ''}
+							{pattern === 3 ? 'md:col-span-2 row-span-1' : ''}
+							{pattern === 6 ? 'col-span-2 md:col-span-1 row-span-2' : ''}"
+						>
+							<div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10 pointer-events-none"></div>
+							<img
+								src={getMediaUrl(image.url)}
+								alt="Gallery"
+								class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+								loading="lazy"
+							/>
+						</div>
+					{/each}
 				</div>
 			</div>
 		</section>
