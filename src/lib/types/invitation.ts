@@ -17,12 +17,18 @@ import type { GuestbookRequest, RSVPRequest } from './requests';
 
 export interface PernikahanPayload {
 	nama_mempelai_pria?: string;
+	nama_panggilan_pria?: string;
 	nama_ayah_pria?: string;
 	nama_ibu_pria?: string;
+	anak_ke_pria?: number;
+	bersaudara_pria?: number;
 	alamat_pria?: string;
 	nama_mempelai_wanita?: string;
+	nama_panggilan_wanita?: string;
 	nama_ayah_wanita?: string;
 	nama_ibu_wanita?: string;
+	anak_ke_wanita?: number;
+	bersaudara_wanita?: number;
 	alamat_wanita?: string;
 }
 

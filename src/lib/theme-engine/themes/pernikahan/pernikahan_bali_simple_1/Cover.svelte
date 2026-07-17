@@ -37,9 +37,9 @@
 					Undangan Pawiwahan
 				</p>
 				<h4 class="font-script text-6xl md:text-8xl text-white drop-shadow-xl leading-tight">
-					{payload.nama_mempelai_pria} <br class="md:hidden" />
+					{payload.nama_panggilan_pria || payload.nama_mempelai_pria} <br class="md:hidden" />
 					<span class="text-3xl md:text-5xl text-yellow-400 mx-2">&</span> <br class="md:hidden" />
-					{payload.nama_mempelai_wanita}
+					{payload.nama_panggilan_wanita || payload.nama_mempelai_wanita}
 				</h4>
 			</div>
 

@@ -172,7 +172,7 @@
 
 			<div class="z-10 text-center text-white p-6" in:fly={{ y: 50, duration: 1500, delay: 500 }}>
 				<h1 class="font-script text-5xl md:text-7xl lg:text-8xl mb-4 drop-shadow-lg">
-					{payload.nama_mempelai_pria} & {payload.nama_mempelai_wanita}
+					{payload.nama_panggilan_pria || payload.nama_mempelai_pria} & {payload.nama_panggilan_wanita || payload.nama_mempelai_wanita}
 				</h1>
 				<p class="text-lg md:text-xl font-light tracking-widest uppercase mt-6 drop-shadow-md">
 					We are getting married
@@ -219,9 +219,15 @@
 							<div class="w-full h-full bg-stone-200"></div>
 						{/if}
 					</div>
-					<h3 class="font-script text-4xl text-stone-800 mb-2">{payload.nama_mempelai_pria}</h3>
+					<h3 class="font-script text-4xl text-stone-800 mb-2">{payload.nama_panggilan_pria || payload.nama_mempelai_pria}</h3>
 					<p class="font-bold text-lg mb-1">{payload.nama_mempelai_pria}</p>
-					<p class="italic text-stone-500 mb-2 text-sm">Putra dari pasangan</p>
+					<p class="italic text-stone-500 mb-2 text-sm text-center">
+						{#if payload.anak_ke_pria && payload.bersaudara_pria}
+							Putra ke-{payload.anak_ke_pria} dari {payload.bersaudara_pria} bersaudara pasangan
+						{:else}
+							Putra dari pasangan
+						{/if}
+					</p>
 					<p class="text-stone-700 font-medium">
 						Bpk. {payload.nama_ayah_pria}<br />&<br />Ibu {payload.nama_ibu_pria}
 					</p>
@@ -239,9 +245,15 @@
 							<div class="w-full h-full bg-stone-200"></div>
 						{/if}
 					</div>
-					<h3 class="font-script text-4xl text-stone-800 mb-2">{payload.nama_mempelai_wanita}</h3>
+					<h3 class="font-script text-4xl text-stone-800 mb-2">{payload.nama_panggilan_wanita || payload.nama_mempelai_wanita}</h3>
 					<p class="font-bold text-lg mb-1">{payload.nama_mempelai_wanita}</p>
-					<p class="italic text-stone-500 mb-2 text-sm">Putri dari pasangan</p>
+					<p class="italic text-stone-500 mb-2 text-sm text-center">
+						{#if payload.anak_ke_wanita && payload.bersaudara_wanita}
+							Putri ke-{payload.anak_ke_wanita} dari {payload.bersaudara_wanita} bersaudara pasangan
+						{:else}
+							Putri dari pasangan
+						{/if}
+					</p>
 					<p class="text-stone-700 font-medium">
 						Bpk. {payload.nama_ayah_wanita}<br />&<br />Ibu {payload.nama_ibu_wanita}
 					</p>
