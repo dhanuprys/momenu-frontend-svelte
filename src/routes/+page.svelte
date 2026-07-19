@@ -8,16 +8,16 @@
 
 	let mounted = $state(false);
 
-	const particles = Array.from({ length: 40 }).map((_, i) => {
+	const particles = Array.from({ length: 60 }).map((_, i) => {
 		const angle = Math.random() * Math.PI * 2;
-		const distance = 50 + Math.random() * 50;
+		const distance = 60 + Math.random() * 80;
 		return {
 			id: i,
 			x: Math.cos(angle) * distance,
 			y: Math.sin(angle) * distance,
 			delay: Math.random() * 4,
 			duration: 2 + Math.random() * 4,
-			scale: 0.3 + Math.random() * 1.2
+			scale: 0.5 + Math.random() * 1.5
 		};
 	});
 
@@ -42,22 +42,28 @@
 <div
 	class="relative min-h-screen overflow-hidden bg-background text-foreground flex flex-col justify-between selection:bg-primary/20"
 >
-	<!-- Animated Particles Background -->
-	<div class="absolute inset-0 pointer-events-none flex items-center justify-center">
-		{#if mounted}
-			{#each particles as p}
-				<div
-					class="particle absolute w-1.5 h-1.5 bg-foreground/20 rounded-full"
-					style="
-						--px: {p.x}vw; 
-						--py: {p.y}vh; 
-						--ps: {p.scale};
-						animation-duration: {p.duration}s;
-						animation-delay: {p.delay}s;
-					"
-				></div>
-			{/each}
-		{/if}
+	<!-- Animated Particles & Aurora Glow Background -->
+	<div class="absolute inset-0 pointer-events-none overflow-hidden">
+		<!-- Aurora Glow Orbs -->
+		<div class="absolute top-[20%] left-[20%] w-[350px] h-[350px] md:w-[450px] md:h-[450px] bg-primary/10 rounded-full blur-[100px] md:blur-[130px] aurora-glow-1"></div>
+		<div class="absolute bottom-[20%] right-[20%] w-[300px] h-[300px] md:w-[400px] md:h-[400px] bg-primary/5 rounded-full blur-[90px] md:blur-[120px] aurora-glow-2"></div>
+		
+		<div class="absolute inset-0 flex items-center justify-center">
+			{#if mounted}
+				{#each particles as p}
+					<div
+						class="particle absolute w-2 h-2 bg-primary/40 rounded-full"
+						style="
+							--px: {p.x}vw; 
+							--py: {p.y}vh; 
+							--ps: {p.scale};
+							animation-duration: {p.duration}s;
+							animation-delay: {p.delay}s;
+						"
+					></div>
+				{/each}
+			{/if}
+		</div>
 	</div>
 
 	<!-- Navigation -->
@@ -103,6 +109,44 @@
 				</div>
 			</div>
 		{/if}
+
+		{#if mounted}
+			<div in:fly={{ y: 15, duration: 800, delay: 600 }} class="w-full mt-24 mb-8 overflow-hidden relative">
+				<!-- Gradient fading edges for smoother look -->
+				<div class="pointer-events-none absolute inset-y-0 left-0 w-1/6 bg-gradient-to-r from-background to-transparent z-10"></div>
+				<div class="pointer-events-none absolute inset-y-0 right-0 w-1/6 bg-gradient-to-l from-background to-transparent z-10"></div>
+
+				<p class="text-sm font-medium text-muted-foreground uppercase tracking-widest mb-8 text-center relative z-20">
+					Dipercaya oleh Partner Fotografi
+				</p>
+				
+				<div class="flex overflow-hidden">
+					<div class="flex shrink-0 animate-marquee items-center gap-10 md:gap-16 px-5 md:px-8">
+						{#each Array(2) as _}
+							{#each [
+								'4k-galerie.jpg',
+								'jepret-by-liam.jpg',
+								'kusuma-photographybali.jpg',
+								'oncam-bali.jpg',
+								'pradnya-visual.png',
+								'shutter-stories-id.jpg',
+								'thorughdamarlens.jpg',
+								'tomotovisual.jpg'
+							] as partner}
+								<div class="group flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500">
+									<img 
+										src={`/assets/partners/${partner}`} 
+										alt="Momenu Partner" 
+										class="h-14 md:h-20 w-auto object-contain rounded-md"
+										loading="lazy"
+									/>
+								</div>
+							{/each}
+						{/each}
+					</div>
+				</div>
+			</div>
+		{/if}
 	</main>
 
 	<!-- Footer -->
@@ -125,6 +169,54 @@
 </div>
 
 <style>
+	.animate-marquee {
+		animation: marquee 30s linear infinite;
+	}
+	
+	.animate-marquee:hover {
+		animation-play-state: paused;
+	}
+
+	@keyframes marquee {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			/* Transform by -50% because we duplicated the array of logos exactly 2 times */
+			transform: translateX(-50%);
+		}
+	}
+
+	.aurora-glow-1 {
+		animation: float-glow-1 25s ease-in-out infinite alternate;
+	}
+	.aurora-glow-2 {
+		animation: float-glow-2 20s ease-in-out infinite alternate;
+	}
+
+	@keyframes float-glow-1 {
+		0% {
+			transform: translate(-10%, -10%) scale(1);
+		}
+		50% {
+			transform: translate(10%, 15%) scale(1.1);
+		}
+		100% {
+			transform: translate(-5%, 10%) scale(0.95);
+		}
+	}
+	@keyframes float-glow-2 {
+		0% {
+			transform: translate(10%, 10%) scale(0.95);
+		}
+		50% {
+			transform: translate(-10%, -15%) scale(1.05);
+		}
+		100% {
+			transform: translate(5%, -10%) scale(1);
+		}
+	}
+
 	.particle {
 		animation-name: particle-shoot;
 		animation-iteration-count: infinite;
