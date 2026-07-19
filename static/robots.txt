@@ -1,3 +1,9 @@
-# allow crawling everything by default
 User-agent: *
-Disallow:
+Disallow: /app/
+Disallow: /preview/
+Disallow: /auth/
+Disallow: /share/
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://momenu.id/sitemap.xml

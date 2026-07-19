@@ -4,6 +4,7 @@
 	import { ArrowRight } from '@lucide/svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import SEO from '$lib/components/seo.svelte';
 
 	let mounted = $state(false);
 
@@ -25,9 +26,18 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Momenu | Segera Hadir</title>
-</svelte:head>
+<SEO
+	title="Momenu | Platform Undangan Digital Premium"
+	description="Buat dan bagikan undangan digital elegan untuk pernikahan, upacara adat, ulang tahun, dan acara spesial lainnya. Desain modern, cepat, dan mudah digunakan."
+	keywords="undangan digital, buat undangan online, undangan pernikahan digital, undangan digital bali, platform undangan, momenu, undangan pawiwahan"
+	jsonLd={{
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: 'Momenu',
+		url: 'https://momenu.id',
+		description: 'Platform Undangan Digital Premium'
+	}}
+/>
 
 <div
 	class="relative min-h-screen overflow-hidden bg-background text-foreground flex flex-col justify-between selection:bg-primary/20"

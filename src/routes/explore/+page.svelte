@@ -9,6 +9,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { getMediaUrl } from '$lib/utils.js';
 	import { Image, Palette } from '@lucide/svelte';
+	import SEO from '$lib/components/seo.svelte';
 
 	let themes = $state<Theme[]>([]);
 	let loading = $state(true);
@@ -36,13 +37,12 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Momenu | Katalog Tema Undangan</title>
-	<meta
-		name="description"
-		content="Pilih dari berbagai koleksi tema undangan digital premium kami untuk pernikahan, ulang tahun, dan acara lainnya."
-	/>
-</svelte:head>
+<SEO
+	title="Momenu | Katalog Tema Undangan"
+	description="Pilih dari berbagai koleksi tema undangan digital premium kami untuk pernikahan, ulang tahun, dan acara lainnya. Desain elegan yang siap digunakan."
+	keywords="tema undangan digital, template undangan pernikahan, desain undangan online, katalog momenu"
+	url="https://momenu.id/explore"
+/>
 
 <div
 	class="min-h-screen flex flex-col bg-background font-sans text-foreground selection:bg-primary/20"
