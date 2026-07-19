@@ -124,14 +124,14 @@
 					<div class="flex shrink-0 animate-marquee items-center gap-10 md:gap-16 px-5 md:px-8">
 						{#each Array(2) as _}
 							{#each [
-								'4k-galerie.jpg',
-								'jepret-by-liam.jpg',
-								'kusuma-photographybali.jpg',
-								'oncam-bali.jpg',
-								'pradnya-visual.png',
-								'shutter-stories-id.jpg',
-								'thorughdamarlens.jpg',
-								'tomotovisual.jpg'
+								'4k-galerie.webp',
+								'jepret-by-liam.webp',
+								'kusuma-photographybali.webp',
+								'oncam-bali.webp',
+								'pradnya-visual.webp',
+								'shutter-stories-id.webp',
+								'thorughdamarlens.webp',
+								'tomotovisual.webp'
 							] as partner}
 								<div class="group flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-500">
 									<img 
