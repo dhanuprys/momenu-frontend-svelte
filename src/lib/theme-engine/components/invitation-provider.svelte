@@ -25,6 +25,7 @@
 
 	let isOpened = $state(false);
 	let isPlaying = $state(false);
+	let wasPlayingBeforeHide = false;
 	let isCustomizerOpen = $state(false);
 	let customizerFocusTab = $state<'text' | 'style'>('text');
 	let customizerFocusSlot = $state('');
@@ -322,8 +323,15 @@
 	// ─── Lifecycle ───────────────────────────────────────────────────
 
 	function handleVisibilityChange() {
-		if (document.hidden && isPlaying) {
-			pauseAudio();
+		if (document.hidden) {
+			wasPlayingBeforeHide = isPlaying;
+			if (isPlaying) {
+				pauseAudio();
+			}
+		} else {
+			if (wasPlayingBeforeHide) {
+				playAudio();
+			}
 		}
 	}
 
