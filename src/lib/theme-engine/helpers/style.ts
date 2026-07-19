@@ -27,7 +27,9 @@ export function createStyleHelper<TSlots extends StyleSlotDefinitions>(
 				.map(([k, value]) => {
 					// special case for textColor to just 'color' in CSS
 					const cssProp = k === 'textColor' ? 'color' : camelToKebab(k);
-					return `${cssProp}: ${value};`;
+					// sanitize to prevent CSS injection (no semicolons or braces)
+					const safeValue = String(value).replace(/[;{}]/g, '').trim();
+					return `${cssProp}: ${safeValue};`;
 				})
 				.join(' ');
 		},

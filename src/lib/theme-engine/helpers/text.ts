@@ -87,8 +87,8 @@ export function createTextHelper<TSlots extends TextSlotDefinitions>(
 			const slot = slots?.[key];
 			const o = overrides?.[key];
 
-			const family = o?.font_family || slot?.defaultFontFamily || '';
-			const align = o?.text_align || slot?.defaultTextAlign || '';
+			const family = (o?.font_family || slot?.defaultFontFamily || '').replace(/[;"'{}]/g, '');
+			const align = (o?.text_align || slot?.defaultTextAlign || '').replace(/[;"'{}]/g, '');
 
 			if (family) parts.push(`font-family: '${family}', sans-serif`);
 			if (align) parts.push(`text-align: ${align}`);

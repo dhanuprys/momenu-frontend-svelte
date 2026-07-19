@@ -268,7 +268,9 @@
 							class="p-5 border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300"
 						>
 							<div class="flex items-center justify-between mb-4">
-								<Label class="block font-semibold text-stone-800 tracking-wide">{config.label}</Label>
+								<Label class="block font-semibold text-stone-800 tracking-wide"
+									>{config.label}</Label
+								>
 								<Button
 									variant="ghost"
 									size="sm"
@@ -455,7 +457,7 @@
 						<span
 							class="truncate"
 							style={textEdits[key].font_family
-								? `font-family: '${textEdits[key].font_family}', sans-serif`
+								? `font-family: '${textEdits[key].font_family.replace(/[;"'{}]/g, '')}', sans-serif`
 								: ''}
 						>
 							{getFontLabel(textEdits[key].font_family)}

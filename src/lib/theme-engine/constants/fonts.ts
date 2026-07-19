@@ -37,6 +37,11 @@ export const AVAILABLE_FONTS = [
 	{ value: 'Montserrat', label: 'Montserrat', category: FontCategory.SANS },
 	{ value: 'Open Sans', label: 'Open Sans', category: FontCategory.SANS },
 	{ value: 'Nunito', label: 'Nunito', category: FontCategory.SANS },
+	{ value: 'Lato', label: 'Lato', category: FontCategory.SANS },
+	{ value: 'Oswald', label: 'Oswald', category: FontCategory.SANS },
+	{ value: 'Raleway', label: 'Raleway', category: FontCategory.SANS },
+	{ value: 'Ubuntu', label: 'Ubuntu', category: FontCategory.SANS },
+	{ value: 'Quicksand', label: 'Quicksand', category: FontCategory.SANS },
 
 	// Serif
 	{ value: 'Lora', label: 'Lora', category: FontCategory.SERIF },
@@ -44,9 +49,19 @@ export const AVAILABLE_FONTS = [
 	{ value: 'Merriweather', label: 'Merriweather', category: FontCategory.SERIF },
 	{ value: 'Cormorant Garamond', label: 'Cormorant Garamond', category: FontCategory.SERIF },
 	{ value: 'EB Garamond', label: 'EB Garamond', category: FontCategory.SERIF },
+	{ value: 'PT Serif', label: 'PT Serif', category: FontCategory.SERIF },
+	{ value: 'Libre Baskerville', label: 'Libre Baskerville', category: FontCategory.SERIF },
+	{ value: 'Crimson Text', label: 'Crimson Text', category: FontCategory.SERIF },
+	{ value: 'Cardo', label: 'Cardo', category: FontCategory.SERIF },
 
 	// Display
 	{ value: 'Abril Fatface', label: 'Abril Fatface', category: FontCategory.DISPLAY },
+	{ value: 'Bebas Neue', label: 'Bebas Neue', category: FontCategory.DISPLAY },
+	{ value: 'Righteous', label: 'Righteous', category: FontCategory.DISPLAY },
+	{ value: 'Comfortaa', label: 'Comfortaa', category: FontCategory.DISPLAY },
+	{ value: 'Anton', label: 'Anton', category: FontCategory.DISPLAY },
+	{ value: 'Pacifico', label: 'Pacifico', category: FontCategory.DISPLAY },
+	{ value: 'Lobster', label: 'Lobster', category: FontCategory.DISPLAY },
 
 	// Handwriting / Script
 	{ value: 'Great Vibes', label: 'Great Vibes', category: FontCategory.HANDWRITING },
@@ -54,9 +69,18 @@ export const AVAILABLE_FONTS = [
 	{ value: 'Parisienne', label: 'Parisienne', category: FontCategory.HANDWRITING },
 	{ value: 'Sacramento', label: 'Sacramento', category: FontCategory.HANDWRITING },
 	{ value: 'Alex Brush', label: 'Alex Brush', category: FontCategory.HANDWRITING },
+	{ value: 'Caveat', label: 'Caveat', category: FontCategory.HANDWRITING },
+	{ value: 'Satisfy', label: 'Satisfy', category: FontCategory.HANDWRITING },
+	{ value: 'Yellowtail', label: 'Yellowtail', category: FontCategory.HANDWRITING },
+	{ value: 'Cookie', label: 'Cookie', category: FontCategory.HANDWRITING },
+	{ value: 'Allura', label: 'Allura', category: FontCategory.HANDWRITING },
+	{ value: 'Pinyon Script', label: 'Pinyon Script', category: FontCategory.HANDWRITING },
 
 	// Monospace
-	{ value: 'JetBrains Mono', label: 'JetBrains Mono', category: FontCategory.MONOSPACE }
+	{ value: 'JetBrains Mono', label: 'JetBrains Mono', category: FontCategory.MONOSPACE },
+	{ value: 'Roboto Mono', label: 'Roboto Mono', category: FontCategory.MONOSPACE },
+	{ value: 'Fira Code', label: 'Fira Code', category: FontCategory.MONOSPACE },
+	{ value: 'Source Code Pro', label: 'Source Code Pro', category: FontCategory.MONOSPACE }
 ] as const satisfies readonly FontFamilyOption[];
 
 /** All valid font-family values as a union type */
