@@ -31,5 +31,10 @@ export const AuthService = {
 
 	getGoogleLoginURL() {
 		window.location.href = `${config.API_BASE_URL}/auth/google/login`;
+	},
+
+	async changePassword(data: { old_password: string; new_password: string }) {
+		const res = await api.put('/auth/me/password', data);
+		return res.data;
 	}
 };

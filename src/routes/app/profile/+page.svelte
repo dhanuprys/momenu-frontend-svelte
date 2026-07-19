@@ -3,6 +3,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import { Mail, Calendar, User, Key, LogOut, Loader2, Edit2, Check, X } from '@lucide/svelte';
 	import { authState } from '$lib/stores/auth.svelte';
 	import AppHeader from '$lib/components/layout/app-header.svelte';
@@ -36,6 +38,41 @@
 			toast.error(error.response?.data?.message || 'Gagal memperbarui profil');
 		} finally {
 			isSavingName = false;
+		}
+	}
+
+	let isChangingPassword = $state(false);
+	let oldPassword = $state('');
+	let newPassword = $state('');
+	let confirmPassword = $state('');
+	let isSavingPassword = $state(false);
+
+	async function savePassword() {
+		if (!oldPassword.trim() || !newPassword.trim() || !confirmPassword.trim()) {
+			toast.error('Semua kolom kata sandi harus diisi');
+			return;
+		}
+		if (newPassword.length < 6) {
+			toast.error('Kata sandi baru minimal 6 karakter');
+			return;
+		}
+		if (newPassword !== confirmPassword) {
+			toast.error('Konfirmasi kata sandi tidak cocok');
+			return;
+		}
+		
+		isSavingPassword = true;
+		try {
+			await AuthService.changePassword({ old_password: oldPassword, new_password: newPassword });
+			isChangingPassword = false;
+			oldPassword = '';
+			newPassword = '';
+			confirmPassword = '';
+			toast.success('Kata sandi berhasil diperbarui');
+		} catch (error: any) {
+			toast.error(error.response?.data?.message || 'Gagal memperbarui kata sandi');
+		} finally {
+			isSavingPassword = false;
 		}
 	}
 
@@ -283,28 +320,94 @@
 							</div>
 							<div class="space-y-1 w-full flex-1">
 								<div
-									class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-0"
+									class="flex flex-col w-full gap-4"
 								>
-									<div>
-										<p class="text-sm font-semibold text-stone-500 dark:text-stone-400">
-											Kata Sandi
-										</p>
-										<p class="text-base font-medium text-stone-900 dark:text-stone-100 mt-0.5">
-											{#if user.google_id}
-												<span class="text-sm text-stone-500">Dikelola oleh Google</span>
-											{:else}
-												••••••••••••
-											{/if}
-										</p>
+									<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-0">
+										<div class="flex-1 mr-4">
+											<p class="text-sm font-semibold text-stone-500 dark:text-stone-400">
+												Kata Sandi
+											</p>
+											<p class="text-base font-medium text-stone-900 dark:text-stone-100 mt-0.5">
+												{#if user.google_id}
+													<span class="text-sm text-stone-500">Dikelola oleh Google</span>
+												{:else}
+													••••••••••••
+												{/if}
+											</p>
+										</div>
+										
+										{#if !user.google_id}
+											<div class="flex items-center gap-2 self-start sm:self-center mt-2 sm:mt-0">
+												<Button
+													variant="outline"
+													size="sm"
+													class="w-full sm:w-auto hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 dark:hover:bg-purple-900/20 dark:hover:text-purple-400 transition-colors"
+													onclick={() => (isChangingPassword = true)}
+												>
+													Ubah Kata Sandi
+												</Button>
+
+												<Dialog.Root bind:open={isChangingPassword} onOpenChange={(open) => {
+													if (!open) {
+														oldPassword = '';
+														newPassword = '';
+														confirmPassword = '';
+													}
+												}}>
+													<Dialog.Content class="sm:max-w-[425px]">
+														<Dialog.Header>
+															<Dialog.Title>Ubah Kata Sandi</Dialog.Title>
+															<Dialog.Description>
+																Masukkan kata sandi lama Anda dan kata sandi baru untuk akun ini.
+															</Dialog.Description>
+														</Dialog.Header>
+														<div class="grid gap-4 py-4">
+															<div class="grid gap-2">
+																<Label for="old_password">Kata Sandi Lama</Label>
+																<Input
+																	id="old_password"
+																	type="password"
+																	bind:value={oldPassword}
+																	disabled={isSavingPassword}
+																	placeholder="Masukkan kata sandi lama"
+																/>
+															</div>
+															<div class="grid gap-2">
+																<Label for="new_password">Kata Sandi Baru</Label>
+																<Input
+																	id="new_password"
+																	type="password"
+																	bind:value={newPassword}
+																	disabled={isSavingPassword}
+																	placeholder="Masukkan kata sandi baru (min. 6 karakter)"
+																/>
+															</div>
+															<div class="grid gap-2">
+																<Label for="confirm_password">Konfirmasi Kata Sandi Baru</Label>
+																<Input
+																	id="confirm_password"
+																	type="password"
+																	bind:value={confirmPassword}
+																	disabled={isSavingPassword}
+																	placeholder="Ketik ulang kata sandi baru"
+																/>
+															</div>
+														</div>
+														<Dialog.Footer>
+															<Button variant="outline" onclick={() => isChangingPassword = false} disabled={isSavingPassword}>Batal</Button>
+															<Button onclick={savePassword} disabled={isSavingPassword}>
+																{#if isSavingPassword}
+																	<Loader2 class="mr-2 h-4 w-4 animate-spin" /> Menyimpan
+																{:else}
+																	<Check class="mr-2 h-4 w-4" /> Simpan Kata Sandi
+																{/if}
+															</Button>
+														</Dialog.Footer>
+													</Dialog.Content>
+												</Dialog.Root>
+											</div>
+										{/if}
 									</div>
-									{#if !user.google_id}
-										<Button
-											variant="outline"
-											size="sm"
-											class="w-full sm:w-auto hover:bg-purple-50 hover:text-purple-600 hover:border-purple-200 dark:hover:bg-purple-900/20 dark:hover:text-purple-400 transition-colors"
-											>Ubah Kata Sandi</Button
-										>
-									{/if}
 								</div>
 							</div>
 						</div>
