@@ -17,11 +17,26 @@ export interface BucketConfig {
 export type BucketDefinitions = Record<string, BucketConfig>;
 
 /**
- * Text slot: overrideable text content
+ * Text slot: overrideable text content with optional section grouping and formatting defaults.
+ *
+ * - `section`: groups this slot with other slots of the same section in the customizer UI.
+ *   Slots without a section appear as standalone items.
+ * - `inputType`: controls whether the customizer renders an Input ('short') or Textarea ('long').
+ *   Auto-detected from defaultValue length if omitted.
+ * - `defaultFontFamily`, `defaultFontSize`, `defaultTextAlign`: theme-level formatting defaults
+ *   that the user can override per-slot.
  */
 export interface TextSlotConfig {
 	label: string;
 	defaultValue: string;
+	/** Group key — slots with the same section string are grouped in the customizer */
+	section?: string;
+	/** UI hint: 'short' renders an Input, 'long' renders a Textarea */
+	inputType?: 'short' | 'long';
+	/** Default font family (CSS value, must match an entry in AVAILABLE_FONTS) */
+	defaultFontFamily?: string;
+	/** Default text alignment */
+	defaultTextAlign?: 'left' | 'center' | 'right';
 }
 export type TextSlotDefinitions = Record<string, TextSlotConfig>;
 

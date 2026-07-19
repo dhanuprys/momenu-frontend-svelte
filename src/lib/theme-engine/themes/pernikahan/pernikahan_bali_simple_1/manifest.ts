@@ -13,22 +13,28 @@ export const MANIFEST = {
 		promo_video: { label: 'Video Cerita Kami', mediaType: 'video', maxFiles: 1 }
 	},
 	textSlots: {
-		greeting_title: { label: 'Judul Salam', defaultValue: 'Om Swastyastu' },
+		greeting_title: { label: 'Judul Salam', defaultValue: 'Om Swastyastu', section: 'Salam Pembuka' },
 		greeting_body: {
 			label: 'Isi Salam',
 			defaultValue:
-				'Atas Asung Kertha Wara Nugraha Ida Sang Hyang Widhi Wasa/Tuhan Yang Maha Esa, kami bermaksud mengundang Bapak/Ibu/Saudara/i pada Acara Manusa Yadnya (Pawiwahan) putra-putri kami.'
+				'Atas Asung Kertha Wara Nugraha Ida Sang Hyang Widhi Wasa/Tuhan Yang Maha Esa, kami bermaksud mengundang Bapak/Ibu/Saudara/i pada Acara Manusa Yadnya (Pawiwahan) putra-putri kami.',
+			section: 'Salam Pembuka',
+			inputType: 'long'
 		},
 		quote_text: {
-			label: 'Kutipan',
+			label: 'Isi Kutipan',
 			defaultValue:
-				'"Wahai pasangan suami-istri, semoga kalian tetap bersatu dan tidak pernah terpisahkan. Semoga kalian mencapai hidup penuh kebahagiaan, tinggal di rumah yang penuh kegembiraan bersama seluruh keturunanmu."'
+				'"Wahai pasangan suami-istri, semoga kalian tetap bersatu dan tidak pernah terpisahkan. Semoga kalian mencapai hidup penuh kebahagiaan, tinggal di rumah yang penuh kegembiraan bersama seluruh keturunanmu."',
+			section: 'Kutipan',
+			inputType: 'long'
 		},
-		quote_source: { label: 'Sumber Kutipan', defaultValue: '— Rg Veda X.85.42' },
+		quote_source: { label: 'Sumber Kutipan', defaultValue: '— Rg Veda X.85.42', section: 'Kutipan' },
 		closing_text: {
 			label: 'Pesan Penutup',
 			defaultValue:
-				'Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/ Ibu/ Saudara/i, berkenan hadir untuk memberikan doa restu.'
+				'Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/ Ibu/ Saudara/i, berkenan hadir untuk memberikan doa restu.',
+			section: 'Penutup',
+			inputType: 'long'
 		},
 		schedule_title: { label: 'Judul Jadwal', defaultValue: 'Rangkaian Acara' }
 	},

@@ -128,6 +128,9 @@ export interface TextOverride {
 	value: string;
 	bold: boolean;
 	italic: boolean;
+	underline: boolean;
+	text_align: string;
+	font_family: string;
 }
 
 export interface StyleOverride {

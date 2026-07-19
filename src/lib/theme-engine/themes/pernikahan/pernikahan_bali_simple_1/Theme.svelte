@@ -36,7 +36,7 @@
 	let isOpened = $derived(coverState.isOpened());
 
 	// Media helper
-	const media = createMediaHelper(MANIFEST.buckets, mediaMappings);
+	const media = createMediaHelper(MANIFEST.buckets, mediaMappings, invitationData.isPreview);
 
 	// Text and Style helpers
 	const text = createTextHelper(MANIFEST.textSlots, textOverrides);
@@ -227,8 +227,8 @@
 			class="top-14 right-4"
 		/>
 		<div class="max-w-4xl mx-auto">
-			<h2 class="font-script text-4xl md:text-5xl mb-6">{@html text.render(TEXT.greeting_title)}</h2>
-			<p class="leading-relaxed max-w-2xl mx-auto mb-16">
+			<h2 class="font-script text-4xl md:text-5xl mb-6" style={text.fontStyle(TEXT.greeting_title)}>{@html text.render(TEXT.greeting_title)}</h2>
+			<p class="leading-relaxed max-w-2xl mx-auto mb-16" style={text.fontStyle(TEXT.greeting_body)}>
 				{@html text.render(TEXT.greeting_body)}
 			</p>
 
@@ -302,7 +302,7 @@
 				class="top-14 right-4"
 			/>
 			<div class="max-w-4xl mx-auto relative z-10">
-				<h3 class="font-script text-5xl md:text-6xl mb-12">{text.render(TEXT.schedule_title)}</h3>
+				<h3 class="font-script text-5xl md:text-6xl mb-12" style={text.fontStyle(TEXT.schedule_title)}>{text.render(TEXT.schedule_title)}</h3>
 				<div
 					use:reveal
 					class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl shadow-2xl max-w-lg mx-auto"
@@ -354,7 +354,7 @@
 					{/each}
 
 					<div class="mt-8 pt-6 border-t border-white/20">
-						<p class="italic text-sm mb-2">
+						<p class="italic text-sm mb-2" style={text.fontStyle(TEXT.closing_text)}>
 							{@html text.render(TEXT.closing_text)}
 						</p>
 						<p class="text-xs font-bold text-yellow-400 uppercase tracking-widest mt-4">
@@ -442,10 +442,10 @@
 						></path></svg
 					>
 				</div>
-				<p class="italic text-lg md:text-xl mb-4 font-serif leading-relaxed">
+				<p class="italic text-lg md:text-xl mb-4 font-serif leading-relaxed" style={text.fontStyle(TEXT.quote_text)}>
 					{@html text.render(TEXT.quote_text)}
 				</p>
-				<p class="font-bold tracking-widest uppercase text-sm">
+				<p class="font-bold tracking-widest uppercase text-sm" style={text.fontStyle(TEXT.quote_source)}>
 					{@html text.render(TEXT.quote_source)}
 				</p>
 			</div>

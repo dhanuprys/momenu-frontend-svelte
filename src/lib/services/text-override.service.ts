@@ -1,4 +1,5 @@
 import type { TextOverride } from '../types';
+import type { TextOverridePayload } from '$lib/theme-engine/helpers/text-edit-state.js';
 import { api } from '../utils/api';
 
 export const TextOverrideService = {
@@ -7,10 +8,7 @@ export const TextOverrideService = {
 		return res.data;
 	},
 
-	async upsert(
-		projectId: string,
-		overrides: { slot_key: string; value: string; bold: boolean; italic: boolean }[]
-	) {
+	async upsert(projectId: string, overrides: TextOverridePayload[]) {
 		const res = await api.put<TextOverride[]>(`/projects/${projectId}/text-overrides`, {
 			overrides
 		});

@@ -18,7 +18,8 @@ import type { BucketDefinitions } from '$lib/theme-engine/types.js';
  */
 export function createMediaHelper<TBuckets extends BucketDefinitions>(
 	_buckets: TBuckets,
-	mediaMappings: MediaMapping[]
+	mediaMappings: MediaMapping[],
+	isPreview: boolean = false
 ) {
 	type BucketKey = keyof TBuckets & string;
 
@@ -33,9 +34,26 @@ export function createMediaHelper<TBuckets extends BucketDefinitions>(
 			return this.getAll(bucket)[0];
 		},
 
-		/** Get the URL of the first media item in a bucket, or undefined. */
-		getFirstUrl(bucket: BucketKey): string | undefined {
-			return this.getFirst(bucket)?.url;
+		/**
+		 * Get the URL of the first media item in a bucket.
+		 * If no user media exists, returns the fallbackUrl ONLY if in preview mode.
+		 */
+		getFirstUrl(bucket: BucketKey, fallbackUrl?: string): string | undefined {
+			const item = this.getFirst(bucket);
+			if (item?.url) return item.url;
+			return isPreview ? fallbackUrl : undefined;
+		},
+
+		/**
+		 * Get all URLs for a bucket (useful for galleries).
+		 * If no user media exists, returns the fallbackUrls ONLY if in preview mode.
+		 */
+		getUrls(bucket: BucketKey, fallbackUrls?: string[]): string[] {
+			const items = this.getAll(bucket);
+			if (items.length > 0) {
+				return items.map((m) => m.url).filter(Boolean) as string[];
+			}
+			return isPreview && fallbackUrls ? fallbackUrls : [];
 		},
 
 		/** Check if a bucket has any media items. */

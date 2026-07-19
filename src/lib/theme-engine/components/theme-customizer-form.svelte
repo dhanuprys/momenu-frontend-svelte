@@ -4,10 +4,35 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { TextOverrideService, StyleOverrideService } from '$lib/services/index.js';
-	import type { TextOverride, StyleOverride, Project } from '$lib/types/models.js';
+	import type { StyleOverride, Project } from '$lib/types/models.js';
 	import { getThemeManifest } from '$lib/theme-engine/registry.js';
-	import { Loader2, Bold, Italic, Type, Palette } from '@lucide/svelte';
+	import {
+		AVAILABLE_FONTS,
+		type FontFamilyOption
+	} from '$lib/theme-engine/constants/fonts.js';
+	import type { TextSlotConfig } from '$lib/theme-engine/types.js';
+	import {
+		type TextEditState,
+		initTextEdits,
+		buildTextPayload,
+		resetToDefault
+	} from '$lib/theme-engine/helpers/text-edit-state.js';
+	import {
+		Loader2,
+		Bold,
+		Italic,
+		Underline,
+		Type,
+		Palette,
+		AlignLeft,
+		AlignCenter,
+		AlignRight,
+		ChevronDown,
+		ChevronUp,
+		RotateCcw
+	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import type { Snippet } from 'svelte';
 
@@ -31,34 +56,45 @@
 	let textSlots = $derived(manifest?.textSlots || {});
 	let styleSlots = $derived(manifest?.styleSlots || {});
 
-	// Local state for editing
-	let textEdits = $state<Record<string, { value: string; bold: boolean; italic: boolean }>>({});
+	// ── State (using shared factory) ──
+
+	let textEdits = $state<Record<string, TextEditState>>({});
 	let styleEdits = $state<Record<string, Record<string, string>>>({});
 
-	// Initialize local state
+	// ── Section grouping ──
+
+	interface SectionGroup {
+		name: string | null;
+		slots: [string, TextSlotConfig][];
+	}
+
+	let collapsedSections = $state<Record<string, boolean>>({});
+
+	let sectionGroups = $derived.by((): SectionGroup[] => {
+		const entries = Object.entries(textSlots);
+		const sectionMap = new Map<string | null, [string, TextSlotConfig][]>();
+
+		for (const [key, config] of entries) {
+			const section = config.section ?? null;
+			if (!sectionMap.has(section)) {
+				sectionMap.set(section, []);
+			}
+			sectionMap.get(section)!.push([key, config]);
+		}
+
+		const groups: SectionGroup[] = [];
+		for (const [name, slots] of sectionMap) {
+			groups.push({ name, slots });
+		}
+		return groups;
+	});
+
+	// ── Initialize edit state (single call to shared factory) ──
+
 	$effect(() => {
 		if (project) {
-			// Init text
-			const initialText: typeof textEdits = {};
-			for (const key of Object.keys(textSlots)) {
-				const existing = project.text_overrides?.find((o: TextOverride) => o.slot_key === key);
-				if (existing) {
-					initialText[key] = {
-						value: existing.value,
-						bold: existing.bold,
-						italic: existing.italic
-					};
-				} else {
-					initialText[key] = {
-						value: textSlots[key].defaultValue,
-						bold: false,
-						italic: false
-					};
-				}
-			}
-			textEdits = initialText;
+			textEdits = initTextEdits(textSlots, project.text_overrides);
 
-			// Init style
 			const initialStyle: typeof styleEdits = {};
 			for (const key of Object.keys(styleSlots)) {
 				const existing = project.style_overrides?.find((o: StyleOverride) => o.slot_key === key);
@@ -85,20 +121,33 @@
 		}
 	});
 
+	// ── Helpers ──
+
+	function getInputType(config: TextSlotConfig): 'short' | 'long' {
+		if (config.inputType) return config.inputType;
+		return (config.defaultValue || '').length > 50 ? 'long' : 'short';
+	}
+
+	function getFontLabel(value: string): string {
+		if (!value) return 'Default Tema';
+		const found = AVAILABLE_FONTS.find((f: FontFamilyOption) => f.value === value);
+		return found ? found.label : value;
+	}
+
+	function toggleSection(name: string) {
+		collapsedSections[name] = !collapsedSections[name];
+	}
+
+	function handleResetSlot(key: string) {
+		textEdits[key] = resetToDefault(textSlots[key]);
+	}
+
+	// ── Save (uses shared buildTextPayload) ──
+
 	async function handleSave() {
 		saving = true;
 		try {
-			const txtPayload = Object.entries(textEdits)
-				.filter(([key, edit]) => {
-					const def = textSlots[key].defaultValue;
-					return edit.value !== def || edit.bold || edit.italic;
-				})
-				.map(([key, edit]) => ({
-					slot_key: key,
-					value: edit.value,
-					bold: edit.bold,
-					italic: edit.italic
-				}));
+			const txtPayload = buildTextPayload(textEdits, textSlots);
 
 			const stlPayload = Object.entries(styleEdits)
 				.filter(([key, edit]) => {
@@ -120,10 +169,17 @@
 
 			toast.success('Kustomisasi berhasil disimpan');
 
-			// Update local project overrides so it reflects immediately
 			if (project) {
-				project.text_overrides = txtPayload.map((p) => ({ ...p, project_id: project.id }));
-				project.style_overrides = stlPayload.map((p) => ({ ...p, project_id: project.id }));
+				project.text_overrides = txtPayload.map((p) => ({
+					...p,
+					id: 0,
+					project_id: project.id
+				}));
+				project.style_overrides = stlPayload.map((p) => ({
+					...p,
+					id: 0,
+					project_id: project.id
+				})) as StyleOverride[];
 			}
 
 			if (onSaved) onSaved();
@@ -149,60 +205,47 @@
 			</Tabs.List>
 
 			<!-- TEXT TAB -->
-			<Tabs.Content value="text" class="space-y-4 pb-6">
+			<Tabs.Content value="text" class="space-y-5 pb-6">
 				{#if Object.keys(textSlots).length === 0}
 					<div class="text-center py-10 text-muted-foreground text-sm">
 						Tema ini tidak memiliki slot teks yang bisa dikustomisasi.
 					</div>
 				{:else}
-					{#each Object.entries(textSlots) as [key, config]}
-						<div
-							id="slot-edit-{key}"
-							class="p-5 border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300"
-						>
-							<Label class="mb-3 block font-semibold text-stone-800 tracking-wide"
-								>{config.label}</Label
-							>
-							<div class="flex items-start gap-3">
-								<div class="flex-1">
-									{#if textEdits[key]}
-										{#if (config.defaultValue || '').length > 50}
-											<Textarea
-												bind:value={textEdits[key].value}
-												class="min-h-[100px] w-full bg-stone-50 border-stone-200 focus-visible:ring-indigo-500/30 transition-all"
-											/>
-										{:else}
-											<Input
-												bind:value={textEdits[key].value}
-												class="bg-stone-50 border-stone-200 focus-visible:ring-indigo-500/30 transition-all h-10"
-											/>
-										{/if}
+					{#each sectionGroups as group}
+						{#if group.name}
+							<!-- Grouped Section -->
+							<div class="border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+								<button
+									class="w-full flex items-center justify-between px-5 py-4 bg-stone-50/80 hover:bg-stone-100/80 transition-colors cursor-pointer"
+									onclick={() => toggleSection(group.name!)}
+								>
+									<span class="font-bold text-stone-700 tracking-wide text-sm uppercase">{group.name}</span>
+									{#if collapsedSections[group.name]}
+										<ChevronDown class="h-4 w-4 text-stone-400" />
+									{:else}
+										<ChevronUp class="h-4 w-4 text-stone-400" />
 									{/if}
-								</div>
-								<div class="flex items-center gap-1.5 shrink-0 pt-0.5">
-									<Button
-										variant={textEdits[key]?.bold ? 'default' : 'outline'}
-										size="icon"
-										class="h-9 w-9 shrink-0 {textEdits[key]?.bold
-											? 'bg-indigo-600 text-white hover:bg-indigo-700'
-											: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
-										onclick={() => (textEdits[key].bold = !textEdits[key].bold)}
-									>
-										<Bold class="h-4 w-4" />
-									</Button>
-									<Button
-										variant={textEdits[key]?.italic ? 'default' : 'outline'}
-										size="icon"
-										class="h-9 w-9 shrink-0 {textEdits[key]?.italic
-											? 'bg-indigo-600 text-white hover:bg-indigo-700'
-											: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
-										onclick={() => (textEdits[key].italic = !textEdits[key].italic)}
-									>
-										<Italic class="h-4 w-4" />
-									</Button>
-								</div>
+								</button>
+
+								{#if !collapsedSections[group.name!]}
+									<div class="p-4 space-y-4">
+										{#each group.slots as [key, config]}
+											{@render slotEditor(key, config)}
+										{/each}
+									</div>
+								{/if}
 							</div>
-						</div>
+						{:else}
+							<!-- Standalone Slots -->
+							{#each group.slots as [key, config]}
+								<div
+									id="slot-edit-{key}"
+									class="p-5 border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300"
+								>
+									{@render slotEditor(key, config)}
+								</div>
+							{/each}
+						{/if}
 					{/each}
 				{/if}
 			</Tabs.Content>
@@ -277,3 +320,135 @@
 		</Button>
 	</div>
 </div>
+
+<!-- ── Reusable slot editor snippet ── -->
+{#snippet slotEditor(key: string, config: TextSlotConfig)}
+	<div id="slot-edit-{key}" class="space-y-3">
+		<!-- Header: label + reset button -->
+		<div class="flex items-center justify-between">
+			<Label class="block font-semibold text-stone-800 tracking-wide">{config.label}</Label>
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-7 px-2 text-xs text-stone-400 hover:text-stone-700 gap-1"
+				onclick={() => handleResetSlot(key)}
+			>
+				<RotateCcw class="h-3 w-3" />
+				Reset
+			</Button>
+		</div>
+
+		{#if textEdits[key]}
+			<!-- Text input -->
+			{#if getInputType(config) === 'long'}
+				<Textarea
+					bind:value={textEdits[key].value}
+					class="min-h-[100px] w-full bg-stone-50 border-stone-200 focus-visible:ring-indigo-500/30 transition-all"
+				/>
+			{:else}
+				<Input
+					bind:value={textEdits[key].value}
+					class="bg-stone-50 border-stone-200 focus-visible:ring-indigo-500/30 transition-all h-10"
+				/>
+			{/if}
+
+			<!-- Formatting toolbar -->
+			<div class="flex flex-wrap items-center gap-2">
+				<!-- Bold / Italic / Underline toggles -->
+				<div class="flex items-center gap-1">
+					<Button
+						variant={textEdits[key].bold ? 'default' : 'outline'}
+						size="icon"
+						class="h-8 w-8 shrink-0 {textEdits[key].bold
+							? 'bg-indigo-600 text-white hover:bg-indigo-700'
+							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
+						onclick={() => (textEdits[key].bold = !textEdits[key].bold)}
+					>
+						<Bold class="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={textEdits[key].italic ? 'default' : 'outline'}
+						size="icon"
+						class="h-8 w-8 shrink-0 {textEdits[key].italic
+							? 'bg-indigo-600 text-white hover:bg-indigo-700'
+							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
+						onclick={() => (textEdits[key].italic = !textEdits[key].italic)}
+					>
+						<Italic class="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={textEdits[key].underline ? 'default' : 'outline'}
+						size="icon"
+						class="h-8 w-8 shrink-0 {textEdits[key].underline
+							? 'bg-indigo-600 text-white hover:bg-indigo-700'
+							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
+						onclick={() => (textEdits[key].underline = !textEdits[key].underline)}
+					>
+						<Underline class="h-3.5 w-3.5" />
+					</Button>
+				</div>
+
+				<!-- Separator -->
+				<div class="w-px h-6 bg-stone-200 mx-1"></div>
+
+				<!-- Text Alignment -->
+				<div class="flex items-center gap-1">
+					<Button
+						variant={textEdits[key].text_align === 'left' ? 'default' : 'outline'}
+						size="icon"
+						class="h-8 w-8 shrink-0 {textEdits[key].text_align === 'left'
+							? 'bg-indigo-600 text-white hover:bg-indigo-700'
+							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
+						onclick={() => (textEdits[key].text_align = textEdits[key].text_align === 'left' ? '' : 'left')}
+					>
+						<AlignLeft class="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={textEdits[key].text_align === 'center' ? 'default' : 'outline'}
+						size="icon"
+						class="h-8 w-8 shrink-0 {textEdits[key].text_align === 'center'
+							? 'bg-indigo-600 text-white hover:bg-indigo-700'
+							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
+						onclick={() => (textEdits[key].text_align = textEdits[key].text_align === 'center' ? '' : 'center')}
+					>
+						<AlignCenter class="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={textEdits[key].text_align === 'right' ? 'default' : 'outline'}
+						size="icon"
+						class="h-8 w-8 shrink-0 {textEdits[key].text_align === 'right'
+							? 'bg-indigo-600 text-white hover:bg-indigo-700'
+							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
+						onclick={() => (textEdits[key].text_align = textEdits[key].text_align === 'right' ? '' : 'right')}
+					>
+						<AlignRight class="h-3.5 w-3.5" />
+					</Button>
+				</div>
+			</div>
+
+			<!-- Font selectors row -->
+			<div class="flex flex-wrap items-center gap-2 pt-1">
+				<!-- Font Family selector with preview -->
+				<Select.Root
+					type="single"
+					value={textEdits[key].font_family || undefined}
+					onValueChange={(v) => (textEdits[key].font_family = v ?? '')}
+				>
+					<Select.Trigger class="h-9 w-[180px] text-xs bg-stone-50 border-stone-200">
+						<span class="truncate" style={textEdits[key].font_family ? `font-family: '${textEdits[key].font_family}', sans-serif` : ''}>
+							{getFontLabel(textEdits[key].font_family)}
+						</span>
+					</Select.Trigger>
+					<Select.Content class="max-h-[240px]">
+						<Select.Item value="">Default Tema</Select.Item>
+						{#each AVAILABLE_FONTS as font (font.value)}
+							<Select.Item value={font.value}>
+								<span style="font-family: '{font.value}', sans-serif">{font.label}</span>
+							</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+		{/if}
+	</div>
+{/snippet}
