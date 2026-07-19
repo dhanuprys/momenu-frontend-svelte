@@ -212,7 +212,9 @@
 	<main class="flex-1 flex flex-col items-center justify-center p-8 text-center relative">
 		<!-- Soft borderless white spotlight behind text for readability -->
 		{#if mounted && introPhase >= 4}
-			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] md:w-[700px] h-[50vh] bg-white/[0.12] dark:bg-white/[0.05] rounded-full blur-[100px] pointer-events-none z-0"></div>
+			<div
+				class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] md:w-[700px] h-[50vh] bg-white/40 dark:bg-white/5 rounded-full blur-[100px] pointer-events-none z-0"
+			></div>
 		{/if}
 
 		<!-- Content wrapper with relative z-10 to stay above background elements -->
