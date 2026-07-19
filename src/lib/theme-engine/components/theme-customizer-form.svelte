@@ -139,6 +139,10 @@
 		textEdits[key] = resetToDefault(textSlots[key]);
 	}
 
+	function handleResetStyleSlot(key: string) {
+		styleEdits[key] = { ...styleSlots[key].properties };
+	}
+
 	// ── Save (uses shared buildTextPayload) ──
 
 	async function handleSave() {
@@ -263,9 +267,18 @@
 							id="slot-edit-{key}"
 							class="p-5 border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300"
 						>
-							<Label class="mb-4 block font-semibold text-stone-800 tracking-wide"
-								>{config.label}</Label
-							>
+							<div class="flex items-center justify-between mb-4">
+								<Label class="block font-semibold text-stone-800 tracking-wide">{config.label}</Label>
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-7 px-2 text-xs text-stone-400 hover:text-stone-700 gap-1"
+									onclick={() => handleResetStyleSlot(key)}
+								>
+									<RotateCcw class="h-3 w-3" />
+									Reset
+								</Button>
+							</div>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 								{#if styleEdits[key]}
 									{#each Object.keys(styleEdits[key]) as propKey}
