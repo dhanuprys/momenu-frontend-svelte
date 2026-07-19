@@ -449,7 +449,7 @@
 						</span>
 					</Select.Trigger>
 					<Select.Content class="max-h-[240px]">
-						<Select.Item value="">Default Tema</Select.Item>
+						<Select.Item value="">Gunakan font default</Select.Item>
 						{#each AVAILABLE_FONTS as font (font.value)}
 							<Select.Item value={font.value}>
 								<span style="font-family: '{font.value}', sans-serif">{font.label}</span>
