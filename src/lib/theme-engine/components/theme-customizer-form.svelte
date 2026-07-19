@@ -8,10 +8,7 @@
 	import { TextOverrideService, StyleOverrideService } from '$lib/services/index.js';
 	import type { StyleOverride, Project } from '$lib/types/models.js';
 	import { getThemeManifest } from '$lib/theme-engine/registry.js';
-	import {
-		AVAILABLE_FONTS,
-		type FontFamilyOption
-	} from '$lib/theme-engine/constants/fonts.js';
+	import { AVAILABLE_FONTS, type FontFamilyOption } from '$lib/theme-engine/constants/fonts.js';
 	import type { TextSlotConfig } from '$lib/theme-engine/types.js';
 	import {
 		type TextEditState,
@@ -214,12 +211,16 @@
 					{#each sectionGroups as group}
 						{#if group.name}
 							<!-- Grouped Section -->
-							<div class="border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+							<div
+								class="border border-stone-200/60 rounded-2xl bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden"
+							>
 								<button
 									class="w-full flex items-center justify-between px-5 py-4 bg-stone-50/80 hover:bg-stone-100/80 transition-colors cursor-pointer"
 									onclick={() => toggleSection(group.name!)}
 								>
-									<span class="font-bold text-stone-700 tracking-wide text-sm uppercase">{group.name}</span>
+									<span class="font-bold text-stone-700 tracking-wide text-sm uppercase"
+										>{group.name}</span
+									>
 									{#if collapsedSections[group.name]}
 										<ChevronDown class="h-4 w-4 text-stone-400" />
 									{:else}
@@ -399,7 +400,8 @@
 						class="h-8 w-8 shrink-0 {textEdits[key].text_align === 'left'
 							? 'bg-indigo-600 text-white hover:bg-indigo-700'
 							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
-						onclick={() => (textEdits[key].text_align = textEdits[key].text_align === 'left' ? '' : 'left')}
+						onclick={() =>
+							(textEdits[key].text_align = textEdits[key].text_align === 'left' ? '' : 'left')}
 					>
 						<AlignLeft class="h-3.5 w-3.5" />
 					</Button>
@@ -409,7 +411,8 @@
 						class="h-8 w-8 shrink-0 {textEdits[key].text_align === 'center'
 							? 'bg-indigo-600 text-white hover:bg-indigo-700'
 							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
-						onclick={() => (textEdits[key].text_align = textEdits[key].text_align === 'center' ? '' : 'center')}
+						onclick={() =>
+							(textEdits[key].text_align = textEdits[key].text_align === 'center' ? '' : 'center')}
 					>
 						<AlignCenter class="h-3.5 w-3.5" />
 					</Button>
@@ -419,7 +422,8 @@
 						class="h-8 w-8 shrink-0 {textEdits[key].text_align === 'right'
 							? 'bg-indigo-600 text-white hover:bg-indigo-700'
 							: 'text-stone-500 hover:text-stone-800 hover:bg-stone-100'} transition-colors"
-						onclick={() => (textEdits[key].text_align = textEdits[key].text_align === 'right' ? '' : 'right')}
+						onclick={() =>
+							(textEdits[key].text_align = textEdits[key].text_align === 'right' ? '' : 'right')}
 					>
 						<AlignRight class="h-3.5 w-3.5" />
 					</Button>
@@ -435,7 +439,12 @@
 					onValueChange={(v) => (textEdits[key].font_family = v ?? '')}
 				>
 					<Select.Trigger class="h-9 w-[180px] text-xs bg-stone-50 border-stone-200">
-						<span class="truncate" style={textEdits[key].font_family ? `font-family: '${textEdits[key].font_family}', sans-serif` : ''}>
+						<span
+							class="truncate"
+							style={textEdits[key].font_family
+								? `font-family: '${textEdits[key].font_family}', sans-serif`
+								: ''}
+						>
 							{getFontLabel(textEdits[key].font_family)}
 						</span>
 					</Select.Trigger>

@@ -43,16 +43,11 @@
 			<Skeleton class="h-64 w-full" />
 		</div>
 	{:else if !project}
-		<div class="text-center py-10 text-muted-foreground">
-			Gagal memuat detail proyek.
-		</div>
+		<div class="text-center py-10 text-muted-foreground">Gagal memuat detail proyek.</div>
 	{:else}
 		<div class="max-w-4xl">
 			<!-- Use the exact same form used by the drawer to guarantee 100% UI and UX consistency -->
-			<ThemeCustomizerForm 
-				{project} 
-				onSaved={loadData}
-			/>
+			<ThemeCustomizerForm {project} onSaved={loadData} />
 		</div>
 	{/if}
 </PageComposer>

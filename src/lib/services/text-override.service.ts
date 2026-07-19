@@ -1,5 +1,5 @@
-import type { TextOverride } from '../types';
 import type { TextOverridePayload } from '$lib/theme-engine/helpers/text-edit-state.js';
+import type { TextOverride } from '../types';
 import { api } from '../utils/api';
 
 export const TextOverrideService = {

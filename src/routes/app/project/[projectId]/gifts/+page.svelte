@@ -393,7 +393,9 @@
 									Digital Payment
 								</div>
 								{#if gift.phone_number}
-									<div class="text-sm font-bold text-stone-700 dark:text-stone-300 flex items-center gap-2 drop-shadow-sm">
+									<div
+										class="text-sm font-bold text-stone-700 dark:text-stone-300 flex items-center gap-2 drop-shadow-sm"
+									>
 										{gift.phone_number}
 										<button
 											class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 bg-stone-100 dark:bg-stone-800 p-1 rounded-md"

@@ -206,7 +206,9 @@
 						>
 							<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
 								<Card.Title class="text-sm font-medium">Konfirmasi RSVP</Card.Title>
-								<div class="h-8 w-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+								<div
+									class="h-8 w-8 rounded-full bg-emerald-500/20 flex items-center justify-center"
+								>
 									<CalendarCheck class="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
 								</div>
 							</Card.Header>
@@ -221,7 +223,10 @@
 							{#if analytics.unique_guests > 0}
 								<div
 									class="absolute bottom-0 left-0 h-1 bg-emerald-500/50 transition-all duration-700"
-									style="width: {((analytics.rsvp_stats.attending + analytics.rsvp_stats.not_attending) / analytics.unique_guests) * 100}%"
+									style="width: {((analytics.rsvp_stats.attending +
+										analytics.rsvp_stats.not_attending) /
+										analytics.unique_guests) *
+										100}%"
 								></div>
 							{/if}
 						</Card.Root>
@@ -266,7 +271,9 @@
 									</div>
 									<div>
 										<p class="text-sm font-medium text-muted-foreground">Tidak Hadir</p>
-										<p class="text-2xl sm:text-3xl font-bold">{analytics.rsvp_stats.not_attending}</p>
+										<p class="text-2xl sm:text-3xl font-bold">
+											{analytics.rsvp_stats.not_attending}
+										</p>
 									</div>
 								</div>
 								<div class="flex-1 p-5 flex items-center gap-4">
@@ -377,14 +384,21 @@
 							{#if wishes && wishes.length > 0}
 								<div class="grid gap-4 sm:grid-cols-2">
 									{#each wishes as wish}
-										<div class="p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors space-y-3 shadow-xs">
+										<div
+											class="p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors space-y-3 shadow-xs"
+										>
 											<div class="flex items-center justify-between gap-2">
 												<div class="font-semibold text-sm truncate">{wish.name}</div>
-												<div class="text-xs text-muted-foreground shrink-0">{formatShortDate(wish.created_at)}</div>
+												<div class="text-xs text-muted-foreground shrink-0">
+													{formatShortDate(wish.created_at)}
+												</div>
 											</div>
 											<p class="text-sm text-foreground/90 italic">"{wish.message}"</p>
 											{#if wish.is_attending}
-												<Badge variant="outline" class="text-[10px] bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+												<Badge
+													variant="outline"
+													class="text-[10px] bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800"
+												>
 													<UserCheck class="h-3 w-3 mr-1" /> Hadir
 												</Badge>
 											{:else}
@@ -396,12 +410,18 @@
 									{/each}
 								</div>
 							{:else}
-								<div class="flex flex-col items-center justify-center py-16 text-center border rounded-xl border-dashed">
-									<div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+								<div
+									class="flex flex-col items-center justify-center py-16 text-center border rounded-xl border-dashed"
+								>
+									<div
+										class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4"
+									>
 										<MessageSquareHeart class="h-6 w-6 text-primary" />
 									</div>
 									<h3 class="text-lg font-semibold mb-1">Belum Ada Ucapan</h3>
-									<p class="text-muted-foreground text-sm max-w-sm">Tamu undangan belum memberikan ucapan dan doa untuk acara Anda.</p>
+									<p class="text-muted-foreground text-sm max-w-sm">
+										Tamu undangan belum memberikan ucapan dan doa untuk acara Anda.
+									</p>
 								</div>
 							{/if}
 						</Card.Content>
@@ -447,7 +467,10 @@
 							{#if analytics.total_visits > 0}
 								<div
 									class="absolute bottom-0 left-0 h-1 bg-blue-500/50 transition-all duration-700"
-									style="width: {Math.min((analytics.unique_guests / analytics.total_visits) * 100, 100)}%"
+									style="width: {Math.min(
+										(analytics.unique_guests / analytics.total_visits) * 100,
+										100
+									)}%"
 								></div>
 							{/if}
 						</Card.Root>

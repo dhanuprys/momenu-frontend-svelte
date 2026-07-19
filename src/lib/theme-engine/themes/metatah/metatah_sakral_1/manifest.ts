@@ -1,5 +1,5 @@
-import type { ThemeManifest } from '$lib/theme-engine/types.js';
 import { extractSlotKeys } from '$lib/theme-engine/helpers/slot-keys.js';
+import type { ThemeManifest } from '$lib/theme-engine/types.js';
 
 export const MANIFEST = {
 	id: 'metatah_sakral_1',
@@ -13,4 +13,3 @@ export const MANIFEST = {
 
 /** Typed bucket key constants */
 export const BUCKET = extractSlotKeys(MANIFEST.buckets);
-

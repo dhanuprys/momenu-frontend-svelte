@@ -30,10 +30,14 @@
 			class="absolute inset-0 bg-linear-to-t from-stone-900 via-stone-900/40 to-transparent"
 		></div>
 
-		<div class="relative z-10 w-full h-full flex flex-col items-center justify-between py-16 md:py-24 px-6 text-center text-white">
+		<div
+			class="relative z-10 w-full h-full flex flex-col items-center justify-between py-16 md:py-24 px-6 text-center text-white"
+		>
 			<!-- Top / Middle -->
 			<div class="flex-1 flex flex-col items-center justify-center mt-12 md:mt-20">
-				<p class="uppercase tracking-[0.3em] text-xs md:text-sm mb-6 text-stone-200 font-light drop-shadow-md">
+				<p
+					class="uppercase tracking-[0.3em] text-xs md:text-sm mb-6 text-stone-200 font-light drop-shadow-md"
+				>
 					Undangan Pawiwahan
 				</p>
 				<h4 class="font-script text-6xl md:text-8xl text-white drop-shadow-xl leading-tight">
@@ -48,7 +52,9 @@
 				<p class="text-xs md:text-sm text-stone-200 mb-2 font-light tracking-widest">
 					Kepada Yth. Bapak/Ibu/Saudara/i
 				</p>
-				<h2 class="text-3xl md:text-4xl font-serif italic mb-10 text-white drop-shadow-md border-b border-white/30 pb-3 px-6">
+				<h2
+					class="text-3xl md:text-4xl font-serif italic mb-10 text-white drop-shadow-md border-b border-white/30 pb-3 px-6"
+				>
 					{guestName || 'Tamu Undangan'}
 				</h2>
 

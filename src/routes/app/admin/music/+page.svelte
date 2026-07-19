@@ -7,7 +7,15 @@
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { getMediaUrl } from '$lib/utils.js';
-	import { Music as MusicIcon, Plus, Edit, Trash2, Play, Pause, Image as ImageIcon } from '@lucide/svelte';
+	import {
+		Music as MusicIcon,
+		Plus,
+		Edit,
+		Trash2,
+		Play,
+		Pause,
+		Image as ImageIcon
+	} from '@lucide/svelte';
 	import { config } from '$lib/config/index.js';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { toast } from 'svelte-sonner';
@@ -63,7 +71,7 @@
 	let isEditingMusic = $state(false);
 	let editMusicId = $state<number | null>(null);
 	let selectedCategoryFilter = $state<number | 'all'>('all');
-	
+
 	let audioSourceType = $state<'file' | 'link'>('file');
 	let audioExternalUrl = $state('');
 
@@ -112,7 +120,7 @@
 			cover_image: music.cover_image || '',
 			order: music.order
 		};
-		
+
 		if (music.file_path.startsWith('http://') || music.file_path.startsWith('https://')) {
 			audioSourceType = 'link';
 			audioExternalUrl = music.file_path;
@@ -121,7 +129,10 @@
 			audioExternalUrl = '';
 		}
 
-		if (music.cover_image && (music.cover_image.startsWith('http://') || music.cover_image.startsWith('https://'))) {
+		if (
+			music.cover_image &&
+			(music.cover_image.startsWith('http://') || music.cover_image.startsWith('https://'))
+		) {
 			coverSourceType = 'link';
 			coverExternalUrl = music.cover_image;
 		} else {
@@ -221,7 +232,7 @@
 			toast.error('Silakan pilih file musik');
 			return;
 		}
-		
+
 		if (audioSourceType === 'link' && !audioExternalUrl) {
 			toast.error('Silakan masukkan URL tautan musik');
 			return;
@@ -248,7 +259,7 @@
 			newMusic.category_id = Number(newMusic.category_id);
 			newMusic.duration_seconds = Number(newMusic.duration_seconds);
 			newMusic.order = Number(newMusic.order);
-			
+
 			if (isEditingMusic && editMusicId) {
 				const updated = await AdminService.updateMusic(editMusicId, newMusic);
 				musics = musics.map((m) => (m.id === editMusicId ? updated : m));
@@ -258,7 +269,7 @@
 				musics = [created, ...musics];
 				toast.success('Musik berhasil ditambahkan');
 			}
-			
+
 			createMusicOpen = false;
 			resetMusicForm();
 		} catch (error) {
@@ -305,7 +316,11 @@
 					<Dialog.Content class="max-h-[90vh] overflow-y-auto">
 						<Dialog.Header>
 							<Dialog.Title>{isEditingMusic ? 'Edit Musik' : 'Upload Musik'}</Dialog.Title>
-							<Dialog.Description>{isEditingMusic ? 'Perbarui data musik latar.' : 'Tambahkan musik latar baru.'}</Dialog.Description>
+							<Dialog.Description
+								>{isEditingMusic
+									? 'Perbarui data musik latar.'
+									: 'Tambahkan musik latar baru.'}</Dialog.Description
+							>
 						</Dialog.Header>
 						<form onsubmit={handleCreateMusic} class="space-y-4 py-4">
 							<div class="space-y-2">
@@ -333,14 +348,22 @@
 							<div class="space-y-2">
 								<Label>Sumber Audio</Label>
 								<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
-									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => audioSourceType = 'file'}>
+									<button
+										type="button"
+										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+										onclick={() => (audioSourceType = 'file')}
+									>
 										Upload File
 									</button>
-									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => audioSourceType = 'link'}>
+									<button
+										type="button"
+										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+										onclick={() => (audioSourceType = 'link')}
+									>
 										Tautan Eksternal
 									</button>
 								</div>
-								
+
 								{#if audioSourceType === 'file'}
 									<div class="pt-2">
 										<Input
@@ -351,7 +374,9 @@
 											required={!isEditingMusic}
 										/>
 										{#if isEditingMusic && newMusic.file_path && audioSourceType === 'file'}
-											<p class="text-xs text-muted-foreground mt-1">Biarkan kosong jika tidak ingin mengubah file.</p>
+											<p class="text-xs text-muted-foreground mt-1">
+												Biarkan kosong jika tidak ingin mengubah file.
+											</p>
 										{/if}
 									</div>
 								{:else}
@@ -363,31 +388,38 @@
 											bind:value={audioExternalUrl}
 											required
 										/>
-										<p class="text-xs text-muted-foreground mt-1">Masukkan URL langsung (direct link) ke file audio (mp3, wav, dll).</p>
+										<p class="text-xs text-muted-foreground mt-1">
+											Masukkan URL langsung (direct link) ke file audio (mp3, wav, dll).
+										</p>
 									</div>
 								{/if}
 							</div>
 							<div class="space-y-2">
 								<Label>Cover Image (Opsional)</Label>
 								<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
-									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => coverSourceType = 'file'}>
+									<button
+										type="button"
+										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+										onclick={() => (coverSourceType = 'file')}
+									>
 										Upload File
 									</button>
-									<button type="button" class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`} onclick={() => coverSourceType = 'link'}>
+									<button
+										type="button"
+										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+										onclick={() => (coverSourceType = 'link')}
+									>
 										Tautan Eksternal
 									</button>
 								</div>
-								
+
 								{#if coverSourceType === 'file'}
 									<div class="pt-2">
-										<Input
-											id="music-cover"
-											type="file"
-											accept="image/*"
-											bind:files={coverFiles}
-										/>
+										<Input id="music-cover" type="file" accept="image/*" bind:files={coverFiles} />
 										{#if isEditingMusic && newMusic.cover_image && coverSourceType === 'file'}
-											<p class="text-xs text-muted-foreground mt-1">Biarkan kosong jika tidak ingin mengubah cover.</p>
+											<p class="text-xs text-muted-foreground mt-1">
+												Biarkan kosong jika tidak ingin mengubah cover.
+											</p>
 										{/if}
 									</div>
 								{:else}
@@ -398,7 +430,9 @@
 											placeholder="https://example.com/cover.jpg"
 											bind:value={coverExternalUrl}
 										/>
-										<p class="text-xs text-muted-foreground mt-1">Masukkan URL langsung (direct link) ke gambar cover (jpg, png, dll).</p>
+										<p class="text-xs text-muted-foreground mt-1">
+											Masukkan URL langsung (direct link) ke gambar cover (jpg, png, dll).
+										</p>
 									</div>
 								{/if}
 							</div>
@@ -459,19 +493,30 @@
 								>
 							</Table.Row>
 						{:else}
-							{#each musics.filter((m) => selectedCategoryFilter === 'all' || m.category_id === selectedCategoryFilter).sort((a, b) => a.order - b.order) as music}
+							{#each musics
+								.filter((m) => selectedCategoryFilter === 'all' || m.category_id === selectedCategoryFilter)
+								.sort((a, b) => a.order - b.order) as music}
 								<Table.Row>
 									<Table.Cell>
-										<div class="relative h-10 w-10 shrink-0 rounded overflow-hidden bg-muted transition-shadow">
+										<div
+											class="relative h-10 w-10 shrink-0 rounded overflow-hidden bg-muted transition-shadow"
+										>
 											{#if music.cover_image}
-												<img src={getMediaUrl(music.cover_image)} alt={music.title} class="h-full w-full object-cover" />
+												<img
+													src={getMediaUrl(music.cover_image)}
+													alt={music.title}
+													class="h-full w-full object-cover"
+												/>
 											{:else}
 												<div class="h-full w-full flex items-center justify-center bg-primary/10">
 													<MusicIcon class="h-4 w-4 text-primary/50" />
 												</div>
 											{/if}
 											<button
-												class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId === music.id ? 'opacity-100! bg-black/60' : ''}"
+												class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId ===
+												music.id
+													? 'opacity-100! bg-black/60'
+													: ''}"
 												onclick={(e) => {
 													e.stopPropagation();
 													playAudio(music);

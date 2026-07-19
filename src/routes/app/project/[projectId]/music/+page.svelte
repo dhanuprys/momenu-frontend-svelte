@@ -416,17 +416,26 @@
 					>
 						<div class="flex p-3 sm:p-4 items-center gap-3 sm:gap-4">
 							<!-- Cover Image / Play Button -->
-							<div class="relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-lg overflow-hidden bg-muted transition-shadow group-hover:shadow-sm">
+							<div
+								class="relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-lg overflow-hidden bg-muted transition-shadow group-hover:shadow-sm"
+							>
 								{#if music.cover_image}
-									<img src={getMediaUrl(music.cover_image)} alt={music.title} class="h-full w-full object-cover" />
+									<img
+										src={getMediaUrl(music.cover_image)}
+										alt={music.title}
+										class="h-full w-full object-cover"
+									/>
 								{:else}
 									<div class="h-full w-full flex items-center justify-center bg-primary/10">
 										<MusicIcon class="h-5 w-5 sm:h-6 sm:w-6 text-primary/50" />
 									</div>
 								{/if}
-								
+
 								<button
-									class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId === music.id ? 'opacity-100! bg-black/60' : ''} text-white"
+									class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId ===
+									music.id
+										? 'opacity-100! bg-black/60'
+										: ''} text-white"
 									onclick={(e) => {
 										e.stopPropagation();
 										playAudio(music);
@@ -435,9 +444,12 @@
 								>
 									{#if playingMusicId === music.id}
 										<div class="flex items-center gap-0.5 h-4 justify-center">
-											<span class="w-1 h-3 bg-white animate-[bounce_1s_infinite_0.1s] rounded-full"></span>
-											<span class="w-1 h-4 bg-white animate-[bounce_1s_infinite_0.3s] rounded-full"></span>
-											<span class="w-1 h-2 bg-white animate-[bounce_1s_infinite_0.5s] rounded-full"></span>
+											<span class="w-1 h-3 bg-white animate-[bounce_1s_infinite_0.1s] rounded-full"
+											></span>
+											<span class="w-1 h-4 bg-white animate-[bounce_1s_infinite_0.3s] rounded-full"
+											></span>
+											<span class="w-1 h-2 bg-white animate-[bounce_1s_infinite_0.5s] rounded-full"
+											></span>
 										</div>
 									{:else}
 										<Play class="h-5 w-5 sm:h-6 sm:w-6 ml-1" fill="currentColor" />

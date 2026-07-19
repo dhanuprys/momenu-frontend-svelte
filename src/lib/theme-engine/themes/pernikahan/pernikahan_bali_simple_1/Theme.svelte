@@ -196,7 +196,8 @@
 
 			<div class="z-10 text-center text-white p-6" in:fly={{ y: 50, duration: 1500, delay: 500 }}>
 				<h1 class="font-script text-5xl md:text-7xl lg:text-8xl mb-4 drop-shadow-lg">
-					{payload.nama_panggilan_pria || payload.nama_mempelai_pria} & {payload.nama_panggilan_wanita || payload.nama_mempelai_wanita}
+					{payload.nama_panggilan_pria || payload.nama_mempelai_pria} & {payload.nama_panggilan_wanita ||
+						payload.nama_mempelai_wanita}
 				</h1>
 				<p class="text-lg md:text-xl font-light tracking-widest uppercase mt-6 drop-shadow-md">
 					We are getting married
@@ -227,7 +228,9 @@
 			class="top-14 right-4"
 		/>
 		<div class="max-w-4xl mx-auto">
-			<h2 class="font-script text-4xl md:text-5xl mb-6" style={text.fontStyle(TEXT.greeting_title)}>{@html text.render(TEXT.greeting_title)}</h2>
+			<h2 class="font-script text-4xl md:text-5xl mb-6" style={text.fontStyle(TEXT.greeting_title)}>
+				{@html text.render(TEXT.greeting_title)}
+			</h2>
 			<p class="leading-relaxed max-w-2xl mx-auto mb-16" style={text.fontStyle(TEXT.greeting_body)}>
 				{@html text.render(TEXT.greeting_body)}
 			</p>
@@ -244,7 +247,9 @@
 							<div class="w-full h-full bg-stone-200"></div>
 						{/if}
 					</div>
-					<h3 class="font-script text-4xl text-stone-800 mb-2">{payload.nama_panggilan_pria || payload.nama_mempelai_pria}</h3>
+					<h3 class="font-script text-4xl text-stone-800 mb-2">
+						{payload.nama_panggilan_pria || payload.nama_mempelai_pria}
+					</h3>
 					<p class="font-bold text-lg mb-1">{payload.nama_mempelai_pria}</p>
 					<p class="italic text-stone-500 mb-2 text-sm text-center">
 						{#if payload.anak_ke_pria && payload.bersaudara_pria}
@@ -270,7 +275,9 @@
 							<div class="w-full h-full bg-stone-200"></div>
 						{/if}
 					</div>
-					<h3 class="font-script text-4xl text-stone-800 mb-2">{payload.nama_panggilan_wanita || payload.nama_mempelai_wanita}</h3>
+					<h3 class="font-script text-4xl text-stone-800 mb-2">
+						{payload.nama_panggilan_wanita || payload.nama_mempelai_wanita}
+					</h3>
 					<p class="font-bold text-lg mb-1">{payload.nama_mempelai_wanita}</p>
 					<p class="italic text-stone-500 mb-2 text-sm text-center">
 						{#if payload.anak_ke_wanita && payload.bersaudara_wanita}
@@ -294,7 +301,11 @@
 			class="relative py-24 px-6 text-center overflow-hidden"
 			style={style.css(STYLE.schedule_section)}
 		>
-			<SectionEditButton slotKey={STYLE.schedule_section} tab="style" label="Edit Tampilan Jadwal" />
+			<SectionEditButton
+				slotKey={STYLE.schedule_section}
+				tab="style"
+				label="Edit Tampilan Jadwal"
+			/>
 			<SectionEditButton
 				slotKey={TEXT.schedule_title}
 				tab="text"
@@ -302,7 +313,12 @@
 				class="top-14 right-4"
 			/>
 			<div class="max-w-4xl mx-auto relative z-10">
-				<h3 class="font-script text-5xl md:text-6xl mb-12" style={text.fontStyle(TEXT.schedule_title)}>{text.render(TEXT.schedule_title)}</h3>
+				<h3
+					class="font-script text-5xl md:text-6xl mb-12"
+					style={text.fontStyle(TEXT.schedule_title)}
+				>
+					{text.render(TEXT.schedule_title)}
+				</h3>
 				<div
 					use:reveal
 					class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl shadow-2xl max-w-lg mx-auto"
@@ -343,7 +359,12 @@
 										hour: '2-digit',
 										minute: '2-digit',
 										timeZone: schedule.timezone || 'Asia/Jakarta'
-									})} {schedule.timezone === 'Asia/Makassar' ? 'WITA' : schedule.timezone === 'Asia/Jayapura' ? 'WIT' : 'WIB'} - Selesai
+									})}
+									{schedule.timezone === 'Asia/Makassar'
+										? 'WITA'
+										: schedule.timezone === 'Asia/Jayapura'
+											? 'WIT'
+											: 'WIB'} - Selesai
 								</p>
 							{/if}
 							<div class="mt-4 text-stone-300">
@@ -442,10 +463,16 @@
 						></path></svg
 					>
 				</div>
-				<p class="italic text-lg md:text-xl mb-4 font-serif leading-relaxed" style={text.fontStyle(TEXT.quote_text)}>
+				<p
+					class="italic text-lg md:text-xl mb-4 font-serif leading-relaxed"
+					style={text.fontStyle(TEXT.quote_text)}
+				>
 					{@html text.render(TEXT.quote_text)}
 				</p>
-				<p class="font-bold tracking-widest uppercase text-sm" style={text.fontStyle(TEXT.quote_source)}>
+				<p
+					class="font-bold tracking-widest uppercase text-sm"
+					style={text.fontStyle(TEXT.quote_source)}
+				>
 					{@html text.render(TEXT.quote_source)}
 				</p>
 			</div>
@@ -462,8 +489,13 @@
 
 				<div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
 					{#each galleryImages as image}
-						<div use:reveal class="break-inside-avoid overflow-hidden rounded-xl shadow-sm group relative">
-							<div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10 pointer-events-none"></div>
+						<div
+							use:reveal
+							class="break-inside-avoid overflow-hidden rounded-xl shadow-sm group relative"
+						>
+							<div
+								class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10 pointer-events-none"
+							></div>
 							<img
 								src={getMediaUrl(image.url)}
 								alt="Gallery"
@@ -652,12 +684,20 @@
 								<div class="grow flex flex-col justify-center my-4">
 									{#if gift.type === 'ewallet'}
 										{#if gift.qr_code_image}
-											<div class="max-w-[200px] mx-auto mb-4 aspect-square rounded-xl overflow-hidden border border-stone-200">
-												<img src={getMediaUrl(gift.qr_code_image)} alt="QR" class="w-full h-full object-cover" />
+											<div
+												class="max-w-[200px] mx-auto mb-4 aspect-square rounded-xl overflow-hidden border border-stone-200"
+											>
+												<img
+													src={getMediaUrl(gift.qr_code_image)}
+													alt="QR"
+													class="w-full h-full object-cover"
+												/>
 											</div>
 										{/if}
 										{#if gift.phone_number}
-											<p class="text-xl font-mono text-stone-900 tracking-widest text-center">{gift.phone_number}</p>
+											<p class="text-xl font-mono text-stone-900 tracking-widest text-center">
+												{gift.phone_number}
+											</p>
 										{/if}
 									{:else}
 										<p class="text-3xl font-mono text-stone-900 tracking-widest mb-2 text-center">

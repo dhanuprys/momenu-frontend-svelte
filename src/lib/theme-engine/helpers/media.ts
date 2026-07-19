@@ -1,5 +1,5 @@
-import type { MediaMapping } from '$lib/types/models';
 import type { BucketDefinitions } from '$lib/theme-engine/types.js';
+import type { MediaMapping } from '$lib/types/models';
 
 /**
  * Creates a typed media helper scoped to a theme's bucket definitions.

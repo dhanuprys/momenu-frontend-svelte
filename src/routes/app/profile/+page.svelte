@@ -60,7 +60,7 @@
 			toast.error('Konfirmasi kata sandi tidak cocok');
 			return;
 		}
-		
+
 		isSavingPassword = true;
 		try {
 			await AuthService.changePassword({ old_password: oldPassword, new_password: newPassword });
@@ -319,10 +319,10 @@
 								<Key class="h-6 w-6 text-stone-500 group-hover:text-purple-500 transition-colors" />
 							</div>
 							<div class="space-y-1 w-full flex-1">
-								<div
-									class="flex flex-col w-full gap-4"
-								>
-									<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-0">
+								<div class="flex flex-col w-full gap-4">
+									<div
+										class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 sm:gap-0"
+									>
 										<div class="flex-1 mr-4">
 											<p class="text-sm font-semibold text-stone-500 dark:text-stone-400">
 												Kata Sandi
@@ -335,7 +335,7 @@
 												{/if}
 											</p>
 										</div>
-										
+
 										{#if !user.google_id}
 											<div class="flex items-center gap-2 self-start sm:self-center mt-2 sm:mt-0">
 												<Button
@@ -347,13 +347,16 @@
 													Ubah Kata Sandi
 												</Button>
 
-												<Dialog.Root bind:open={isChangingPassword} onOpenChange={(open) => {
-													if (!open) {
-														oldPassword = '';
-														newPassword = '';
-														confirmPassword = '';
-													}
-												}}>
+												<Dialog.Root
+													bind:open={isChangingPassword}
+													onOpenChange={(open) => {
+														if (!open) {
+															oldPassword = '';
+															newPassword = '';
+															confirmPassword = '';
+														}
+													}}
+												>
 													<Dialog.Content class="sm:max-w-[425px]">
 														<Dialog.Header>
 															<Dialog.Title>Ubah Kata Sandi</Dialog.Title>
@@ -394,7 +397,11 @@
 															</div>
 														</div>
 														<Dialog.Footer>
-															<Button variant="outline" onclick={() => isChangingPassword = false} disabled={isSavingPassword}>Batal</Button>
+															<Button
+																variant="outline"
+																onclick={() => (isChangingPassword = false)}
+																disabled={isSavingPassword}>Batal</Button
+															>
 															<Button onclick={savePassword} disabled={isSavingPassword}>
 																{#if isSavingPassword}
 																	<Loader2 class="mr-2 h-4 w-4 animate-spin" /> Menyimpan

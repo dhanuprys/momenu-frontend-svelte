@@ -71,7 +71,7 @@
 	function toDatetimeLocal(isoString: string, timeZone: string) {
 		if (!isoString) return '';
 		const d = new Date(isoString);
-		
+
 		const formatter = new Intl.DateTimeFormat('en-CA', {
 			timeZone,
 			year: 'numeric',
@@ -81,7 +81,7 @@
 			minute: '2-digit',
 			hour12: false
 		});
-		
+
 		const parts = formatter.formatToParts(d);
 		let year, month, day, hour, minute;
 		for (const part of parts) {
@@ -91,9 +91,9 @@
 			if (part.type === 'hour') hour = part.value;
 			if (part.type === 'minute') minute = part.value;
 		}
-		
+
 		if (hour === '24') hour = '00';
-		
+
 		return `${year}-${month}-${day}T${hour}:${minute}`;
 	}
 
@@ -102,7 +102,10 @@
 		formData = {
 			title: schedule.title,
 			start_time: toDatetimeLocal(schedule.start_time, schedule.timezone || 'Asia/Jakarta'),
-			end_time: schedule.end_time && !schedule.end_time.startsWith('000') ? toDatetimeLocal(schedule.end_time, schedule.timezone || 'Asia/Jakarta') : '',
+			end_time:
+				schedule.end_time && !schedule.end_time.startsWith('000')
+					? toDatetimeLocal(schedule.end_time, schedule.timezone || 'Asia/Jakarta')
+					: '',
 			timezone: schedule.timezone,
 			location: schedule.location || '',
 			map_url: schedule.map_url || ''

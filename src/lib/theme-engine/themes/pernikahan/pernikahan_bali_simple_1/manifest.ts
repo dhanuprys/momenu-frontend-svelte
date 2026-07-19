@@ -1,5 +1,5 @@
-import type { ThemeManifest } from '$lib/theme-engine/types.js';
 import { extractSlotKeys } from '$lib/theme-engine/helpers/slot-keys.js';
+import type { ThemeManifest } from '$lib/theme-engine/types.js';
 
 export const MANIFEST = {
 	id: 'pernikahan_bali_simple_1',
@@ -13,7 +13,11 @@ export const MANIFEST = {
 		promo_video: { label: 'Video Cerita Kami', mediaType: 'video', maxFiles: 1 }
 	},
 	textSlots: {
-		greeting_title: { label: 'Judul Salam', defaultValue: 'Om Swastyastu', section: 'Salam Pembuka' },
+		greeting_title: {
+			label: 'Judul Salam',
+			defaultValue: 'Om Swastyastu',
+			section: 'Salam Pembuka'
+		},
 		greeting_body: {
 			label: 'Isi Salam',
 			defaultValue:
@@ -28,7 +32,11 @@ export const MANIFEST = {
 			section: 'Kutipan',
 			inputType: 'long'
 		},
-		quote_source: { label: 'Sumber Kutipan', defaultValue: '— Rg Veda X.85.42', section: 'Kutipan' },
+		quote_source: {
+			label: 'Sumber Kutipan',
+			defaultValue: '— Rg Veda X.85.42',
+			section: 'Kutipan'
+		},
 		closing_text: {
 			label: 'Pesan Penutup',
 			defaultValue:
@@ -61,4 +69,3 @@ export const BUCKET = extractSlotKeys(MANIFEST.buckets);
 export const TEXT = extractSlotKeys(MANIFEST.textSlots);
 /** Typed style slot key constants */
 export const STYLE = extractSlotKeys(MANIFEST.styleSlots);
-

@@ -42,12 +42,8 @@
 		Pause,
 		Search,
 		Music as MusicIcon,
-
 		Trash2,
-
 		Plus
-
-
 	} from '@lucide/svelte';
 	import { UploadService } from '$lib/services/index.js';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';

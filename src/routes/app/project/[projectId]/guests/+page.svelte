@@ -121,7 +121,7 @@
 		isAddingGuest = true;
 		try {
 			const sanitizedWa = newGuestWhatsapp ? sanitizePhone(newGuestWhatsapp) : undefined;
-			
+
 			if (editingGuestId) {
 				await RSVPService.updateGuest(projectId, editingGuestId, {
 					name: newGuestName,
@@ -137,7 +137,7 @@
 				});
 				toast.success('Tamu berhasil ditambahkan');
 			}
-			
+
 			isAddGuestOpen = false;
 			resetGuestForm();
 			loadRSVPs();
@@ -374,7 +374,9 @@
 					<Dialog.Header>
 						<Dialog.Title>{editingGuestId ? 'Ubah Tamu' : 'Tambah Tamu'}</Dialog.Title>
 						<Dialog.Description>
-							{editingGuestId ? 'Ubah detail tamu Anda.' : 'Tambahkan tamu ke daftar Anda dan berikan pesan spesial jika diinginkan.'}
+							{editingGuestId
+								? 'Ubah detail tamu Anda.'
+								: 'Tambahkan tamu ke daftar Anda dan berikan pesan spesial jika diinginkan.'}
 						</Dialog.Description>
 					</Dialog.Header>
 					<form onsubmit={handleAddGuest} class="space-y-4 py-4">
@@ -388,10 +390,14 @@
 								required
 							/>
 							{#if editingGuestId}
-								<div class="flex items-start gap-1.5 mt-1.5 text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200">
+								<div
+									class="flex items-start gap-1.5 mt-1.5 text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200"
+								>
 									<AlertTriangle class="h-4 w-4 shrink-0 mt-0.5" />
 									<p class="text-xs leading-relaxed">
-										<strong>Peringatan:</strong> Mengubah nama tamu akan menyebabkan <strong>URL undangan sebelumnya menjadi tidak valid</strong>. Tamu harus menggunakan URL baru yang dibagikan.
+										<strong>Peringatan:</strong> Mengubah nama tamu akan menyebabkan
+										<strong>URL undangan sebelumnya menjadi tidak valid</strong>. Tamu harus
+										menggunakan URL baru yang dibagikan.
 									</p>
 								</div>
 							{/if}
