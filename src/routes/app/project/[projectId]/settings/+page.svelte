@@ -166,7 +166,7 @@
 
 	{#if loading}
 		<div class="space-y-4">
-			<div class="h-[200px] bg-muted/30 rounded-xl animate-pulse"></div>
+			<div class="h-50 bg-muted/30 rounded-xl animate-pulse"></div>
 			<div class="h-[300px] bg-muted/30 rounded-xl animate-pulse"></div>
 		</div>
 	{:else if project && featureToggle}

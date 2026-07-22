@@ -43,7 +43,7 @@
 		<div class="flex items-center gap-4 flex-1 min-w-0">
 			<!-- Cover Art with animation -->
 			<div
-				class="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-muted border border-border/50"
+				class="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted border border-border/50"
 			>
 				{#if music.cover_image}
 					<img
@@ -95,7 +95,7 @@
 			<Button
 				variant="outline"
 				size="icon"
-				class="h-10 w-10 rounded-full md:hidden mr-2 transition-transform active:scale-95 flex-shrink-0"
+				class="h-10 w-10 rounded-full md:hidden mr-2 transition-transform active:scale-95 shrink-0"
 				onclick={onTogglePlay}
 			>
 				{#if isPlaying}

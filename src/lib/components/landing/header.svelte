@@ -74,7 +74,7 @@
 				</a>
 				<Button
 					href="/register"
-					class="rounded-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 font-bold text-xs uppercase tracking-wider px-5 py-2 hover:opacity-95 shadow-md shadow-emerald-500/10 border-0 transition-transform active:scale-95"
+					class="rounded-full bg-linear-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 font-bold text-xs uppercase tracking-wider px-5 py-2 hover:opacity-95 shadow-md shadow-emerald-500/10 border-0 transition-transform active:scale-95"
 				>
 					Buat Undangan
 				</Button>

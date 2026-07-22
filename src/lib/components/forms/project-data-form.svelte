@@ -451,7 +451,7 @@
 									bind:value={formData[field.key]}
 									placeholder={field.placeholder}
 									oninput={() => clearFieldError(field.key)}
-									class="min-h-[100px] bg-transparent {fieldErrors[field.key]
+									class="min-h-25 bg-transparent {fieldErrors[field.key]
 										? 'border-destructive focus-visible:ring-destructive'
 										: 'border-input'}"
 								/>

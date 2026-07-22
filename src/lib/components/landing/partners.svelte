@@ -25,10 +25,10 @@
 	<div class="relative w-full flex overflow-hidden group">
 		<!-- Fade Edges -->
 		<div
-			class="absolute left-0 top-0 w-28 md:w-64 h-full bg-gradient-to-r from-[#F9FAF8] to-transparent z-10 pointer-events-none"
+			class="absolute left-0 top-0 w-28 md:w-64 h-full bg-linear-to-r from-[#F9FAF8] to-transparent z-10 pointer-events-none"
 		></div>
 		<div
-			class="absolute right-0 top-0 w-28 md:w-64 h-full bg-gradient-to-l from-[#F9FAF8] to-transparent z-10 pointer-events-none"
+			class="absolute right-0 top-0 w-28 md:w-64 h-full bg-linear-to-l from-[#F9FAF8] to-transparent z-10 pointer-events-none"
 		></div>
 
 		<!-- Scrolling Content with Larger Logos -->

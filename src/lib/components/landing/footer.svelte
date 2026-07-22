@@ -32,7 +32,7 @@
 				</p>
 				<Button
 					size="lg"
-					class="h-14 px-10 text-xs uppercase tracking-widest font-bold rounded-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 hover:opacity-95 shadow-xl transition-all"
+					class="h-14 px-10 text-xs uppercase tracking-widest font-bold rounded-full bg-linear-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 hover:opacity-95 shadow-xl transition-all"
 					href="/register"
 				>
 					<span>Mulai Sekarang</span>

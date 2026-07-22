@@ -466,7 +466,7 @@
 				<Table.Root>
 					<Table.Header>
 						<Table.Row>
-							<Table.Head class="w-[60px]"></Table.Head>
+							<Table.Head class="w-15"></Table.Head>
 							<Table.Head>Judul</Table.Head>
 							<Table.Head>Artis</Table.Head>
 							<Table.Head>Kategori</Table.Head>

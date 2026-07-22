@@ -120,7 +120,7 @@
 					<AppWindow class="h-8 w-8 text-muted-foreground" />
 				</div>
 				<h2 class="text-xl font-bold tracking-tight mb-2">Acara Masih Dalam Draf</h2>
-				<p class="text-sm text-muted-foreground mb-6 leading-relaxed max-w-[280px]">
+				<p class="text-sm text-muted-foreground mb-6 leading-relaxed max-w-70">
 					Halaman ini belum dipublikasikan oleh pemilik acara. Data analitik tidak dapat ditampilkan
 					saat ini.
 				</p>

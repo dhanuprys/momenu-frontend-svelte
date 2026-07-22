@@ -61,7 +61,7 @@
 >
 	<!-- Subtle Soft Sage Background Glow -->
 	<div
-		class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-emerald-100/30 rounded-full blur-[140px] pointer-events-none -z-10"
+		class="absolute top-1/4 left-1/2 -translate-x-1/2 w-175 h-175 bg-emerald-100/30 rounded-full blur-[140px] pointer-events-none -z-10"
 	></div>
 
 	<div class="relative z-10 flex flex-col min-h-screen">
@@ -113,7 +113,7 @@
 							<div
 								class="rounded-[2rem] border border-stone-200/60 bg-white/60 backdrop-blur-md overflow-hidden p-3 shadow-xs"
 							>
-								<Skeleton class="h-[320px] w-full rounded-2xl bg-stone-200/60" />
+								<Skeleton class="h-80 w-full rounded-2xl bg-stone-200/60" />
 								<div class="p-4 space-y-3 mt-2">
 									<Skeleton class="h-5 w-3/4 rounded-full bg-stone-200/60" />
 									<Skeleton class="h-4 w-full rounded-full bg-stone-200/60" />
@@ -155,7 +155,7 @@
 								class="group relative rounded-[2rem] border border-stone-200/80 bg-white/90 backdrop-blur-xl p-3.5 shadow-xs hover:shadow-2xl hover:-translate-y-2 hover:border-emerald-900/30 transition-all duration-500 flex flex-col h-full overflow-hidden"
 							>
 								<!-- Image Container -->
-								<div class="relative h-[320px] w-full overflow-hidden rounded-2xl bg-[#121815]">
+								<div class="relative h-80 w-full overflow-hidden rounded-2xl bg-[#121815]">
 									{#if theme.thumbnail}
 										<img
 											src={getMediaUrl(theme.thumbnail)}
@@ -182,7 +182,7 @@
 										class="absolute inset-0 bg-stone-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center gap-3 backdrop-blur-xs z-10 p-4"
 									>
 										<Button
-											class="rounded-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 hover:opacity-95 font-bold text-xs uppercase tracking-wider px-6 py-3 shadow-lg"
+											class="rounded-full bg-linear-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 hover:opacity-95 font-bold text-xs uppercase tracking-wider px-6 py-3 shadow-lg"
 											href={`/explore/${theme.id}/demo`}
 										>
 											<Eye class="w-3.5 h-3.5 mr-2" /> Coba Demo

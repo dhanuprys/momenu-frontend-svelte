@@ -97,7 +97,7 @@
 			</Card.Header>
 			<Card.Content>
 				{#if data.files.length === 0}
-					<div class="flex h-[200px] items-center justify-center rounded-md border border-dashed">
+					<div class="flex h-50 items-center justify-center rounded-md border border-dashed">
 						<p class="text-sm text-muted-foreground">Belum ada file media yang diunggah.</p>
 					</div>
 				{:else}

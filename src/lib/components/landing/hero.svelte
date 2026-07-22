@@ -8,7 +8,7 @@
 >
 	<!-- Ambient Sage Green Glow Orbs -->
 	<div
-		class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-emerald-200/30 via-teal-100/40 to-transparent rounded-full blur-[140px] pointer-events-none -z-10"
+		class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-linear-to-tr from-emerald-200/30 via-teal-100/40 to-transparent rounded-full blur-[140px] pointer-events-none -z-10"
 	></div>
 
 	<div class="container mx-auto max-w-6xl px-4 md:px-8 relative z-10">
@@ -51,7 +51,7 @@
 		>
 			<!-- Ambient Drop Shadow Aura -->
 			<div
-				class="absolute -inset-4 bg-gradient-to-b from-emerald-800/10 to-stone-950/20 rounded-[2.5rem] blur-3xl opacity-60 -z-10 pointer-events-none"
+				class="absolute -inset-4 bg-linear-to-b from-emerald-800/10 to-stone-950/20 rounded-[2.5rem] blur-3xl opacity-60 -z-10 pointer-events-none"
 			></div>
 
 			<!-- Frame Container -->
@@ -79,7 +79,7 @@
 					>
 						<!-- Soft Sage Glow Background -->
 						<div
-							class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/15 via-transparent to-transparent pointer-events-none"
+							class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-emerald-500/15 via-transparent to-transparent pointer-events-none"
 						></div>
 
 						<div class="relative z-10 space-y-6">
@@ -130,7 +130,7 @@
 
 							<div class="pt-2">
 								<span
-									class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-bold shadow-lg"
+									class="inline-flex items-center gap-2 bg-linear-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-bold shadow-lg"
 								>
 									<Heart class="w-3.5 h-3.5 fill-current" />
 									Buka Undangan

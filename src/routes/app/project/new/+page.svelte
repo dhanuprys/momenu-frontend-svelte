@@ -1085,7 +1085,7 @@
 												bind:value={formData[field.key]}
 												placeholder={field.placeholder}
 												oninput={() => clearFieldError(field.key)}
-												class="flex min-h-[100px] w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y
+												class="flex min-h-25 w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-y
 													{fieldErrors[field.key] ? 'border-destructive focus-visible:ring-destructive' : 'border-input'}"
 											></textarea>
 										{:else if field.type === 'number'}

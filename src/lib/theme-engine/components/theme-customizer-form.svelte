@@ -359,7 +359,7 @@
 			{#if getInputType(config) === 'long'}
 				<Textarea
 					bind:value={textEdits[key].value}
-					class="min-h-[100px] w-full bg-stone-50 border-stone-200 focus-visible:ring-indigo-500/30 transition-all"
+					class="min-h-25 w-full bg-stone-50 border-stone-200 focus-visible:ring-indigo-500/30 transition-all"
 				/>
 			{:else}
 				<Input
@@ -463,7 +463,7 @@
 							{getFontLabel(textEdits[key].font_family)}
 						</span>
 					</Select.Trigger>
-					<Select.Content class="max-h-[240px]">
+					<Select.Content class="max-h-60">
 						<Select.Item value="">Gunakan font default</Select.Item>
 						{#each AVAILABLE_FONTS as font (font.value)}
 							<Select.Item value={font.value}>

@@ -74,7 +74,7 @@
 				<div class="pt-4 text-center">
 					<Button
 						size="lg"
-						class="w-full sm:w-auto h-14 px-10 text-xs uppercase tracking-widest font-bold rounded-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 hover:opacity-95 shadow-xl transition-all"
+						class="w-full sm:w-auto h-14 px-10 text-xs uppercase tracking-widest font-bold rounded-full bg-linear-to-r from-emerald-400 via-emerald-300 to-teal-300 text-stone-950 hover:opacity-95 shadow-xl transition-all"
 						href="/register"
 					>
 						<span>Buat Undangan Eksklusif</span>

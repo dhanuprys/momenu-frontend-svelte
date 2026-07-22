@@ -370,7 +370,7 @@
 				Tambah Tamu
 			</Button>
 			<Dialog.Root bind:open={isAddGuestOpen} onOpenChange={(open) => !open && resetGuestForm()}>
-				<Dialog.Content class="sm:max-w-[425px]">
+				<Dialog.Content class="sm:max-w-106.25">
 					<Dialog.Header>
 						<Dialog.Title>{editingGuestId ? 'Ubah Tamu' : 'Tambah Tamu'}</Dialog.Title>
 						<Dialog.Description>
@@ -804,7 +804,7 @@
 </AlertDialog.Root>
 
 <Dialog.Root bind:open={isWhatsappTemplateOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>Template WhatsApp</Dialog.Title>
 			<Dialog.Description>

@@ -40,7 +40,7 @@
 		<div class="space-y-6">
 			<Skeleton class="h-10 w-32" />
 			<Skeleton class="h-[300px] w-full rounded-xl" />
-			<Skeleton class="h-[200px] w-full rounded-xl" />
+			<Skeleton class="h-50 w-full rounded-xl" />
 		</div>
 	{:else if project && schema.length > 0}
 		<div class="mb-6">

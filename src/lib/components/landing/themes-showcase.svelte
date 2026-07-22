@@ -133,10 +133,10 @@
 						>
 							<!-- Inner Mock Screen -->
 							<div
-								class="relative w-full max-w-[210px] aspect-[4/6] rounded-2xl border border-white/10 bg-black/50 backdrop-blur-md p-5 shadow-2xl flex flex-col justify-between group-hover:scale-105 transition-transform duration-500"
+								class="relative w-full max-w-52.5 aspect-4/6 rounded-2xl border border-white/10 bg-black/50 backdrop-blur-md p-5 shadow-2xl flex flex-col justify-between group-hover:scale-105 transition-transform duration-500"
 							>
 								<div
-									class="border border-white/10 rounded-xl p-3 text-center flex-grow flex flex-col justify-center gap-1.5"
+									class="border border-white/10 rounded-xl p-3 text-center grow flex flex-col justify-center gap-1.5"
 								>
 									<span
 										class="text-[7px] tracking-[0.3em] text-emerald-300/80 uppercase font-semibold"
@@ -167,7 +167,7 @@
 						</div>
 
 						<!-- Card Body Details -->
-						<div class="p-7 flex-grow flex flex-col justify-between space-y-6">
+						<div class="p-7 grow flex flex-col justify-between space-y-6">
 							<div class="space-y-2">
 								<div class="flex items-center justify-between">
 									<h3

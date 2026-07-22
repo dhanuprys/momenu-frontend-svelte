@@ -180,7 +180,7 @@
 </PageComposer>
 
 <Sheet.Root bind:open={isEditDialogOpen}>
-	<Sheet.Content class="sm:max-w-[425px] overflow-y-auto">
+	<Sheet.Content class="sm:max-w-106.25 overflow-y-auto">
 		<Sheet.Header>
 			<Sheet.Title>Edit Tema</Sheet.Title>
 			<Sheet.Description>

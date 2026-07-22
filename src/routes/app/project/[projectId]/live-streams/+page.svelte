@@ -238,7 +238,7 @@
 </PageComposer>
 
 <Dialog.Root bind:open={dialogOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>{editingId ? 'Edit Live Streaming' : 'Tambah Live Streaming'}</Dialog.Title>
 			<Dialog.Description>Tentukan platform dan masukkan URL siaran langsung.</Dialog.Description>

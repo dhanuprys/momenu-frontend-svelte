@@ -88,7 +88,7 @@
 				{#if loading}
 					<!-- Loading Skeleton Layout -->
 					<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-						<Skeleton class="h-[600px] w-full rounded-[2rem] bg-stone-200/50 shadow-sm" />
+						<Skeleton class="h-150 w-full rounded-[2rem] bg-stone-200/50 shadow-sm" />
 						<div class="space-y-6 pt-4">
 							<Skeleton class="h-8 w-32 rounded-full bg-stone-200/50" />
 							<Skeleton class="h-12 w-3/4 bg-stone-200/50" />
@@ -229,7 +229,7 @@
 						class="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-stone-200/50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-50 transition-transform"
 					>
 						<div class="flex items-center justify-between gap-3">
-							<div class="flex flex-col min-w-[70px]">
+							<div class="flex flex-col min-w-17.5">
 								<span class="text-xs font-medium text-stone-500 uppercase tracking-wider"
 									>Harga</span
 								>

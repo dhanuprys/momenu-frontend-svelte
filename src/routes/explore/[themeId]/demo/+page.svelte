@@ -74,7 +74,7 @@
 	<div class="relative w-full h-screen overflow-hidden bg-stone-900">
 		<!-- Floating Action Bar -->
 		<div
-			class="absolute top-0 left-0 right-0 p-4 z-50 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent pointer-events-none"
+			class="absolute top-0 left-0 right-0 p-4 z-50 flex items-center justify-between bg-linear-to-b from-black/60 to-transparent pointer-events-none"
 		>
 			<div class="pointer-events-auto">
 				<Button
