@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AdminService, MusicService } from '$lib/services/index.js';
+	import { AdminService, MusicService } from '$lib/services/index';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Users, FolderGit2, Music } from '@lucide/svelte';
 	import { onMount } from 'svelte';

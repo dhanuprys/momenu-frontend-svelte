@@ -5,17 +5,17 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { TextOverrideService, StyleOverrideService } from '$lib/services/index.js';
-	import type { StyleOverride, Project } from '$lib/types/models.js';
-	import { getThemeManifest } from '$lib/theme-engine/registry.js';
-	import { AVAILABLE_FONTS, type FontFamilyOption } from '$lib/theme-engine/constants/fonts.js';
-	import type { TextSlotConfig } from '$lib/theme-engine/types.js';
+	import { TextOverrideService, StyleOverrideService } from '$lib/services/index';
+	import type { StyleOverride, Project } from '$lib/types/models';
+	import { getThemeManifest } from '$lib/theme-engine/registry';
+	import { AVAILABLE_FONTS, type FontFamilyOption } from '$lib/theme-engine/constants/fonts';
+	import type { TextSlotConfig } from '$lib/theme-engine/types';
 	import {
 		type TextEditState,
 		initTextEdits,
 		buildTextPayload,
 		resetToDefault
-	} from '$lib/theme-engine/helpers/text-edit-state.js';
+	} from '$lib/theme-engine/helpers/text-edit-state';
 	import {
 		Loader2,
 		Bold,

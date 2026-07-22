@@ -6,9 +6,9 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import Briefcase from '@lucide/svelte/icons/briefcase';
-	import { ProjectService } from '$lib/services/index.js';
-	import type { Project } from '$lib/types/index.js';
-	import type { ProjectStatus } from '$lib/types/enums.js';
+	import { ProjectService } from '$lib/services/index';
+	import type { Project } from '$lib/types/index';
+	import type { ProjectStatus } from '$lib/types/enums';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 

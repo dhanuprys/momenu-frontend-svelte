@@ -2,9 +2,9 @@
 	import ProjectSwitcher from '$lib/components/navigation/project-switcher.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { page } from '$app/stores';
-	import { authState } from '$lib/stores/auth.svelte.js';
-	import { ProjectService } from '$lib/services/index.js';
-	import type { Project } from '$lib/types/index.js';
+	import { authState } from '$lib/stores/auth.svelte';
+	import { ProjectService } from '$lib/services/index';
+	import type { Project } from '$lib/types/index';
 	import type { ComponentProps } from 'svelte';
 	import {
 		LayoutDashboard,

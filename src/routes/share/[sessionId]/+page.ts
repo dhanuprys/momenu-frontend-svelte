@@ -1,4 +1,4 @@
-import { ShareService } from '$lib/services/index.js';
+import { ShareService } from '$lib/services/index';
 import { ApiError } from '$lib/utils/api-error';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';

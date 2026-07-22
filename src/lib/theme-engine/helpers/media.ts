@@ -1,4 +1,4 @@
-import type { BucketDefinitions } from '$lib/theme-engine/types.js';
+import type { BucketDefinitions } from '$lib/theme-engine/types';
 import type { MediaMapping } from '$lib/types/models';
 
 /**
@@ -7,8 +7,8 @@ import type { MediaMapping } from '$lib/types/models';
  *
  * @example
  * ```typescript
- * import { MANIFEST } from './manifest.js';
- * import { createMediaHelper } from '$lib/theme-engine/helpers/media.js';
+ * import { MANIFEST } from './manifest';
+ * import { createMediaHelper } from '$lib/theme-engine/helpers/media';
  *
  * const media = createMediaHelper(MANIFEST.buckets, mediaMappings);
  * const heroImages = media.getAll('hero_slider');      // ✅ autocomplete

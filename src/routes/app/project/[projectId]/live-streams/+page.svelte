@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { LiveStreamService } from '$lib/services/index.js';
-	import type { LiveStream, LiveStreamRequest } from '$lib/types/index.js';
-	import type { LiveStreamPlatform } from '$lib/types/enums.js';
+	import { LiveStreamService } from '$lib/services/index';
+	import type { LiveStream, LiveStreamRequest } from '$lib/types/index';
+	import type { LiveStreamPlatform } from '$lib/types/enums';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';

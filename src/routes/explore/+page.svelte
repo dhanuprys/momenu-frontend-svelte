@@ -2,17 +2,17 @@
 	import Header from '$lib/components/landing/header.svelte';
 	import Footer from '$lib/components/landing/footer.svelte';
 	import { onMount } from 'svelte';
-	import { ThemeService } from '$lib/services/theme.service.js';
-	import type { Theme } from '$lib/types/index.js';
+	import { ThemeService } from '$lib/services/theme.service';
+	import type { Theme } from '$lib/types/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 	import { Image, Sparkles, Eye, ArrowLeft } from '@lucide/svelte';
 	import SEO from '$lib/components/seo.svelte';
 	import { fly, scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 
-	import { EVENT_TYPES } from '$lib/types/enums.js';
+	import { EVENT_TYPES } from '$lib/types/enums';
 
 	let themes = $state<Theme[]>([]);
 	let loading = $state(true);
@@ -45,9 +45,7 @@
 	};
 
 	const filteredThemes = $derived(
-		activeFilter === 'Semua'
-			? themes
-			: themes.filter((t) => t.event_type === activeFilter)
+		activeFilter === 'Semua' ? themes : themes.filter((t) => t.event_type === activeFilter)
 	);
 </script>
 
@@ -62,7 +60,9 @@
 	class="min-h-screen flex flex-col bg-[#F9FAF8] font-sans text-stone-900 selection:bg-emerald-500/20 relative overflow-hidden select-none"
 >
 	<!-- Subtle Soft Sage Background Glow -->
-	<div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-emerald-100/30 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+	<div
+		class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-emerald-100/30 rounded-full blur-[140px] pointer-events-none -z-10"
+	></div>
 
 	<div class="relative z-10 flex flex-col min-h-screen">
 		<Header />
@@ -82,7 +82,8 @@
 						in:fly={{ y: 30, duration: 800, delay: 300, easing: quintOut }}
 						class="text-stone-600 md:text-lg leading-relaxed max-w-xl font-sans"
 					>
-						Setiap tema dibuat dengan presisi estetika tinggi, menyajikan keindahan tipografi dan navigasi interaktif penuh.
+						Setiap tema dibuat dengan presisi estetika tinggi, menyajikan keindahan tipografi dan
+						navigasi interaktif penuh.
 					</p>
 
 					<!-- Event Type Filter Badges -->
@@ -99,8 +100,8 @@
 									: 'bg-white/90 text-stone-600 border-stone-200/90 hover:text-stone-900 hover:bg-stone-50 hover:border-stone-300 shadow-xs backdrop-blur-md'}"
 								onclick={() => (activeFilter = filter)}
 							>
-									{eventTypeLabels[filter] || filter}
-								</button>
+								{eventTypeLabels[filter] || filter}
+							</button>
 						{/each}
 					</div>
 				</div>
@@ -135,7 +136,9 @@
 					</div>
 				{:else if filteredThemes.length === 0}
 					<div class="flex flex-col items-center justify-center py-20 text-center space-y-4">
-						<p class="text-stone-500 font-serif italic text-xl">Belum ada tema untuk kategori ini.</p>
+						<p class="text-stone-500 font-serif italic text-xl">
+							Belum ada tema untuk kategori ini.
+						</p>
 						<Button
 							onclick={() => (activeFilter = 'Semua')}
 							variant="outline"
@@ -166,7 +169,10 @@
 										>
 											<div class="text-center space-y-2">
 												<Image class="h-12 w-12 opacity-30 mx-auto text-emerald-200" />
-												<span class="text-[10px] uppercase tracking-widest text-emerald-300/60 block font-serif">MOMENU PREVIEW</span>
+												<span
+													class="text-[10px] uppercase tracking-widest text-emerald-300/60 block font-serif"
+													>MOMENU PREVIEW</span
+												>
 											</div>
 										</div>
 									{/if}
@@ -216,7 +222,8 @@
 											</span>
 										</div>
 										<p class="text-xs text-stone-500 line-clamp-2 leading-relaxed font-sans">
-											{theme.description || 'Desain undangan digital eksklusif yang siap dipersonalisasi.'}
+											{theme.description ||
+												'Desain undangan digital eksklusif yang siap dipersonalisasi.'}
 										</p>
 									</div>
 								</div>

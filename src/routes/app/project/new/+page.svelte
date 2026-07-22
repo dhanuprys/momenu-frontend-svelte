@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { config } from '$lib/config/index.js';
+	import { config } from '$lib/config/index';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -11,7 +11,7 @@
 		EventTypeService,
 		ProjectService,
 		MusicService
-	} from '$lib/services/index.js';
+	} from '$lib/services/index';
 	import type {
 		Theme,
 		FieldGroup,
@@ -19,9 +19,9 @@
 		EventType,
 		Music,
 		MusicCategory
-	} from '$lib/types/index.js';
-	import { ApiError } from '$lib/utils/api-error.js';
-	import { getMediaUrl, eventTypeLabel } from '$lib/utils.js';
+	} from '$lib/types/index';
+	import { ApiError } from '$lib/utils/api-error';
+	import { getMediaUrl, eventTypeLabel } from '$lib/utils';
 	import { onMount, onDestroy } from 'svelte';
 	import {
 		ArrowLeft,
@@ -45,7 +45,7 @@
 		Trash2,
 		Plus
 	} from '@lucide/svelte';
-	import { UploadService } from '$lib/services/index.js';
+	import { UploadService } from '$lib/services/index';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
 
 	// ── Wizard state ──

@@ -6,7 +6,7 @@
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import { Link2, UploadCloud, Video, X } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 
 	let {
 		mediaType = 'image',

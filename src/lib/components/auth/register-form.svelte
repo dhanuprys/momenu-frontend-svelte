@@ -9,9 +9,9 @@
 	} from '$lib/components/ui/field/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { cn } from '$lib/utils.js';
+	import { cn } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
-	import { AuthService } from '$lib/services/index.js';
+	import { AuthService } from '$lib/services/index';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { Loader2 } from '@lucide/svelte';

@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ProjectService, MediaService } from '$lib/services/index.js';
-	import type {
-		Project,
-		MediaMapping,
-		MediaBucket,
-		MediaMappingRequest
-	} from '$lib/types/index.js';
+	import { ProjectService, MediaService } from '$lib/services/index';
+	import type { Project, MediaMapping, MediaBucket, MediaMappingRequest } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -34,7 +29,7 @@
 	import { toast } from 'svelte-sonner';
 	import MediaInput from '$lib/components/forms/media-input.svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 
 	let projectId = $derived($page.params.projectId!);
 	let project = $state<Project | null>(null);

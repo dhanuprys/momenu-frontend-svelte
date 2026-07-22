@@ -3,7 +3,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { goto } from '$app/navigation';
-	import { authState } from '$lib/stores/auth.svelte.js';
+	import { authState } from '$lib/stores/auth.svelte';
 	import type { ComponentProps, Snippet } from 'svelte';
 	import { ChevronsUpDown, LogOut, ArrowLeft, User, SunMoon } from '@lucide/svelte';
 	import AppLogo from '$lib/components/brand/app-logo.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AdminService } from '$lib/services/index.js';
-	import type { Project } from '$lib/types/index.js';
+	import { AdminService } from '$lib/services/index';
+	import type { Project } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import * as Table from '$lib/components/ui/table/index.js';

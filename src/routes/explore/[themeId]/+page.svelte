@@ -4,10 +4,10 @@
 	import Footer from '$lib/components/landing/footer.svelte';
 	import { onMount } from 'svelte';
 	import { ThemeService } from '$lib/services/theme.service';
-	import type { Theme } from '$lib/types/index.js';
+	import type { Theme } from '$lib/types/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 	import { ArrowLeft, CheckCircle2, Image as ImageIcon, LayoutTemplate } from '@lucide/svelte';
 	import SEO from '$lib/components/seo.svelte';
 	import { fly, scale } from 'svelte/transition';

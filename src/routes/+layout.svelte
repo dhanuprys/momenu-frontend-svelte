@@ -1,7 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import { onMount } from 'svelte';
-	import { authState } from '$lib/stores/auth.svelte.js';
+	import { authState } from '$lib/stores/auth.svelte';
 	import Sonner from '$lib/components/ui/sonner/sonner.svelte';
 
 	let { children } = $props();

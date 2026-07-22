@@ -28,11 +28,11 @@
 
 <script lang="ts">
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
-	import { cn, type WithElementRef, type WithoutChildrenOrChild } from "$lib/utils.js";
+	import { cn, type WithElementRef, type WithoutChildrenOrChild } from "$lib/utils";
 	import { mergeProps } from "bits-ui";
 	import type { ComponentProps, Snippet } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
-	import { useSidebar } from "./context.svelte.js";
+	import { useSidebar } from "./context.svelte";
 
 	let {
 		ref = $bindable(null),

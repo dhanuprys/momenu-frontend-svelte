@@ -6,7 +6,7 @@
 	import ModeToggle from '$lib/components/mode-toggle.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { authState } from '$lib/stores/auth.svelte.js';
+	import { authState } from '$lib/stores/auth.svelte';
 	let { children } = $props();
 
 	$effect(() => {

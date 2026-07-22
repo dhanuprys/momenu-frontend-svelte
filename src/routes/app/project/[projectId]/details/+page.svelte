@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { EventTypeService, ProjectService } from '$lib/services/index.js';
-	import type { FieldGroup, Project } from '$lib/types/index.js';
-	import { eventTypeLabel } from '$lib/utils.js';
+	import { EventTypeService, ProjectService } from '$lib/services/index';
+	import type { FieldGroup, Project } from '$lib/types/index';
+	import { eventTypeLabel } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { toast } from 'svelte-sonner';

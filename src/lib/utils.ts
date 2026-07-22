@@ -1,5 +1,5 @@
-import { config } from '$lib/config/index.js';
-import type { EventType } from '$lib/types/index.js';
+import { config } from '$lib/config/index';
+import type { EventType } from '$lib/types/index';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

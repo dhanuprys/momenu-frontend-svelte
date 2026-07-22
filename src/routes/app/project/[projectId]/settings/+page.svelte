@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ProjectService } from '$lib/services/index.js';
-	import type { Project, FeatureToggle, ProjectStatus } from '$lib/types/index.js';
+	import { ProjectService } from '$lib/services/index';
+	import type { Project, FeatureToggle, ProjectStatus } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -24,7 +24,7 @@
 	} from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import MediaInput from '$lib/components/forms/media-input.svelte';
-	import { UploadService } from '$lib/services/upload.service.js';
+	import { UploadService } from '$lib/services/upload.service';
 	import QRCode from 'qrcode';
 
 	let projectId = $derived($page.params.projectId!);

@@ -2,14 +2,14 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import type { Component } from 'svelte';
-	import { getThemeManifest, resolveTheme } from '$lib/theme-engine/registry.js';
+	import { getThemeManifest, resolveTheme } from '$lib/theme-engine/registry';
 	import ThemeRenderer from '$lib/theme-engine/components/theme-renderer.svelte';
-	import type { InvitationData } from '$lib/types/invitation.js';
-	import type { Project } from '$lib/types/models.js';
+	import type { InvitationData } from '$lib/types/invitation';
+	import type { Project } from '$lib/types/models';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ArrowLeft, ExternalLink } from '@lucide/svelte';
 	import SEO from '$lib/components/seo.svelte';
-	import { createMockInvitationData } from '$lib/theme-engine/helpers/demo.js';
+	import { createMockInvitationData } from '$lib/theme-engine/helpers/demo';
 
 	let themeId = $derived($page.params.themeId as string);
 	let manifest = $derived(getThemeManifest(themeId));

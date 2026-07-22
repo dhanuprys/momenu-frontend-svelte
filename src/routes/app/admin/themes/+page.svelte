@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AdminService } from '$lib/services/index.js';
+	import { AdminService } from '$lib/services/index';
 	import { onMount } from 'svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
@@ -7,12 +7,12 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Edit, Image as ImageIcon } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
-	import { UploadService } from '$lib/services/index.js';
+	import { UploadService } from '$lib/services/index';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 
 	let themes = $state<any[]>([]);
 	let loading = $state(true);

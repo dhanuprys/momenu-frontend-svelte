@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { GiftRegistryService } from '$lib/services/index.js';
-	import type { GiftRegistry, GiftRegistryRequest, GiftRegistryType } from '$lib/types/index.js';
+	import { GiftRegistryService } from '$lib/services/index';
+	import type { GiftRegistry, GiftRegistryRequest, GiftRegistryType } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -15,9 +15,9 @@
 	import { Plus, Edit2, Trash2, CreditCard, Wallet, Gift as GiftIcon, Copy } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import MediaInput from '$lib/components/forms/media-input.svelte';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
-	import { UploadService } from '$lib/services/upload.service.js';
+	import { UploadService } from '$lib/services/upload.service';
 
 	let projectId = $derived($page.params.projectId!);
 	let gifts = $state<GiftRegistry[]>([]);

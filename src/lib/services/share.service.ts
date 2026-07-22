@@ -1,4 +1,4 @@
-import type { Project, RSVP } from '$lib/types/index.js';
+import type { Project, RSVP } from '$lib/types/index';
 import { api } from '../utils/api';
 
 export interface ShareSession {

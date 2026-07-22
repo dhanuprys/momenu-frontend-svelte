@@ -12,7 +12,7 @@ export * from './music.service';
 export * from './project.service';
 export * from './rsvp.service';
 export * from './schedule.service';
-export * from './share.service.js';
+export * from './share.service';
 export * from './style-override.service';
 export * from './text-override.service';
 export * from './theme.service';

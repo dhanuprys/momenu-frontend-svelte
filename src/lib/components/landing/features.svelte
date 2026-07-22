@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { CalendarCheck, MessageSquareHeart, Gift, Video, Palette, Sparkles, ShieldCheck, Zap } from '@lucide/svelte';
+	import {
+		CalendarCheck,
+		MessageSquareHeart,
+		Gift,
+		Video,
+		Palette,
+		Sparkles,
+		ShieldCheck,
+		Zap
+	} from '@lucide/svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 </script>
 
@@ -7,11 +16,14 @@
 	<div class="container mx-auto max-w-6xl px-4 md:px-8">
 		<!-- Section Header -->
 		<div class="flex flex-col items-center text-center space-y-4 mb-20">
-			<h2 class="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight text-stone-900">
+			<h2
+				class="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight text-stone-900"
+			>
 				Fitur Presisi Tanpa Kompromi
 			</h2>
 			<p class="max-w-xl text-stone-600 text-base md:text-lg leading-relaxed font-sans">
-				Dirancang khusus untuk menghadirkan kemewahan, efisiensi, dan kenyamanan tanpa cela bagi Anda dan setiap tamu yang diundang.
+				Dirancang khusus untuk menghadirkan kemewahan, efisiensi, dan kenyamanan tanpa cela bagi
+				Anda dan setiap tamu yang diundang.
 			</p>
 		</div>
 
@@ -27,27 +39,42 @@
 					>
 						<CalendarCheck class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-2xl font-serif font-normal text-stone-900">Manajemen RSVP Real-Time</Card.Title>
+					<Card.Title class="text-2xl font-serif font-normal text-stone-900"
+						>Manajemen RSVP Real-Time</Card.Title
+					>
 					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
-						Pantau konfirmasi kehadiran tamu secara langsung dari dashboard Anda. Lengkap dengan catatan ucapan, pendamping, dan preferensi acara.
+						Pantau konfirmasi kehadiran tamu secara langsung dari dashboard Anda. Lengkap dengan
+						catatan ucapan, pendamping, dan preferensi acara.
 					</Card.Description>
 				</Card.Header>
 				<Card.Content class="mt-6 flex justify-end p-6 pt-0">
 					<div
 						class="h-44 w-full sm:w-5/6 rounded-2xl bg-[#121815] border border-emerald-900/40 p-5 shadow-2xl relative overflow-hidden"
 					>
-						<div class="flex items-center justify-between pb-3 border-b border-emerald-900/40 text-xs text-stone-400">
+						<div
+							class="flex items-center justify-between pb-3 border-b border-emerald-900/40 text-xs text-stone-400"
+						>
 							<span class="font-serif font-bold text-emerald-200">Konfirmasi RSVP Terbaru</span>
 							<span class="text-[10px] uppercase tracking-wider text-emerald-400">34 Hadir</span>
 						</div>
 						<div class="mt-3 space-y-2.5">
-							<div class="flex items-center justify-between p-2.5 rounded-xl bg-[#1a221e] text-xs border border-emerald-900/30">
+							<div
+								class="flex items-center justify-between p-2.5 rounded-xl bg-[#1a221e] text-xs border border-emerald-900/30"
+							>
 								<span class="font-medium text-stone-200">Bpk. Made & Keluarga</span>
-								<span class="px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[10px] uppercase font-semibold tracking-wider">Hadir (2 Orang)</span>
+								<span
+									class="px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[10px] uppercase font-semibold tracking-wider"
+									>Hadir (2 Orang)</span
+								>
 							</div>
-							<div class="flex items-center justify-between p-2.5 rounded-xl bg-[#1a221e] text-xs border border-emerald-900/30">
+							<div
+								class="flex items-center justify-between p-2.5 rounded-xl bg-[#1a221e] text-xs border border-emerald-900/30"
+							>
 								<span class="font-medium text-stone-200">Ibu Wayan Sudiarta</span>
-								<span class="px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[10px] uppercase font-semibold tracking-wider">Hadir (1 Orang)</span>
+								<span
+									class="px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[10px] uppercase font-semibold tracking-wider"
+									>Hadir (1 Orang)</span
+								>
 							</div>
 						</div>
 					</div>
@@ -64,15 +91,23 @@
 					>
 						<Gift class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl font-serif font-normal text-stone-900">Amplop Digital & QRIS</Card.Title>
+					<Card.Title class="text-xl font-serif font-normal text-stone-900"
+						>Amplop Digital & QRIS</Card.Title
+					>
 					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
-						Terima hadiah dan angpao digital secara aman via transfer bank atau QRIS tanpa biaya komisi.
+						Terima hadiah dan angpao digital secara aman via transfer bank atau QRIS tanpa biaya
+						komisi.
 					</Card.Description>
 				</Card.Header>
 				<div class="px-6 pb-6 mt-auto">
-					<div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex items-center justify-between">
+					<div
+						class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex items-center justify-between"
+					>
 						<span class="text-xs font-semibold text-stone-800">Direct QRIS Transfer</span>
-						<span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#121815] text-emerald-300 uppercase tracking-widest">Instant</span>
+						<span
+							class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#121815] text-emerald-300 uppercase tracking-widest"
+							>Instant</span
+						>
 					</div>
 				</div>
 			</Card.Root>
@@ -87,7 +122,9 @@
 					>
 						<MessageSquareHeart class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl font-serif font-normal text-stone-900">Buku Tamu Interaktif</Card.Title>
+					<Card.Title class="text-xl font-serif font-normal text-stone-900"
+						>Buku Tamu Interaktif</Card.Title
+					>
 					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
 						Kumpulkan pesan, ucapan, dan doa hangat dari sahabat & keluarga dalam tampilan estetik.
 					</Card.Description>
@@ -104,9 +141,12 @@
 					>
 						<Video class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl font-serif font-normal text-stone-900">Integrasi Live Stream</Card.Title>
+					<Card.Title class="text-xl font-serif font-normal text-stone-900"
+						>Integrasi Live Stream</Card.Title
+					>
 					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
-						Sematkan tautan YouTube atau Zoom Live agar kerabat yang jauh tetap hadir menyaksikan momen bersejarah Anda.
+						Sematkan tautan YouTube atau Zoom Live agar kerabat yang jauh tetap hadir menyaksikan
+						momen bersejarah Anda.
 					</Card.Description>
 				</Card.Header>
 			</Card.Root>
@@ -121,9 +161,12 @@
 					>
 						<Palette class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl font-serif font-normal text-stone-900">Personal Kustomisasi</Card.Title>
+					<Card.Title class="text-xl font-serif font-normal text-stone-900"
+						>Personal Kustomisasi</Card.Title
+					>
 					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
-						Sesuaikan musik latar, tipografi, foto galeri, serta warna tema secara visual dan intuitif.
+						Sesuaikan musik latar, tipografi, foto galeri, serta warna tema secara visual dan
+						intuitif.
 					</Card.Description>
 				</Card.Header>
 			</Card.Root>

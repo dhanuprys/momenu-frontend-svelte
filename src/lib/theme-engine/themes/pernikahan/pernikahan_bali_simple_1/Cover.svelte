@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { getPernikahanContext } from '$lib/theme-engine/context.js';
-	import { createMediaHelper } from '$lib/theme-engine/helpers/media.js';
-	import { getMediaUrl } from '$lib/utils.js';
-	import { MANIFEST } from './manifest.js';
+	import { getPernikahanContext } from '$lib/theme-engine/context';
+	import { createMediaHelper } from '$lib/theme-engine/helpers/media';
+	import { getMediaUrl } from '$lib/utils';
+	import { MANIFEST } from './manifest';
 	import { fly } from 'svelte/transition';
 
 	const { payload, guestName, coverState, mediaMappings } = getPernikahanContext();

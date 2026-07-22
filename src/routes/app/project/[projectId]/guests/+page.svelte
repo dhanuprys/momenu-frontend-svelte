@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { RSVPService, ProjectService } from '$lib/services/index.js';
-	import type { RSVP, Pagination, Project, FeatureToggle } from '$lib/types/index.js';
+	import { RSVPService, ProjectService } from '$lib/services/index';
+	import type { RSVP, Pagination, Project, FeatureToggle } from '$lib/types/index';
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import * as Table from '$lib/components/ui/table/index.js';

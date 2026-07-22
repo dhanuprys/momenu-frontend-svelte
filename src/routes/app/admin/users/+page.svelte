@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AdminService } from '$lib/services/index.js';
-	import type { User } from '$lib/types/index.js';
+	import { AdminService } from '$lib/services/index';
+	import type { User } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';

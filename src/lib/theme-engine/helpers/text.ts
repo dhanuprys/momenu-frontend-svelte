@@ -1,5 +1,5 @@
-import type { TextOverride } from '$lib/types/models.js';
-import type { TextSlotDefinitions } from '../types.js';
+import type { TextOverride } from '$lib/types/models';
+import type { TextSlotDefinitions } from '../types';
 
 /**
  * Safely escapes HTML entities to prevent XSS attacks.

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { GuestbookService } from '$lib/services/index.js';
-	import type { Guestbook, Pagination } from '$lib/types/index.js';
+	import { GuestbookService } from '$lib/services/index';
+	import type { Guestbook, Pagination } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';

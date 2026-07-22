@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { InvitationService } from '$lib/services/index.js';
-	import type { Guestbook } from '$lib/types/index.js';
+	import { InvitationService } from '$lib/services/index';
+	import type { Guestbook } from '$lib/types/index';
 	import { Loader2, MessageSquareHeart, AlertCircle } from '@lucide/svelte';
 	import { fade, slide } from 'svelte/transition';
 

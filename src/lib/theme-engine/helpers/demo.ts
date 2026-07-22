@@ -1,7 +1,7 @@
-import type { InvitationData, PayloadMap } from '$lib/types/invitation.js';
-import type { Project, Schedule, RSVP, Guestbook } from '$lib/types/models.js';
-import type { ThemeManifest } from '../types.js';
-import type { EventType } from '$lib/types/enums.js';
+import type { EventType } from '$lib/types/enums';
+import type { InvitationData, PayloadMap } from '$lib/types/invitation';
+import type { Guestbook, Project, RSVP, Schedule } from '$lib/types/models';
+import type { ThemeManifest } from '../types';
 
 const defaultMockPayloads: { [K in EventType]: PayloadMap[K] } = {
 	pernikahan: {

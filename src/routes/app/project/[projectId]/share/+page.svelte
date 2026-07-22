@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ShareService } from '$lib/services/index.js';
-	import type { ShareSession } from '$lib/services/share.service.js';
+	import { ShareService } from '$lib/services/index';
+	import type { ShareSession } from '$lib/services/share.service';
 	import { onMount } from 'svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';

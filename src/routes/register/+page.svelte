@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RegisterForm from '$lib/components/auth/register-form.svelte';
-	import { authState } from '$lib/stores/auth.svelte.js';
+	import { authState } from '$lib/stores/auth.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import SEO from '$lib/components/seo.svelte';

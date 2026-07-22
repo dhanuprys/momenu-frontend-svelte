@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import type { Project } from '$lib/types/models.js';
+	import type { Project } from '$lib/types/models';
 	import ThemeCustomizerForm from './theme-customizer-form.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 

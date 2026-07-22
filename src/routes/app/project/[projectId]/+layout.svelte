@@ -5,7 +5,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import ModeToggle from '$lib/components/mode-toggle.svelte';
 	import { page } from '$app/stores';
-	import { ProjectService } from '$lib/services/project.service.js';
+	import { ProjectService } from '$lib/services/project.service';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();

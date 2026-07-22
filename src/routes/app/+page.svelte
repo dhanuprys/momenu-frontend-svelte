@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { ProjectService } from '$lib/services/project.service.js';
-	import type { Project } from '$lib/types/index.js';
+	import { ProjectService } from '$lib/services/project.service';
+	import type { Project } from '$lib/types/index';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { Plus, Calendar, LayoutDashboard, Users, ExternalLink } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 	import AppHeader from '$lib/components/layout/app-header.svelte';
 
 	let projects: Project[] = $state([]);

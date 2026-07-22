@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Music } from '$lib/types/index.js';
+	import type { Music } from '$lib/types/index';
 	import { Play, Pause, Check, Music as MusicIcon } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Progress } from '$lib/components/ui/progress/index.js';

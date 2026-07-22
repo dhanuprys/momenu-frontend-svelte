@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { InvitationService } from '$lib/services/index.js';
+	import { InvitationService } from '$lib/services/index';
 	import { Loader2, CheckCircle2, AlertCircle } from '@lucide/svelte';
 	import { fade, slide } from 'svelte/transition';
 

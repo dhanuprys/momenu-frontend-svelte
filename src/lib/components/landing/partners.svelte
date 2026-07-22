@@ -12,7 +12,9 @@
 	];
 </script>
 
-<section class="py-16 md:py-24 bg-[#F9FAF8] border-y border-stone-200/60 overflow-hidden select-none">
+<section
+	class="py-16 md:py-24 bg-[#F9FAF8] border-y border-stone-200/60 overflow-hidden select-none"
+>
 	<div class="container mx-auto px-4 md:px-8 mb-10 text-center">
 		<p class="text-xs uppercase tracking-[0.3em] font-semibold text-emerald-900/70">
 			Dipercaya oleh Mitra Dokumentasi & Vendor Visual Terbaik

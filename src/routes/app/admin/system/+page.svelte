@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AdminService } from '$lib/services/index.js';
+	import { AdminService } from '$lib/services/index';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Activity, Cpu, Server, Clock, HardDrive, Info, Image, Files, Zap } from '@lucide/svelte';
 	import { onMount, onDestroy } from 'svelte';

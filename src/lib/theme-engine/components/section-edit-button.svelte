@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Pencil } from '@lucide/svelte';
-	import { getInvitationContext } from '$lib/theme-engine/context.js';
+	import { getInvitationContext } from '$lib/theme-engine/context';
 
 	let {
 		slotKey,

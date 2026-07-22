@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ScheduleService } from '$lib/services/index.js';
-	import type { Schedule, ScheduleRequest } from '$lib/types/index.js';
+	import { ScheduleService } from '$lib/services/index';
+	import type { Schedule, ScheduleRequest } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';

@@ -1,6 +1,6 @@
-import type { EventType, MediaType } from '$lib/types/enums.js';
-import type { PayloadMap } from '$lib/types/invitation.js';
-import type { FeatureToggle, Schedule } from '$lib/types/models.js';
+import type { EventType, MediaType } from '$lib/types/enums';
+import type { PayloadMap } from '$lib/types/invitation';
+import type { FeatureToggle, Schedule } from '$lib/types/models';
 
 /**
  * Defines a single media bucket slot for a theme.

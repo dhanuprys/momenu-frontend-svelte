@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { InvitationData } from '$lib/types/index.js';
+	import type { InvitationData } from '$lib/types/index';
 	import { MailOpen } from '@lucide/svelte';
 	import { fly } from 'svelte/transition';
 

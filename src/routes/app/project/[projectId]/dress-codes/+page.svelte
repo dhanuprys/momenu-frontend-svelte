@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { DressCodeService } from '$lib/services/index.js';
-	import type { DressCode, DressCodeRequest } from '$lib/types/index.js';
+	import { DressCodeService } from '$lib/services/index';
+	import type { DressCode, DressCodeRequest } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';

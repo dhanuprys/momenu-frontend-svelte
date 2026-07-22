@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { AdminService, MusicService } from '$lib/services/index.js';
-	import { UploadService } from '$lib/services/upload.service.js';
-	import type { Music, MusicCategory } from '$lib/types/index.js';
+	import { AdminService, MusicService } from '$lib/services/index';
+	import { UploadService } from '$lib/services/upload.service';
+	import type { Music, MusicCategory } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 	import {
 		Music as MusicIcon,
 		Plus,
@@ -16,7 +16,7 @@
 		Pause,
 		Image as ImageIcon
 	} from '@lucide/svelte';
-	import { config } from '$lib/config/index.js';
+	import { config } from '$lib/config/index';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { toast } from 'svelte-sonner';
 

@@ -2,9 +2,9 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { authState } from '$lib/stores/auth.svelte.js';
-	import { AuthService } from '$lib/services/index.js';
-	import { config } from '$lib/config/index.js';
+	import { authState } from '$lib/stores/auth.svelte';
+	import { AuthService } from '$lib/services/index';
+	import { config } from '$lib/config/index';
 
 	onMount(async () => {
 		const token = $page.url.searchParams.get('token');

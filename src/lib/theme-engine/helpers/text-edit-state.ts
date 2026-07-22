@@ -1,5 +1,5 @@
-import type { TextOverride } from '$lib/types/models.js';
-import type { TextSlotConfig, TextSlotDefinitions } from '../types.js';
+import type { TextOverride } from '$lib/types/models';
+import type { TextSlotConfig, TextSlotDefinitions } from '../types';
 
 // ─── Shared Edit State ────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
-import type { StyleOverride } from '$lib/types/models.js';
-import type { StyleProperties, StyleSlotDefinitions } from '../types.js';
+import type { StyleOverride } from '$lib/types/models';
+import type { StyleProperties, StyleSlotDefinitions } from '../types';
 
 export function createStyleHelper<TSlots extends StyleSlotDefinitions>(
 	slots: TSlots | undefined,

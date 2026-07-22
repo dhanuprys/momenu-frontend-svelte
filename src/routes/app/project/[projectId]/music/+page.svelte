@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ProjectService, MusicService } from '$lib/services/index.js';
-	import type { Project, Music, MusicCategory } from '$lib/types/index.js';
+	import { ProjectService, MusicService } from '$lib/services/index';
+	import type { Project, Music, MusicCategory } from '$lib/types/index';
 	import { onMount, onDestroy } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Play, Pause, Check, Music as MusicIcon, Search } from '@lucide/svelte';
-	import { config } from '$lib/config/index.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { config } from '$lib/config/index';
+	import { getMediaUrl } from '$lib/utils';
 	import { toast } from 'svelte-sonner';
 	import MusicPlayerBar from '$lib/theme-engine/components/music-player-bar.svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';

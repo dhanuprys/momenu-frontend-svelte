@@ -1,4 +1,4 @@
-export * from '../theme-engine/types.js';
+export * from '../theme-engine/types';
 export * from './api';
 export * from './enums';
 export * from './invitation';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ProjectService } from '$lib/services/index.js';
-	import type { Project } from '$lib/types/models.js';
+	import { ProjectService } from '$lib/services/index';
+	import type { Project } from '$lib/types/models';
 	import { onMount } from 'svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { toast } from 'svelte-sonner';

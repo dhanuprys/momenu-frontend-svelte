@@ -6,8 +6,8 @@
 		GuestbookService,
 		ScheduleService,
 		GiftRegistryService
-	} from '$lib/services/index.js';
-	import type { Project, RSVPStats, Guestbook } from '$lib/types/index.js';
+	} from '$lib/services/index';
+	import type { Project, RSVPStats, Guestbook } from '$lib/types/index';
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';

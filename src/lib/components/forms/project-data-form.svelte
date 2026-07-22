@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { FieldGroup, FieldDefinition, Project } from '$lib/types/index.js';
-	import { ProjectService, UploadService } from '$lib/services/index.js';
-	import { ApiError } from '$lib/utils/api-error.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import type { FieldGroup, FieldDefinition, Project } from '$lib/types/index';
+	import { ProjectService, UploadService } from '$lib/services/index';
+	import { ApiError } from '$lib/utils/api-error';
+	import { getMediaUrl } from '$lib/utils';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';

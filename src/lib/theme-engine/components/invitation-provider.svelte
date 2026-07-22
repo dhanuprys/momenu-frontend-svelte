@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { Component } from 'svelte';
-	import { InvitationService, AnalyticsService, ProjectService } from '$lib/services/index.js';
-	import type { InvitationData, PayloadMap, Project } from '$lib/types/index.js';
+	import { InvitationService, AnalyticsService, ProjectService } from '$lib/services/index';
+	import type { InvitationData, PayloadMap, Project } from '$lib/types/index';
 	import ThemeRenderer from '$lib/theme-engine/components/theme-renderer.svelte';
 	import ThemeCustomizerDrawer from '$lib/theme-engine/components/theme-customizer-drawer.svelte';
-	import { resolveTheme } from '$lib/theme-engine/registry.js';
+	import { resolveTheme } from '$lib/theme-engine/registry';
 	import {
 		Loader2,
 		ShieldAlert,
@@ -31,8 +31,8 @@
 	let customizerFocusSlot = $state('');
 	let audioElement: HTMLAudioElement | null = null;
 
-	import { config } from '$lib/config/index.js';
-	import { getMediaUrl } from '$lib/utils.js';
+	import { config } from '$lib/config/index';
+	import { getMediaUrl } from '$lib/utils';
 
 	// ─── Audio Helpers (safe, centralized) ───────────────────────────
 

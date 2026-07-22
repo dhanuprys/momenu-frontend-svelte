@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { getPernikahanContext } from '$lib/theme-engine/context.js';
-	import { createMediaHelper } from '$lib/theme-engine/helpers/media.js';
-	import { createTextHelper } from '$lib/theme-engine/helpers/text.js';
-	import { createStyleHelper } from '$lib/theme-engine/helpers/style.js';
-	import { createCountdown } from '$lib/theme-engine/helpers/countdown.svelte.js';
-	import { MANIFEST, BUCKET, TEXT, STYLE } from './manifest.js';
+	import { getPernikahanContext } from '$lib/theme-engine/context';
+	import { createMediaHelper } from '$lib/theme-engine/helpers/media';
+	import { createTextHelper } from '$lib/theme-engine/helpers/text';
+	import { createStyleHelper } from '$lib/theme-engine/helpers/style';
+	import { createCountdown } from '$lib/theme-engine/helpers/countdown.svelte';
+	import { MANIFEST, BUCKET, TEXT, STYLE } from './manifest';
 	import { fade, fly } from 'svelte/transition';
-	import type { Guestbook } from '$lib/types/index.js';
+	import type { Guestbook } from '$lib/types/index';
 	import { onMount } from 'svelte';
 
 	import Cover from './Cover.svelte';
@@ -123,7 +123,7 @@
 		}, 2000);
 	}
 
-	import { getMediaUrl } from '$lib/utils.js';
+	import { getMediaUrl } from '$lib/utils';
 
 	function reveal(node: HTMLElement) {
 		const observer = new IntersectionObserver(

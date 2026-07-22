@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { getUlangTahunContext } from '$lib/theme-engine/context.js';
-	import { createMediaHelper } from '$lib/theme-engine/helpers/media.js';
-	import { getMediaUrl } from '$lib/utils.js';
-	import { MANIFEST, BUCKET } from './manifest.js';
+	import { getUlangTahunContext } from '$lib/theme-engine/context';
+	import { createMediaHelper } from '$lib/theme-engine/helpers/media';
+	import { getMediaUrl } from '$lib/utils';
+	import { MANIFEST, BUCKET } from './manifest';
 	import { onMount } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
-	import type { Guestbook } from '$lib/types/index.js';
+	import type { Guestbook } from '$lib/types/index';
 	import { Loader2 } from '@lucide/svelte';
 
 	import GenericCover from '$lib/theme-engine/components/generic-cover.svelte';

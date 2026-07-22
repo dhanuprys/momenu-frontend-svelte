@@ -10,7 +10,7 @@
 	import AppHeader from '$lib/components/layout/app-header.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { toast } from 'svelte-sonner';
-	import { AuthService } from '$lib/services/index.js';
+	import { AuthService } from '$lib/services/index';
 
 	let user = $derived(authState.user);
 	let isEditingName = $state(false);

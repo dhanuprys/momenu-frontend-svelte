@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Button } from "$lib/components/ui/button/index.js";
 	import PanelLeftIcon from '@lucide/svelte/icons/panel-left';
-	import { cn } from "$lib/utils.js";
+	import { cn } from "$lib/utils";
 	import type { ComponentProps } from "svelte";
-	import { useSidebar } from "./context.svelte.js";
+	import { useSidebar } from "./context.svelte";
 
 	let {
 		ref = $bindable(null),

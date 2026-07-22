@@ -1,5 +1,5 @@
-import { extractSlotKeys } from '$lib/theme-engine/helpers/slot-keys.js';
-import type { ThemeManifest } from '$lib/theme-engine/types.js';
+import { extractSlotKeys } from '$lib/theme-engine/helpers/slot-keys';
+import type { ThemeManifest } from '$lib/theme-engine/types';
 
 export const MANIFEST = {
 	id: 'tigang_sasih_pastel_1',
