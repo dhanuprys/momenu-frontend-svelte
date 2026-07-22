@@ -60,6 +60,32 @@ export const MANIFEST = {
 			label: 'Kartu Kutipan',
 			properties: { backgroundColor: '#ffffff', textColor: '#57534e', borderRadius: '1rem' }
 		}
+	},
+	demo: {
+		payload: {
+			nama_mempelai_pria: 'I Gede Aditya',
+			nama_panggilan_pria: 'Aditya',
+			nama_mempelai_wanita: 'Ni Putu Ayu',
+			nama_panggilan_wanita: 'Ayu'
+		},
+		schedules: [
+			{
+				title: 'Upacara Pawiwahan',
+				start_time: '2027-12-10T09:00:00',
+				end_time: '2027-12-10T12:00:00',
+				timezone: 'Asia/Jakarta',
+				location: 'Griya Agung, Bali',
+				map_url: 'https://maps.google.com'
+			}
+		],
+		featureToggle: {
+			show_rsvp: true,
+			show_wishes: true,
+			show_gallery: true,
+			show_gifts: true,
+			show_live_stream: false,
+			show_music: true
+		}
 	}
 } as const satisfies ThemeManifest;
 

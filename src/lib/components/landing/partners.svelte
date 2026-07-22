@@ -1,39 +1,69 @@
 <script lang="ts">
-	import { Hexagon, Triangle, Circle, Square } from '@lucide/svelte';
+	const partners = [
+		'oncam-bali.webp',
+		'locanarta.webp',
+		'4k-galerie.webp',
+		'jepret-by-liam.webp',
+		'kusuma-photographybali.webp',
+		'pradnya-visual.webp',
+		'shutter-stories-id.webp',
+		'thorughdamarlens.webp',
+		'tomotovisual.webp'
+	];
 </script>
 
-<section class="py-12 md:py-16 bg-muted/30 border-y border-border/40">
-	<div class="container mx-auto px-4 md:px-8">
-		<p class="text-center text-sm font-medium text-muted-foreground mb-8 tracking-wider uppercase">
-			Bekerja sama dengan mitra terbaik
+<section class="py-16 md:py-24 bg-[#F9FAF8] border-y border-stone-200/60 overflow-hidden select-none">
+	<div class="container mx-auto px-4 md:px-8 mb-10 text-center">
+		<p class="text-xs uppercase tracking-[0.3em] font-semibold text-emerald-900/70">
+			Dipercaya oleh Mitra Dokumentasi & Vendor Visual Terbaik
 		</p>
+	</div>
 
+	<!-- Full-Width Marquee Container -->
+	<div class="relative w-full flex overflow-hidden group">
+		<!-- Fade Edges -->
 		<div
-			class="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 md:gap-x-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-500"
-		>
-			<!-- Partner A -->
-			<div class="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors">
-				<Hexagon class="h-8 w-8" />
-				<span class="text-xl font-bold tracking-tight font-serif">Partner A</span>
-			</div>
+			class="absolute left-0 top-0 w-28 md:w-64 h-full bg-gradient-to-r from-[#F9FAF8] to-transparent z-10 pointer-events-none"
+		></div>
+		<div
+			class="absolute right-0 top-0 w-28 md:w-64 h-full bg-gradient-to-l from-[#F9FAF8] to-transparent z-10 pointer-events-none"
+		></div>
 
-			<!-- Partner B -->
-			<div class="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors">
-				<Triangle class="h-8 w-8" />
-				<span class="text-xl font-bold tracking-tight font-serif">Partner B</span>
-			</div>
-
-			<!-- Partner C -->
-			<div class="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors">
-				<Circle class="h-8 w-8" />
-				<span class="text-xl font-bold tracking-tight font-serif">Partner C</span>
-			</div>
-
-			<!-- Partner D -->
-			<div class="flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors">
-				<Square class="h-8 w-8" />
-				<span class="text-xl font-bold tracking-tight font-serif">Partner D</span>
-			</div>
+		<!-- Scrolling Content with Larger Logos -->
+		<div class="flex shrink-0 items-center gap-16 md:gap-28 px-6 animate-marquee">
+			{#each Array(3) as _}
+				{#each partners as partner}
+					<div
+						class="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 hover:scale-105"
+					>
+						<img
+							src={`/assets/partners/${partner}`}
+							alt="Mitra Momenu"
+							class="h-14 md:h-20 lg:h-24 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300"
+							loading="lazy"
+						/>
+					</div>
+				{/each}
+			{/each}
 		</div>
 	</div>
 </section>
+
+<style>
+	.animate-marquee {
+		animation: marquee 35s linear infinite;
+	}
+
+	.animate-marquee:hover {
+		animation-play-state: paused;
+	}
+
+	@keyframes marquee {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-33.333333%);
+		}
+	}
+</style>

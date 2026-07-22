@@ -42,11 +42,6 @@
 <section id="faq" class="py-24 bg-background relative overflow-hidden">
 	<div class="container mx-auto max-w-4xl px-4 md:px-8">
 		<div class="flex flex-col items-center text-center space-y-4 mb-16">
-			<div
-				class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
-			>
-				<span>FAQ</span>
-			</div>
 			<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Pertanyaan yang Sering Diajukan</h2>
 			<p class="max-w-2xl text-muted-foreground sm:text-lg">
 				Temukan jawaban cepat untuk pertanyaan umum seputar fitur dan layanan Momenu.

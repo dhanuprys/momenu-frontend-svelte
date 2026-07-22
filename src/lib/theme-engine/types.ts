@@ -1,4 +1,6 @@
-import type { MediaType } from '$lib/types/enums.js';
+import type { EventType, MediaType } from '$lib/types/enums.js';
+import type { PayloadMap } from '$lib/types/invitation.js';
+import type { FeatureToggle, Schedule } from '$lib/types/models.js';
 
 /**
  * Defines a single media bucket slot for a theme.
@@ -56,21 +58,33 @@ export interface StyleSlotConfig {
 export type StyleSlotDefinitions = Record<string, StyleSlotConfig>;
 
 /**
+ * Demo payload defining mock data to render the theme nicely without a real project.
+ */
+export interface ThemeDemoPayload<TEventType extends EventType> {
+	guestName?: string;
+	payload: PayloadMap[TEventType];
+	schedules?: Omit<Schedule, 'id' | 'project_id'>[];
+	featureToggle?: Partial<FeatureToggle>;
+}
+
+/**
  * A theme manifest that strongly types the media buckets, text slots, and style slots for a specific theme.
  * This is the frontend's mirror of the backend's theme seeder data.
  *
- * Use `as const satisfies ThemeManifest` when defining a manifest to get
+ * Use `as const satisfies ThemeManifest<...>` when defining a manifest to get
  * literal type inference for bucket keys.
  */
 export interface ThemeManifest<
+	TEventType extends EventType = EventType,
 	TBuckets extends BucketDefinitions = BucketDefinitions,
 	TTextSlots extends TextSlotDefinitions = TextSlotDefinitions,
 	TStyleSlots extends StyleSlotDefinitions = StyleSlotDefinitions
 > {
 	id: string;
-	eventType: string;
+	eventType: TEventType;
 	name: string;
 	buckets: TBuckets;
 	textSlots?: TTextSlots;
 	styleSlots?: TStyleSlots;
+	demo?: ThemeDemoPayload<TEventType>;
 }

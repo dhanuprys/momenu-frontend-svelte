@@ -1,4 +1,5 @@
-export type EventType = 'pernikahan' | 'ulang_tahun' | 'metatah' | 'tigang_sasih' | 'seminar';
+export const EVENT_TYPES = ['pernikahan', 'ulang_tahun', 'metatah', 'tigang_sasih', 'seminar'] as const;
+export type EventType = typeof EVENT_TYPES[number];
 
 export type GiftRegistryType = 'bank' | 'ewallet' | 'physical';
 

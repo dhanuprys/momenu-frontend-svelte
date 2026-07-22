@@ -1,125 +1,129 @@
 <script lang="ts">
-	import { CalendarCheck, MessageSquareHeart, Gift, Video, Palette } from '@lucide/svelte';
+	import { CalendarCheck, MessageSquareHeart, Gift, Video, Palette, Sparkles, ShieldCheck, Zap } from '@lucide/svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 </script>
 
-<section id="fitur" class="py-24 bg-muted/30">
-	<div class="container mx-auto max-w-7xl px-4 md:px-8">
-		<div class="flex flex-col items-center text-center space-y-4 mb-16">
-			<h2 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-				Fitur Premium Tanpa Kompromi
+<section id="fitur" class="py-28 bg-[#F9FAF8] relative text-stone-900">
+	<div class="container mx-auto max-w-6xl px-4 md:px-8">
+		<!-- Section Header -->
+		<div class="flex flex-col items-center text-center space-y-4 mb-20">
+			<h2 class="text-4xl sm:text-5xl md:text-6xl font-serif font-normal tracking-tight text-stone-900">
+				Fitur Presisi Tanpa Kompromi
 			</h2>
-			<p class="max-w-2xl text-muted-foreground sm:text-lg">
-				Semua yang Anda butuhkan untuk mengelola acara dengan sempurna, dirancang dengan keindahan
-				dan kemudahan penggunaan.
+			<p class="max-w-xl text-stone-600 text-base md:text-lg leading-relaxed font-sans">
+				Dirancang khusus untuk menghadirkan kemewahan, efisiensi, dan kenyamanan tanpa cela bagi Anda dan setiap tamu yang diundang.
 			</p>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			<!-- Large Feature -->
+		<!-- Bento Grid Layout -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<!-- Feature 1: RSVP (Large 2 Cols) -->
 			<Card.Root
-				class="md:col-span-2 overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:shadow-md hover:border-primary/20 group"
+				class="md:col-span-2 overflow-hidden border border-stone-200/80 bg-white/80 backdrop-blur-xl p-4 shadow-sm hover:shadow-xl hover:border-emerald-900/20 transition-all duration-500 rounded-3xl group"
 			>
-				<Card.Header class="pb-0">
+				<Card.Header class="pb-0 p-6">
 					<div
-						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"
+						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100/70 text-emerald-900 group-hover:scale-105 transition-transform"
 					>
-						<CalendarCheck class="h-6 w-6" />
+						<CalendarCheck class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-2xl">Manajemen RSVP Cerdas</Card.Title>
-					<Card.Description class="text-base mt-2">
-						Pantau kehadiran tamu secara real-time. Dapatkan notifikasi saat tamu mengonfirmasi
-						kehadiran, lengkap dengan preferensi makanan dan jumlah pengikut.
+					<Card.Title class="text-2xl font-serif font-normal text-stone-900">Manajemen RSVP Real-Time</Card.Title>
+					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
+						Pantau konfirmasi kehadiran tamu secara langsung dari dashboard Anda. Lengkap dengan catatan ucapan, pendamping, dan preferensi acara.
 					</Card.Description>
 				</Card.Header>
-				<Card.Content class="mt-6 flex justify-end">
+				<Card.Content class="mt-6 flex justify-end p-6 pt-0">
 					<div
-						class="h-40 w-full sm:w-3/4 rounded-tl-xl bg-muted/80 border-t border-l border-border/50 overflow-hidden relative"
+						class="h-44 w-full sm:w-5/6 rounded-2xl bg-[#121815] border border-emerald-900/40 p-5 shadow-2xl relative overflow-hidden"
 					>
-						<div class="absolute inset-4 flex flex-col gap-3">
-							<div
-								class="h-8 w-full bg-background rounded-md shadow-sm border border-border/50"
-							></div>
-							<div
-								class="h-8 w-3/4 bg-background rounded-md shadow-sm border border-border/50"
-							></div>
-							<div
-								class="h-8 w-5/6 bg-background rounded-md shadow-sm border border-border/50"
-							></div>
+						<div class="flex items-center justify-between pb-3 border-b border-emerald-900/40 text-xs text-stone-400">
+							<span class="font-serif font-bold text-emerald-200">Konfirmasi RSVP Terbaru</span>
+							<span class="text-[10px] uppercase tracking-wider text-emerald-400">34 Hadir</span>
+						</div>
+						<div class="mt-3 space-y-2.5">
+							<div class="flex items-center justify-between p-2.5 rounded-xl bg-[#1a221e] text-xs border border-emerald-900/30">
+								<span class="font-medium text-stone-200">Bpk. Made & Keluarga</span>
+								<span class="px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[10px] uppercase font-semibold tracking-wider">Hadir (2 Orang)</span>
+							</div>
+							<div class="flex items-center justify-between p-2.5 rounded-xl bg-[#1a221e] text-xs border border-emerald-900/30">
+								<span class="font-medium text-stone-200">Ibu Wayan Sudiarta</span>
+								<span class="px-2.5 py-0.5 rounded-full bg-emerald-400/10 text-emerald-300 text-[10px] uppercase font-semibold tracking-wider">Hadir (1 Orang)</span>
+							</div>
 						</div>
 					</div>
 				</Card.Content>
 			</Card.Root>
 
-			<!-- Small Feature -->
+			<!-- Feature 2: Amplop Digital -->
 			<Card.Root
-				class="overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:shadow-md hover:border-primary/20 group flex flex-col"
+				class="overflow-hidden border border-stone-200/80 bg-white/80 backdrop-blur-xl p-4 shadow-sm hover:shadow-xl hover:border-emerald-900/20 transition-all duration-500 rounded-3xl group flex flex-col justify-between"
 			>
-				<Card.Header>
+				<Card.Header class="p-6">
 					<div
-						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"
+						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100/70 text-emerald-900 group-hover:scale-105 transition-transform"
 					>
-						<Gift class="h-6 w-6" />
+						<Gift class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl">Amplop Digital</Card.Title>
-					<Card.Description class="text-base mt-2">
-						Terima hadiah dan angpao digital langsung ke rekening Anda dengan aman dan praktis,
-						tanpa ribet.
+					<Card.Title class="text-xl font-serif font-normal text-stone-900">Amplop Digital & QRIS</Card.Title>
+					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
+						Terima hadiah dan angpao digital secara aman via transfer bank atau QRIS tanpa biaya komisi.
 					</Card.Description>
 				</Card.Header>
-				<div class="mt-auto flex-grow bg-gradient-to-t from-primary/5 to-transparent h-24"></div>
+				<div class="px-6 pb-6 mt-auto">
+					<div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex items-center justify-between">
+						<span class="text-xs font-semibold text-stone-800">Direct QRIS Transfer</span>
+						<span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#121815] text-emerald-300 uppercase tracking-widest">Instant</span>
+					</div>
+				</div>
 			</Card.Root>
 
-			<!-- Medium Feature -->
+			<!-- Feature 3: Buku Tamu -->
 			<Card.Root
-				class="overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:shadow-md hover:border-primary/20 group"
+				class="overflow-hidden border border-stone-200/80 bg-white/80 backdrop-blur-xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-900/20 transition-all duration-500 rounded-3xl group"
 			>
-				<Card.Header>
+				<Card.Header class="p-0">
 					<div
-						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"
+						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100/70 text-emerald-900 group-hover:scale-105 transition-transform"
 					>
-						<MessageSquareHeart class="h-6 w-6" />
+						<MessageSquareHeart class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl">Buku Tamu Interaktif</Card.Title>
-					<Card.Description class="text-base mt-2">
-						Kumpulkan doa, harapan, dan ucapan selamat dari orang terdekat. Tampilkan secara live di
-						layar acara Anda.
-					</Card.Description>
-				</Card.Header>
-			</Card.Root>
-
-			<!-- Medium Feature -->
-			<Card.Root
-				class="overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:shadow-md hover:border-primary/20 group"
-			>
-				<Card.Header>
-					<div
-						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"
-					>
-						<Video class="h-6 w-6" />
-					</div>
-					<Card.Title class="text-xl">Integrasi Live Stream</Card.Title>
-					<Card.Description class="text-base mt-2">
-						Sematkan tautan YouTube atau Zoom langsung di undangan. Bagikan momen untuk tamu yang
-						tidak bisa hadir fisik.
+					<Card.Title class="text-xl font-serif font-normal text-stone-900">Buku Tamu Interaktif</Card.Title>
+					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
+						Kumpulkan pesan, ucapan, dan doa hangat dari sahabat & keluarga dalam tampilan estetik.
 					</Card.Description>
 				</Card.Header>
 			</Card.Root>
 
-			<!-- Medium Feature -->
+			<!-- Feature 4: Live Stream -->
 			<Card.Root
-				class="overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:shadow-md hover:border-primary/20 group"
+				class="overflow-hidden border border-stone-200/80 bg-white/80 backdrop-blur-xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-900/20 transition-all duration-500 rounded-3xl group"
 			>
-				<Card.Header>
+				<Card.Header class="p-0">
 					<div
-						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform"
+						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100/70 text-emerald-900 group-hover:scale-105 transition-transform"
 					>
-						<Palette class="h-6 w-6" />
+						<Video class="h-6 w-6 stroke-[1.5]" />
 					</div>
-					<Card.Title class="text-xl">Tema Premium & Kustomisasi</Card.Title>
-					<Card.Description class="text-base mt-2">
-						Pilih dari puluhan desain menawan dan sesuaikan warna, font, serta musik latar agar
-						sesuai dengan nuansa acara Anda.
+					<Card.Title class="text-xl font-serif font-normal text-stone-900">Integrasi Live Stream</Card.Title>
+					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
+						Sematkan tautan YouTube atau Zoom Live agar kerabat yang jauh tetap hadir menyaksikan momen bersejarah Anda.
+					</Card.Description>
+				</Card.Header>
+			</Card.Root>
+
+			<!-- Feature 5: Customization -->
+			<Card.Root
+				class="overflow-hidden border border-stone-200/80 bg-white/80 backdrop-blur-xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-900/20 transition-all duration-500 rounded-3xl group"
+			>
+				<Card.Header class="p-0">
+					<div
+						class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100/70 text-emerald-900 group-hover:scale-105 transition-transform"
+					>
+						<Palette class="h-6 w-6 stroke-[1.5]" />
+					</div>
+					<Card.Title class="text-xl font-serif font-normal text-stone-900">Personal Kustomisasi</Card.Title>
+					<Card.Description class="text-stone-500 text-sm mt-2 leading-relaxed">
+						Sesuaikan musik latar, tipografi, foto galeri, serta warna tema secara visual dan intuitif.
 					</Card.Description>
 				</Card.Header>
 			</Card.Root>
