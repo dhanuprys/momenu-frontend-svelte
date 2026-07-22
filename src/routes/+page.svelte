@@ -9,10 +9,11 @@
 	let mounted = $state(false);
 
 	const partners = [
+		'oncam-bali.webp',
+		'locanarta.webp',
 		'4k-galerie.webp',
 		'jepret-by-liam.webp',
 		'kusuma-photographybali.webp',
-		'oncam-bali.webp',
 		'pradnya-visual.webp',
 		'shutter-stories-id.webp',
 		'thorughdamarlens.webp',
