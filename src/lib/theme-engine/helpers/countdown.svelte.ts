@@ -24,11 +24,9 @@ const EXPIRED: CountdownState = { days: 0, hours: 0, minutes: 0, seconds: 0, isE
  * ```
  */
 export function createCountdown(targetDate: Date | null | undefined) {
-	let state = $state<CountdownState>(EXPIRED);
-
 	function compute(target: Date): CountdownState {
 		const diff = target.getTime() - Date.now();
-		if (diff <= 0) return EXPIRED;
+		if (diff <= 0 || isNaN(diff)) return EXPIRED;
 
 		return {
 			days: Math.floor(diff / (1000 * 60 * 60 * 24)),
@@ -39,14 +37,11 @@ export function createCountdown(targetDate: Date | null | undefined) {
 		};
 	}
 
-	$effect(() => {
-		if (!targetDate) {
-			state = EXPIRED;
-			return;
-		}
+	let state = $state<CountdownState>(targetDate ? compute(targetDate) : EXPIRED);
 
-		// Compute immediately, then tick every second
-		state = compute(targetDate);
+	$effect(() => {
+		if (!targetDate) return;
+
 		const interval = setInterval(() => {
 			state = compute(targetDate);
 		}, 1000);

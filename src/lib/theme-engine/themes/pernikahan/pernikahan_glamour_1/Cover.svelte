@@ -33,7 +33,7 @@
 			<div class="absolute inset-0 bg-linear-to-b from-black/90 via-transparent to-black/90"></div>
 		</div>
 
-		<div class="relative z-10 flex h-full w-full flex-col justify-between px-6 py-16 text-center">
+		<div class="relative z-10 flex h-full w-full flex-col justify-between px-6 py-12 text-center">
 			<div class="mt-10 flex flex-col items-center">
 				<p class="mb-2 text-xs font-bold tracking-widest uppercase lg:text-base">
 					Undangan Pernikahan

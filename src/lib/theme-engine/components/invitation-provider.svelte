@@ -33,6 +33,7 @@
 
 	import { config } from '$lib/config/index';
 	import { getMediaUrl } from '$lib/utils';
+	import { SvelteSet } from 'svelte/reactivity';
 
 	// ─── Audio Helpers (safe, centralized) ───────────────────────────
 
@@ -268,7 +269,7 @@
 			//    Uses Promise.race with a timeout so the user is never stuck waiting
 			//    longer than 5 seconds on a slow connection.
 			if (isInitial) {
-				const imageUrls = new Set<string>();
+				const imageUrls = new SvelteSet<string>();
 
 				// Collect image URLs from media mappings (skip videos)
 				if (project.media_mappings) {
@@ -363,9 +364,10 @@
 </script>
 
 {#if loading}
-	<div class="min-h-screen flex flex-col items-center justify-center bg-background">
-		<Loader2 class="h-10 w-10 animate-spin text-primary" />
-		<p class="mt-4 text-sm text-muted-foreground">Memuat undangan...</p>
+	<div class="min-h-screen flex flex-col items-center justify-center bg-stone-50">
+		<div class="animate-pulse flex flex-col items-center">
+			<span class="text-2xl font-bold tracking-[0.3em] text-stone-900">MOMENU</span>
+		</div>
 	</div>
 {:else if error}
 	<div
