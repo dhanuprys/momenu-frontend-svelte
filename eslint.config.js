@@ -44,7 +44,8 @@ export default defineConfig(
 	{
 		files: ['src/lib/theme-engine/themes/**/*.svelte', 'src/lib/theme-engine/themes/**/*.ts'],
 		rules: {
-			'@typescript-eslint/no-unused-vars': 'off'
+			'@typescript-eslint/no-unused-vars': 'off',
+			'svelte/no-navigation-without-resolve': 'off'
 		}
 	}
 );
