@@ -190,6 +190,7 @@
 				eventType: eventType,
 				payload: payload,
 				schedules: project.schedules || [],
+				journeys: project.journeys || [],
 				giftRegistries: project.gift_registries || [],
 				mediaMappings: project.media_mappings || [],
 				dressCodes: project.dress_codes || [],

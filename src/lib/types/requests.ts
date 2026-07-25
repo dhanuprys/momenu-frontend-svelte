@@ -46,6 +46,7 @@ export interface UpdateFeatureToggleRequest {
 	show_gallery?: boolean;
 	show_gifts?: boolean;
 	show_live_stream?: boolean;
+	show_journeys?: boolean;
 	require_registered_guest?: boolean;
 	whatsapp_template?: string;
 }
@@ -57,6 +58,13 @@ export interface ScheduleRequest {
 	timezone: string;
 	location?: string;
 	map_url?: string;
+}
+
+export interface JourneyRequest {
+	title: string;
+	date: string;
+	content: string;
+	order: number;
 }
 
 export interface GiftRegistryRequest {

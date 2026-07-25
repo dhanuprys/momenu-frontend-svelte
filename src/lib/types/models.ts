@@ -64,8 +64,19 @@ export interface FeatureToggle {
 	show_gifts: boolean;
 	show_live_stream: boolean;
 	show_music: boolean;
+	show_journeys: boolean;
 	require_registered_guest: boolean;
 	whatsapp_template: string;
+}
+
+export interface Journey {
+	id: number;
+	project_id: string;
+	title: string;
+	date: string;
+	content: string;
+	order: number;
+	created_at?: string;
 }
 
 export interface Schedule {
@@ -155,6 +166,16 @@ export interface LiveStream {
 	created_at: string;
 }
 
+export interface Journey {
+	id: number;
+	project_id: string;
+	title: string;
+	date: string;
+	content: string;
+	order: number;
+	created_at?: string;
+}
+
 export interface RSVPStats {
 	attending: number;
 	not_attending: number;
@@ -181,6 +202,7 @@ export interface Project {
 	media_mappings?: MediaMapping[];
 	dress_codes?: DressCode[];
 	live_streams?: LiveStream[];
+	journeys?: Journey[];
 	rsvps?: RSVP[];
 	guestbooks?: Guestbook[];
 	text_overrides?: TextOverride[];

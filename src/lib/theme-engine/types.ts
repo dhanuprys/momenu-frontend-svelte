@@ -64,6 +64,7 @@ export interface ThemeDemoPayload<TEventType extends EventType> {
 	guestName?: string;
 	payload: PayloadMap[TEventType];
 	schedules?: Omit<Schedule, 'id' | 'project_id'>[];
+	journeys?: Omit<import('$lib/types').Journey, 'id' | 'project_id' | 'created_at'>[];
 	featureToggle?: Partial<FeatureToggle>;
 }
 

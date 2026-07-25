@@ -4,6 +4,7 @@ import type {
 	FeatureToggle,
 	GiftRegistry,
 	Guestbook,
+	Journey,
 	LiveStream,
 	MediaMapping,
 	Music,
@@ -78,6 +79,7 @@ export interface InvitationData<T extends EventType = EventType> {
 	payload: PayloadMap[T];
 	music?: Music;
 	schedules: Schedule[];
+	journeys: Journey[];
 	giftRegistries: GiftRegistry[];
 	mediaMappings: MediaMapping[];
 	dressCodes: DressCode[];

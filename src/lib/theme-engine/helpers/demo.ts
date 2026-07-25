@@ -34,7 +34,7 @@ const defaultMockPayloads: { [K in EventType]: PayloadMap[K] } = {
  */
 export function createMockInvitationData<TEventType extends EventType>(
 	themeId: string,
-	manifest: ThemeManifest<TEventType, any, any, any>,
+	manifest: ThemeManifest<TEventType>,
 	coverState: { isOpened: () => boolean; open: () => void }
 ): InvitationData {
 	const demoData = manifest.demo || { payload: defaultMockPayloads[manifest.eventType] };
@@ -73,6 +73,7 @@ export function createMockInvitationData<TEventType extends EventType>(
 			show_gifts: true,
 			show_live_stream: false,
 			show_music: false,
+			show_journeys: false,
 			require_registered_guest: false,
 			whatsapp_template: '',
 			...(demoData.featureToggle || {})
@@ -93,6 +94,12 @@ export function createMockInvitationData<TEventType extends EventType>(
 		payload: payload,
 		isPreview: true, // Crucial: Enables placeholder images in media.ts
 		schedules: schedules,
+		journeys: (demoData.journeys || []).map((j, i) => ({
+			id: i + 1,
+			project_id: 'demo',
+			created_at: new Date().toISOString(),
+			...j
+		})),
 		firstScheduleDate: firstScheduleDate,
 		giftRegistries: [],
 		mediaMappings: [],

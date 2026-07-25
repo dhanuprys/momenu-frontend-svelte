@@ -23,6 +23,7 @@
 		Shield,
 		ChevronDown,
 		ChevronRight,
+		Heart,
 		Share2,
 		FileText,
 		MonitorSmartphone,
@@ -111,6 +112,12 @@
 					url: `/app/project/${projectId}/media`,
 					icon: ImageIcon,
 					isActive: currentPath.startsWith(`/app/project/${projectId}/media`)
+				},
+				{
+					title: 'Kisah Perjalanan',
+					url: `/app/project/${projectId}/journeys`,
+					icon: Heart,
+					isActive: currentPath.startsWith(`/app/project/${projectId}/journeys`)
 				},
 				{
 					title: 'Live Streaming',

@@ -133,6 +133,7 @@
 				show_gallery: featureToggle.show_gallery,
 				show_gifts: featureToggle.show_gifts,
 				show_live_stream: featureToggle.show_live_stream,
+				show_journeys: featureToggle.show_journeys,
 				require_registered_guest: featureToggle.require_registered_guest
 			});
 			toast.success('Pengaturan fitur berhasil disimpan');
@@ -311,6 +312,21 @@
 						<Switch
 							id="toggle-live"
 							bind:checked={featureToggle.show_live_stream}
+							onCheckedChange={saveToggles}
+						/>
+					</div>
+
+					<div class="flex items-start justify-between gap-6">
+						<div class="space-y-0.5 pr-4">
+							<Label class="text-base cursor-pointer" for="toggle-journeys">Kisah Perjalanan</Label>
+							<p class="text-sm text-muted-foreground mt-1 leading-relaxed">
+								Tampilkan bagian kisah perjalanan cinta (love story) atau milestone penting di
+								undangan digital Anda.
+							</p>
+						</div>
+						<Switch
+							id="toggle-journeys"
+							bind:checked={featureToggle.show_journeys}
 							onCheckedChange={saveToggles}
 						/>
 					</div>

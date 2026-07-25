@@ -6,6 +6,7 @@ export * from './event-type.service';
 export * from './gift-registry.service';
 export * from './guestbook.service';
 export * from './invitation.service';
+export * from './journey.service';
 export * from './live-stream.service';
 export * from './media.service';
 export * from './music.service';
