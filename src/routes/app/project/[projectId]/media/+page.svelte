@@ -5,22 +5,16 @@
 	import { onMount } from 'svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import { Progress } from '$lib/components/ui/progress/index.js';
 	import {
 		Image as ImageIcon,
 		Video,
 		Plus,
-		Link2,
 		Trash2,
 		X,
 		Maximize2,
-		UploadCloud,
 		ChevronLeft,
 		ChevronRight,
 		Loader2,
@@ -28,6 +22,7 @@
 	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import MediaInput from '$lib/components/forms/media-input.svelte';
+	import UploadQueue, { type QueueItem } from '$lib/components/forms/upload-queue.svelte';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
 	import { getMediaUrl } from '$lib/utils';
 
@@ -50,22 +45,36 @@
 	}
 
 	let selectedBucket = $state<MediaBucket | null>(null);
-	let formData = $state<MediaMappingRequest>({
-		bucket: '',
-		media_type: 'image',
-		url: '',
-		order: 0
-	});
 
 	// Upload State
 	let uploadMode = $state<'file' | 'url'>('file');
-	let selectedFile = $state<File | null>(null);
+	let selectedFiles = $state<File[]>([]);
+	let urlValue = $state('');
 	let uploadProgress = $state(0);
 
+	// Batch upload queue
+	let uploadQueue = $state<QueueItem[]>([]);
+	let isBatchUploading = $state(false);
+
+	// Derived: how many items currently exist in this bucket
+	let currentBucketCount = $derived(
+		selectedBucket ? mediaMappings.filter((m: MediaMapping) => m.bucket === selectedBucket!.key).length : 0
+	);
+
+	// Derived: remaining slots for the selected bucket
+	let remainingSlots = $derived(
+		selectedBucket ? Math.max(0, selectedBucket.max_files - currentBucketCount) : 0
+	);
+
+	// Derived: is multi-file mode (bucket allows more than 1 file AND has more than 1 remaining slot)
+	let isMultiMode = $derived(remainingSlots > 1);
+
 	function resetUploadState() {
-		selectedFile = null;
+		selectedFiles = [];
+		urlValue = '';
 		uploadProgress = 0;
-		formData.url = '';
+		uploadQueue = [];
+		isBatchUploading = false;
 	}
 
 	async function loadData() {
@@ -92,45 +101,58 @@
 	function openAddDialog(bucket: MediaBucket) {
 		selectedBucket = bucket;
 		resetUploadState();
-
-		const currentCount = mediaMappings.filter((m) => m.bucket === bucket.key).length;
-
-		formData = {
-			bucket: bucket.key,
-			media_type: bucket.media_type,
-			url: '',
-			order: currentCount
-		};
 		dialogOpen = true;
 	}
 
-	async function handleSubmit(e: Event) {
+	// ─── SINGLE FILE / URL UPLOAD (when remainingSlots === 1) ─────────────
+	async function handleSingleSubmit(e: Event) {
 		e.preventDefault();
-		if (uploadMode === 'file' && !selectedFile) {
+		if (!selectedBucket) return;
+
+		const currentCount = mediaMappings.filter((m) => m.bucket === selectedBucket!.key).length;
+
+		// Guard: enforce max files
+		if (currentCount >= selectedBucket.max_files) {
+			toast.error(`Slot untuk "${selectedBucket.label}" sudah penuh (maks ${selectedBucket.max_files}).`);
+			return;
+		}
+
+		if (uploadMode === 'file' && selectedFiles.length === 0) {
 			toast.error('Harap pilih file terlebih dahulu');
+			return;
+		}
+		if (uploadMode === 'url' && !urlValue) {
+			toast.error('Harap masukkan URL');
 			return;
 		}
 
 		submitting = true;
 
 		try {
-			if (uploadMode === 'file' && selectedFile) {
+			let mediaUrl = urlValue;
+
+			if (uploadMode === 'file' && selectedFiles[0]) {
 				const uploadRes = await import('$lib/services/upload.service')
 					.then((m) => m.UploadService)
 					.then((service) =>
 						service.upload(
-							selectedFile as File,
-							selectedBucket?.media_type as 'image' | 'video',
+							selectedFiles[0],
+							selectedBucket!.media_type as 'image' | 'video',
 							projectId,
 							(percent) => {
 								uploadProgress = percent;
 							}
 						)
 					);
-				formData.url = uploadRes.url;
+				mediaUrl = uploadRes.url;
 			}
 
-			await MediaService.create(projectId, formData);
+			await MediaService.create(projectId, {
+				bucket: selectedBucket!.key,
+				media_type: selectedBucket!.media_type,
+				url: mediaUrl,
+				order: currentCount
+			});
 			toast.success('Media berhasil ditambahkan');
 
 			dialogOpen = false;
@@ -141,6 +163,141 @@
 		} finally {
 			submitting = false;
 		}
+	}
+
+	// ─── BATCH FILE UPLOAD (when remainingSlots > 1) ─────────────────────
+	async function handleBatchSubmit(e: Event) {
+		e.preventDefault();
+		if (!selectedBucket || selectedFiles.length === 0) return;
+
+		// Final guard: re-check remaining slots at submit time
+		const freshCount = mediaMappings.filter((m) => m.bucket === selectedBucket!.key).length;
+		const slotsLeft = selectedBucket.max_files - freshCount;
+
+		if (slotsLeft <= 0) {
+			toast.error(`Slot untuk "${selectedBucket.label}" sudah penuh.`);
+			return;
+		}
+
+		// Trim files to available slots
+		const filesToUpload = selectedFiles.slice(0, slotsLeft);
+		if (filesToUpload.length < selectedFiles.length) {
+			toast.warning(
+				`Hanya ${slotsLeft} slot tersisa. ${selectedFiles.length - slotsLeft} file akan dilewati.`
+			);
+		}
+
+		// Build queue
+		uploadQueue = filesToUpload.map((file, index) => ({
+			id: `${file.name}_${file.size}_${index}`,
+			file,
+			previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+			status: 'pending' as const,
+			progress: 0
+		}));
+
+		isBatchUploading = true;
+		submitting = true;
+
+		const UploadService = await import('$lib/services/upload.service').then((m) => m.UploadService);
+
+		let successCount = 0;
+		let errorCount = 0;
+		let currentOrder = freshCount;
+
+		for (let i = 0; i < uploadQueue.length; i++) {
+			const item = uploadQueue[i];
+
+			// Skip already-done items (for retry scenario)
+			if (item.status === 'done') {
+				successCount++;
+				continue;
+			}
+
+			// Update status to uploading
+			uploadQueue[i] = { ...item, status: 'uploading', progress: 0 };
+			uploadQueue = [...uploadQueue]; // trigger reactivity
+
+			try {
+				// Step 1: Upload file to storage
+				const uploadRes = await UploadService.upload(
+					item.file,
+					selectedBucket!.media_type as 'image' | 'video',
+					projectId,
+					(percent) => {
+						uploadQueue[i] = { ...uploadQueue[i], progress: percent };
+						uploadQueue = [...uploadQueue];
+					}
+				);
+
+				// Step 2: Create media mapping
+				await MediaService.create(projectId, {
+					bucket: selectedBucket!.key,
+					media_type: selectedBucket!.media_type,
+					url: uploadRes.url,
+					order: currentOrder
+				});
+
+				currentOrder++;
+				successCount++;
+
+				uploadQueue[i] = { ...uploadQueue[i], status: 'done', progress: 100 };
+				uploadQueue = [...uploadQueue];
+			} catch (err: any) {
+				errorCount++;
+				const errorMsg = err?.response?.data?.message || err?.message || 'Upload gagal';
+
+				uploadQueue[i] = {
+					...uploadQueue[i],
+					status: 'error',
+					progress: 0,
+					errorMessage: errorMsg
+				};
+				uploadQueue = [...uploadQueue];
+			}
+		}
+
+		isBatchUploading = false;
+		submitting = false;
+
+		// Show result toast
+		if (errorCount === 0) {
+			toast.success(`${successCount} file berhasil diupload`);
+			// Clean up preview URLs
+			for (const item of uploadQueue) {
+				if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+			}
+			dialogOpen = false;
+			await loadData();
+		} else if (successCount > 0) {
+			toast.warning(`${successCount} berhasil, ${errorCount} gagal. Anda dapat mencoba lagi.`);
+			// Reload data so the successful uploads show up
+			await loadData();
+		} else {
+			toast.error(`Semua ${errorCount} file gagal diupload.`);
+		}
+	}
+
+	function handleRetryFailed() {
+		// Remove succeeded items, keep only failed ones
+		const failedItems = uploadQueue
+			.filter((i) => i.status === 'error')
+			.map((i) => ({ ...i, status: 'pending' as const, progress: 0, errorMessage: undefined }));
+
+		uploadQueue = failedItems;
+		selectedFiles = failedItems.map((i) => i.file);
+	}
+
+	function handleQueueRemove(id: string) {
+		const item = uploadQueue.find((i) => i.id === id);
+		if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl);
+		uploadQueue = uploadQueue.filter((i) => i.id !== id);
+		// Also remove from selectedFiles
+		const idx = selectedFiles.findIndex(
+			(f) => uploadQueue.find((q) => q.id === id)?.file === f
+		);
+		// Since we already filtered uploadQueue, sync selectedFiles from queue
+		selectedFiles = uploadQueue.map((i) => i.file);
 	}
 
 	async function deleteMedia(id: number) {
@@ -234,7 +391,7 @@
 
 	{#if loading}
 		<div class="space-y-8">
-			{#each Array(2) as _}
+			{#each Array(2) as _, i (i)}
 				<div class="space-y-4">
 					<Skeleton class="h-8 w-48" />
 					<div class="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -258,7 +415,7 @@
 		</Empty.Root>
 	{:else}
 		<div class="space-y-10">
-			{#each project.theme.media_buckets as bucket}
+			{#each project.theme.media_buckets as bucket (bucket.key)}
 				{@const items = getBucketItems(bucket.key)}
 				{@const isFull = items.length >= bucket.max_files}
 
@@ -274,7 +431,7 @@
 								{bucket.label}
 							</Card.Title>
 							<Card.Description>
-								Maksimal {bucket.max_files}
+								{items.length} / {bucket.max_files}
 								{bucket.media_type === 'video' ? 'video' : 'foto'}
 							</Card.Description>
 						</div>
@@ -412,35 +569,89 @@
 	{/if}
 </PageComposer>
 
-<Dialog.Root bind:open={dialogOpen}>
-	<Dialog.Content class="sm:max-w-106.25">
+<Dialog.Root bind:open={dialogOpen} onOpenChange={(open) => {
+	// Prevent closing during batch upload
+	if (!open && isBatchUploading) {
+		dialogOpen = true;
+		return;
+	}
+}}>
+	<Dialog.Content class="sm:max-w-106.25" onInteractOutside={(e) => {
+		// Prevent closing by clicking outside during upload
+		if (isBatchUploading || submitting) {
+			e.preventDefault();
+		}
+	}}>
 		<Dialog.Header>
 			<Dialog.Title>
 				Tambah {selectedBucket?.media_type === 'video' ? 'Video' : 'Foto'}
 			</Dialog.Title>
 			<Dialog.Description>
-				Tambahkan file media untuk bagian <strong>{selectedBucket?.label}</strong>.
+				{#if selectedBucket}
+					Tambahkan file media untuk bagian <strong>{selectedBucket.label}</strong>.
+					<span class="text-muted-foreground">
+						(sisa slot: {remainingSlots})
+					</span>
+				{/if}
 			</Dialog.Description>
 		</Dialog.Header>
 
-		<form onsubmit={handleSubmit} class="space-y-4 py-4 min-w-0 w-full">
-			<MediaInput
-				mediaType={selectedBucket?.media_type}
-				bind:mode={uploadMode}
-				bind:url={formData.url}
-				bind:file={selectedFile}
-				progress={uploadProgress}
-				isSubmitting={submitting}
-			/>
+		<form
+			onsubmit={isMultiMode ? handleBatchSubmit : handleSingleSubmit}
+			class="space-y-4 py-4 min-w-0 w-full"
+		>
+			{#if !isBatchUploading}
+				<!-- File/URL selection UI -->
+				<MediaInput
+					mediaType={selectedBucket?.media_type}
+					bind:mode={uploadMode}
+					bind:url={urlValue}
+					bind:files={selectedFiles}
+					maxFiles={selectedBucket?.max_files ?? 1}
+					{remainingSlots}
+					progress={uploadProgress}
+					isSubmitting={submitting}
+				/>
+			{:else}
+				<!-- Batch upload progress -->
+				<UploadQueue
+					bind:items={uploadQueue}
+					isUploading={isBatchUploading}
+					onRemove={handleQueueRemove}
+					onRetry={handleRetryFailed}
+				/>
+			{/if}
 
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (dialogOpen = false)}>Batal</Button>
-				<Button
-					type="submit"
-					disabled={submitting || (uploadMode === 'file' ? !selectedFile : !formData.url)}
-				>
-					{submitting ? 'Menyimpan...' : 'Simpan'}
-				</Button>
+				{#if isBatchUploading}
+					<!-- During batch upload: no cancel, just status -->
+					<p class="text-xs text-muted-foreground mr-auto">
+						Jangan tutup halaman ini selama proses upload.
+					</p>
+				{:else}
+					<Button
+						type="button"
+						variant="outline"
+						onclick={() => (dialogOpen = false)}
+						disabled={submitting}
+					>
+						Batal
+					</Button>
+				{/if}
+
+				{#if !isBatchUploading}
+					{@const fileDisabled = uploadMode === 'file' ? selectedFiles.length === 0 : !urlValue}
+					<Button type="submit" disabled={submitting || fileDisabled}>
+						{#if submitting}
+							<Loader2 class="h-4 w-4 mr-2 animate-spin" />
+							Mengupload...
+						{:else if isMultiMode && selectedFiles.length > 1}
+							Upload Semua ({selectedFiles.length})
+						{:else}
+							Simpan
+						{/if}
+					</Button>
+				{/if}
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>
