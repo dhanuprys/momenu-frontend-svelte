@@ -10,8 +10,11 @@
 	import SimpleRsvp from './components/SimpleRsvp.svelte';
 	import SimpleGuestbook from './components/SimpleGuestbook.svelte';
 	import SectionEditButton from '$lib/theme-engine/components/section-edit-button.svelte';
+	import ImagePreview from '$lib/theme-engine/components/image-preview.svelte';
 	import Cover from './Cover.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
+
+	let previewImage = $state<string | null>(null);
 
 	const invitationData = getPernikahanContext();
 	const {
@@ -607,11 +610,14 @@
 								<div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 w-full" use:fadeUp>
 									{#each galleryMedia as img, i (i)}
 										<div class="overflow-hidden rounded-xl border border-white/20 shadow-lg">
+											<!-- svelte-ignore a11y_click_events_have_key_events -->
+											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 											<img
 												src={getMediaUrl(img)}
 												alt="Gallery Item"
-												class="w-full h-auto object-cover hover:scale-110 transition-transform duration-500"
+												class="w-full h-auto object-cover hover:scale-110 transition-transform duration-500 cursor-pointer"
 												loading="lazy"
+												onclick={() => previewImage = getMediaUrl(img)}
 											/>
 										</div>
 									{/each}
@@ -901,3 +907,5 @@
 		font-family: 'Cardo', serif;
 	}
 </style>
+
+<ImagePreview bind:src={previewImage} />

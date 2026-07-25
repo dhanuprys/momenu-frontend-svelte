@@ -9,8 +9,13 @@
 	import type { Guestbook } from '$lib/types/index';
 	import { onMount } from 'svelte';
 
-	import Cover from './Cover.svelte';
+
+	import ImagePreview from '$lib/theme-engine/components/image-preview.svelte';
 	import SectionEditButton from '$lib/theme-engine/components/section-edit-button.svelte';
+	
+	let previewImage = $state<string | null>(null);
+
+	import Cover from './Cover.svelte';
 	import { Volume2, VolumeX } from '@lucide/svelte';
 
 	// Svelte context data
@@ -496,11 +501,14 @@
 							<div
 								class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500 z-10 pointer-events-none"
 							></div>
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
 							<img
 								src={getMediaUrl(image.url)}
 								alt="Gallery"
-								class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+								class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-out cursor-pointer"
 								loading="lazy"
+								onclick={() => previewImage = getMediaUrl(image.url)}
 							/>
 						</div>
 					{/each}
@@ -750,3 +758,5 @@
 		font-family: 'Cardo', serif;
 	}
 </style>
+
+<ImagePreview bind:src={previewImage} />

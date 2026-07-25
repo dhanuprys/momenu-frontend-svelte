@@ -279,6 +279,19 @@ While themes are encouraged to build their own unique layouts and forms, the eng
 
   <GenericCover invitationData={data} />
   ```
+
+- **`ImagePreview`**: A reusable fullscreen image preview component with a backdrop blur and smooth entrance animation. Commonly used for gallery modals.
+  ```svelte
+  import ImagePreview from '$lib/theme-engine/components/image-preview.svelte';
+  
+  let previewImage = $state<string | null>(null);
+
+  // In your markup, trigger it via:
+  <img onclick={() => previewImage = getMediaUrl(img)} />
+
+  // Render the component at the root level of your theme
+  <ImagePreview bind:src={previewImage} />
+  ```
 - **Form Components**: Though custom forms are recommended, you can reference or use `$lib/theme-engine/components/rsvp-form.svelte` and `guestbook-section.svelte` if you want standard, unstyled logic.
 
 ### Custom Cover
