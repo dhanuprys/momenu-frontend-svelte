@@ -135,15 +135,15 @@
 </script>
 
 <svelte:head>
-	<title>Bagikan Akses - Momenu</title>
+	<title>Akses Simpel - Momenu</title>
 </svelte:head>
 
 <PageComposer>
 	<div class="flex items-center justify-between gap-4 mb-6">
 		<div>
-			<h2 class="text-3xl font-bold tracking-tight">Bagikan Akses Analytics</h2>
+			<h2 class="text-3xl font-bold tracking-tight">Bagikan Akses Simpel</h2>
 			<p class="text-muted-foreground mt-1">
-				Kelola tautan untuk membagikan data analitik dan RSVP acara Anda.
+				Kelola tautan untuk membagikan akses dashboard simpel kepada klien atau pihak lain.
 			</p>
 		</div>
 		<Button onclick={openCreateDialog} disabled={isMaxLimitReached}>
@@ -167,7 +167,7 @@
 		<Card.Header>
 			<Card.Title>Tautan Akses Aktif</Card.Title>
 			<Card.Description
-				>Orang dengan tautan ini dapat melihat halaman analitik secara publik tanpa perlu login.</Card.Description
+				>Orang dengan tautan ini dapat melihat halaman statistik dan menambah tamu secara publik tanpa perlu login.</Card.Description
 			>
 		</Card.Header>
 		<Card.Content>
@@ -184,7 +184,7 @@
 					<Share2 class="h-12 w-12 text-muted-foreground mb-4" />
 					<h3 class="font-semibold text-lg">Belum ada tautan akses</h3>
 					<p class="text-muted-foreground mb-4 max-w-sm">
-						Buat tautan baru untuk mulai membagikan analytics acara Anda dengan pihak lain.
+						Buat tautan baru untuk mulai membagikan akses manajemen tamu dan statistik acara Anda.
 					</p>
 					<Button onclick={openCreateDialog} variant="outline">
 						<Plus class="mr-2 h-4 w-4" />
@@ -273,7 +273,7 @@
 		<Dialog.Header>
 			<Dialog.Title>Buat Tautan Baru</Dialog.Title>
 			<Dialog.Description>
-				Tentukan durasi validitas untuk tautan akses analytics baru.
+				Tentukan durasi validitas untuk tautan akses simpel baru.
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="grid gap-4 py-4">
@@ -332,7 +332,7 @@
 			<AlertDialog.Title>Cabut Akses Tautan?</AlertDialog.Title>
 			<AlertDialog.Description>
 				Tindakan ini tidak dapat dibatalkan. Orang yang memiliki tautan ini tidak akan bisa lagi
-				mengakses halaman analytics.
+				mengakses halaman simpel tersebut.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>

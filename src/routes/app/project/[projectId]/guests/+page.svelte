@@ -33,6 +33,7 @@
 	} from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
+	import { sanitizePhone, generateWaLink } from '$lib/utils/whatsapp';
 
 	let projectId = $derived($page.params.projectId!);
 	let rsvps = $state<RSVP[]>([]);
@@ -205,17 +206,6 @@
 		}
 	}
 
-	function sanitizePhone(phone: string) {
-		if (!phone) return '';
-		let clean = phone.replace(/\D/g, '');
-		if (clean.startsWith('0')) {
-			clean = '62' + clean.slice(1);
-		} else if (clean.startsWith('8')) {
-			clean = '62' + clean;
-		}
-		return clean;
-	}
-
 	function openWhatsApp(guest: RSVP) {
 		if (!guest.whatsapp) {
 			toast.error('Nomor WhatsApp tidak tersedia');
@@ -223,13 +213,13 @@
 		}
 		if (!project?.slug) return;
 
-		const link = `${window.location.origin}/${project.slug}?kepada=${encodeURIComponent(guest.name)}`;
-		let message = whatsappTemplate
-			.replace(/\[Nama Tamu\]/gi, guest.name)
-			.replace(/\[Link\]/gi, link);
-
-		const cleanPhone = sanitizePhone(guest.whatsapp);
-		const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+		const waUrl = generateWaLink(
+			guest.name,
+			guest.whatsapp,
+			project.slug,
+			whatsappTemplate,
+			window.location.origin
+		);
 		window.open(waUrl, '_blank');
 	}
 

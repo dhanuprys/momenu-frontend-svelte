@@ -68,5 +68,26 @@ export const ShareService = {
 	async getSharedData(sessionId: string) {
 		const res = await api.get<SharedDataResponse>(`/public/share/${sessionId}`);
 		return res.data;
+	},
+
+	async addGuest(sessionId: string, name: string, whatsapp: string | null) {
+		const res = await api.post<RSVP>(`/public/share/${sessionId}/guests`, {
+			name,
+			whatsapp
+		});
+		return res.data;
+	},
+
+	async updateGuest(sessionId: string, guestId: number, name: string, whatsapp: string | null) {
+		const res = await api.put<RSVP>(`/public/share/${sessionId}/guests/${guestId}`, {
+			name,
+			whatsapp
+		});
+		return res.data;
+	},
+
+	async deleteGuest(sessionId: string, guestId: number) {
+		const res = await api.delete<null>(`/public/share/${sessionId}/guests/${guestId}`);
+		return res.data;
 	}
 };
