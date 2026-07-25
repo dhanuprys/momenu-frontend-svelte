@@ -37,6 +37,14 @@ export default defineConfig(
 	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
-		rules: {}
+		rules: {
+			'svelte/no-at-html-tags': 'off'
+		}
+	},
+	{
+		files: ['src/lib/theme-engine/themes/**/*.svelte', 'src/lib/theme-engine/themes/**/*.ts'],
+		rules: {
+			'@typescript-eslint/no-unused-vars': 'off'
+		}
 	}
 );

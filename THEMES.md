@@ -1,553 +1,345 @@
 # Theme Development Guide
 
-This guide explains how to create invitation themes for Momenu, from frontend Svelte component to backend seeder integration. Follow these steps to ensure your theme works seamlessly when deployed.
+This guide explains how to create invitation themes for Momenu using the new **Theme Engine** architecture. Follow these steps to ensure your theme works seamlessly with the backend, frontend registry, and the Customizer UI.
 
 ## Table of Contents
 
 - [Architecture Overview](#architecture-overview)
-- [Directory Structure](#directory-structure)
+- [Directory Structure & Naming Conventions](#directory-structure--naming-conventions)
 - [Step-by-Step: Creating a New Theme](#step-by-step-creating-a-new-theme)
-  - [Step 1: Define the Theme in the Backend Seeder](#step-1-define-the-theme-in-the-backend-seeder)
-  - [Step 2: Create the Frontend Theme Directory](#step-2-create-the-frontend-theme-directory)
-  - [Step 3: Create the Theme Manifest](#step-3-create-the-theme-manifest)
+  - [Step 1: Backend Seeder](#step-1-backend-seeder)
+  - [Step 2: Frontend Directory](#step-2-frontend-directory)
+  - [Step 3: Theme Manifest](#step-3-theme-manifest)
   - [Step 4: Build the Theme Component](#step-4-build-the-theme-component)
   - [Step 5: Register the Theme](#step-5-register-the-theme)
-- [Available Data in a Theme](#available-data-in-a-theme)
-  - [Context Getters by Event Type](#context-getters-by-event-type)
-  - [InvitationData Fields](#invitationdata-fields)
-  - [Payload Types by Event Type](#payload-types-by-event-type)
-  - [Complex Field Types (Group & Image)](#complex-field-types-group--image)
-  - [Feature Toggles](#feature-toggles)
-  - [Interactive APIs (RSVP & Guestbook)](#interactive-apis-rsvp--guestbook)
-- [Media Helper API](#media-helper-api)
-- [Utilities](#utilities)
-- [Backend–Frontend Sync Checklist](#backendfrontend-sync-checklist)
-- [Complete Example: Pernikahan Theme](#complete-example-pernikahan-theme)
-- [All Registered Themes](#all-registered-themes)
+- [Available Data (`InvitationData`)](#available-data-invitationdata)
+- [Helper APIs](#helper-apis)
+  - [Media Helper](#media-helper)
+  - [Text Helper](#text-helper)
+  - [Style Helper](#style-helper)
+  - [Countdown Helper](#countdown-helper)
+- [Shared UI Components](#shared-ui-components)
 
 ---
 
 ## Architecture Overview
 
-The theme system follows a **two-repository pattern** where the backend and frontend each hold part of a theme's definition:
+The theme system follows a **Two-Repository Pattern**:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ Backend (momenu-backend-fiber)                                      │
-│                                                                     │
-│   internal/seeder/theme_data.go                                     │
-│   ├─ Theme ID, name, event type, price                              │
-│   ├─ MediaBuckets: [ { key, label, media_type, max_files } ]        │
-│   └─ The backend validates uploads against these bucket rules       │
-│                                                                     │
-│   internal/models/models.go                                         │
-│   ├─ EventTypeFieldSchemas: payload form fields per event type      │
-│   └─ MediaBucket struct definition                                  │
-└──────────────────────────────┬──────────────────────────────────────┘
-                               │ API response (Project with media_mappings)
-                               ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│ Frontend (momenu-frontend-svelte)                                   │
-│                                                                     │
-│   src/lib/components/themes/{eventType}/{theme_name}/               │
-│   ├─ manifest.ts   ← mirrors backend's MediaBuckets exactly         │
-│   └─ Theme.svelte  ← the visual component                           │
-│                                                                     │
-│   src/lib/themes/theme-registry.ts                                  │
-│   └─ maps theme ID → { manifest, lazy-load component }              │
-│                                                                     │
-│   src/lib/utils/theme-media.ts                                      │
-│   └─ createMediaHelper() for type-safe media access                 │
-└─────────────────────────────────────────────────────────────────────┘
-```
+1. **Backend (Source of Truth for Schema)**: The `ThemeData` seeder defines the basic theme profile (ID, event type, pricing) and its **MediaBuckets** (rules for what images/videos can be uploaded).
+2. **Frontend (The Visual Engine & Customizer Rules)**: The Svelte frontend defines a `ThemeManifest` that mirrors the backend media buckets but also introduces **Text Slots** and **Style Slots** for the Customizer UI.
 
-**Key principle:** The backend's `MediaBucket` definitions are the **single source of truth** for what media slots a theme supports. The frontend `manifest.ts` is a typed mirror of those definitions, giving developers autocomplete and compile-time safety.
+When a user edits a theme, the `customizerController` writes overrides for these slots into the backend, which are then provided back to the theme via `textOverrides` and `styleOverrides`.
 
 ---
 
-## Directory Structure
-
-```
-src/lib/
-├── components/
-│   └── themes/                        # All theme components live here
-│       ├── pernikahan/                # Grouped by event type
-│       │   └── pernikahan_elegance_1/ # Each theme gets its own directory
-│       │       ├── manifest.ts        # Media bucket definitions (mirrors backend)
-│       │       └── Theme.svelte       # The visual component
-│       ├── ulang_tahun/
-│       ├── metatah/
-│       ├── tigang_sasih/
-│       └── seminar/
-├── themes/
-│   └── theme-registry.ts             # Central registry mapping IDs → components
-├── contexts/
-│   └── invitation-context.ts         # Svelte context for passing data to themes
-├── types/
-│   ├── invitation.ts                 # InvitationData, payload types
-│   ├── theme-manifest.ts             # ThemeManifest, BucketConfig types
-│   ├── models.ts                     # MediaMapping, Schedule, etc.
-│   └── enums.ts                      # EventType, MediaType, etc.
-└── utils/
-    ├── theme-media.ts                # createMediaHelper() utility
-    └── utils.ts                      # getMediaUrl() and other helpers
-```
-
----
-
-## Theme Naming Conventions & Best Practices
-
-To maintain a scalable and organized ecosystem, follow these rules when creating a new theme.
+## Directory Structure & Naming Conventions
 
 ### Theme ID Rules
 
-The Theme ID is the most critical identifier. It links the backend seeder to the frontend component. It MUST follow this exact format:
+The Theme ID MUST follow this format: `{event_type}_{adjective}_{version}`
 
-**Format:** `{event_type}_{adjective}_{version}`
+- **Examples**: `pernikahan_bali_simple_1`, `ulang_tahun_festive_1`
 
-1. **`{event_type}`**: MUST strictly match one of the backend's `models.EventType` strings (`pernikahan`, `ulang_tahun`, `metatah`, `tigang_sasih`, `seminar`).
-2. **`{adjective}`**: Describes the visual style, vibe, or primary subject (e.g., `elegance`, `festive`, `sakral`, `pastel`).
-3. **`{version}`**: A numeric suffix starting at `1`. This allows future iterations (e.g., `pernikahan_elegance_2`) without breaking existing user projects that rely on the original layout.
+### File Structure
 
-**Examples:**
-
-- ✅ `pernikahan_elegance_1`
-- ✅ `ulang_tahun_festive_1`
-- ❌ `floralWedding` (use snake_case)
-- ❌ `cool_theme_1` (missing event type)
-
-### Frontend Best Practices
-
-1. **Mobile-First Design**: Guests almost always open invitations on their phones. Design the mobile view first, then use Tailwind's responsive prefixes (`md:`, `lg:`) to adapt the layout for larger screens.
-2. **Native Animations**: Use Svelte's built-in transition directives (`in:fade`, `in:fly`, `svelte/transition`) instead of importing heavy CSS or JS animation libraries. They are highly performant and keep bundle sizes minimal.
-3. **Respect Feature Toggles**: Always check `featureToggle` flags (e.g., `featureToggle.show_gallery`) before rendering optional sections. Never assume a section should be visible.
-4. **Handle Empty States**: Data arrays (`schedules`, `galleryImages`, `giftRegistries`) can be empty even if the feature toggle is on. Check `.length > 0` before rendering the section container to avoid awkward empty whitespace.
-5. **Dynamic List Layouts**: Users may input only ONE item for lists like `schedules`, `dressCodes`, or `giftRegistries`. Your grid layouts should dynamically adjust based on the array length so single items don't look awkwardly left-aligned in a multi-column grid (e.g., use `class="grid {schedules.length === 1 ? 'grid-cols-1 max-w-lg mx-auto' : 'md:grid-cols-2'}"`).
-6. **Lazy Loading**: Add `loading="lazy"` to `<img>` tags that are below the fold (like inside the gallery grid) to improve initial page load speed.
+```text
+src/lib/theme-engine/
+├── components/          # Global theme-engine UI (Renderer, Provider, SectionEditButton)
+├── helpers/             # Helpers for Text, Style, Media, and Countdown
+├── themes/              # All your custom themes live here
+│   └── {eventType}/
+│       └── {themeId}/
+│           ├── manifest.ts     # The Theme Manifest
+│           └── Theme.svelte    # The visual component
+└── registry.ts          # Central lazy-loading registry
+```
 
 ---
 
 ## Step-by-Step: Creating a New Theme
 
-### Step 1: Define the Theme in the Backend Seeder
+### Step 1: Backend Seeder
 
-Open `momenu-backend-fiber/internal/seeder/theme_data.go` and add a new entry to `ThemesData`:
+Open `momenu-backend-fiber/internal/seeder/theme_data.go` and add your theme. The backend is only concerned with basic metadata and file upload validation (Media Buckets).
 
 ```go
 {
-    ID:          "pernikahan_tropical_1",      // Unique ID — used as the key everywhere
-    Name:        "Tropical Paradise",
-    EventType:   models.EventTypePernikahan,   // Must match one of the defined EventTypes
-    Description: "Tema tropikal dengan sentuhan warna senja.",
-    Thumbnail:   "/uploads/themes/tropical-thumb.jpg",
-    Price:       pricePtr(39000),              // Use nil for free themes
+    ID:          "pernikahan_contoh_1",
+    Name:        "Contoh Tema",
+    EventType:   models.EventTypePernikahan,
+    Description: "Contoh tema dokumentasi",
+    Price:       nil,
     MediaBuckets: mustJSON([]models.MediaBucket{
-        {Key: "hero_photo",     Label: "Foto Sampul Utama",  MediaType: models.MediaTypeImage, MaxFiles: 1},
-        {Key: "gallery_grid",   Label: "Galeri Foto",        MediaType: models.MediaTypeImage, MaxFiles: 15},
-        {Key: "promo_video",    Label: "Video Teaser",       MediaType: models.MediaTypeVideo, MaxFiles: 1},
+        {Key: "hero_photo", Label: "Foto Sampul Utama", MediaType: models.MediaTypeImage, MaxFiles: 1},
     }),
-},
+}
 ```
 
-**Important rules for `MediaBuckets`:**
+### Step 2: Frontend Directory
 
-- `Key` is a snake_case identifier — this is the bucket name used in `MediaMapping.bucket`
-- `MediaType` must be either `models.MediaTypeImage` or `models.MediaTypeVideo`
-- `MaxFiles` defines the maximum number of files the user can upload to this bucket
-- The backend **validates** uploads against these rules (see `media_service.go`)
+Create `src/lib/theme-engine/themes/pernikahan/pernikahan_contoh_1/`.
 
-After adding, re-run the seeder so the database gets the new theme.
+### Step 3: Theme Manifest
 
----
-
-### Step 2: Create the Frontend Theme Directory
-
-Create the directory for your theme under the appropriate event type:
-
-```
-src/lib/components/themes/pernikahan/pernikahan_tropical_1/
-```
-
-The naming convention is:
-
-```
-src/lib/components/themes/{event_type}/{theme_id}/
-```
-
----
-
-### Step 3: Create the Theme Manifest
-
-Create `manifest.ts` in your theme directory. This file **must exactly mirror** the `MediaBuckets` you defined in the backend seeder:
+Create `manifest.ts`. This file defines your Media Buckets, Text Slots, Style Slots, and Demo Data using strictly-typed generics. Use `as const satisfies ThemeManifest` to enable powerful intellisense.
 
 ```typescript
-// src/lib/components/themes/pernikahan/pernikahan_tropical_1/manifest.ts
-import type { ThemeManifest } from '$lib/types/theme-manifest';
+import type { ThemeManifest } from '$lib/theme-engine/types';
+
+export const BUCKET = { hero_photo: 'hero_photo' } as const;
+export const TEXT = { hero_title: 'hero_title' } as const;
+export const STYLE = { hero_bg: 'hero_bg' } as const;
 
 export const MANIFEST = {
-	id: 'pernikahan_tropical_1', // Must match backend's Theme.ID
-	eventType: 'pernikahan', // Must match backend's Theme.EventType
-	name: 'Tropical Paradise',
+	id: 'pernikahan_contoh_1',
+	eventType: 'pernikahan',
+	name: 'Contoh Tema',
 	buckets: {
-		// Keys and values must EXACTLY match the backend seeder's MediaBuckets
-		hero_photo: { label: 'Foto Sampul Utama', mediaType: 'image', maxFiles: 1 },
-		gallery_grid: { label: 'Galeri Foto', mediaType: 'image', maxFiles: 15 },
-		promo_video: { label: 'Video Teaser', mediaType: 'video', maxFiles: 1 }
+		[BUCKET.hero_photo]: { label: 'Foto Sampul', mediaType: 'image', maxFiles: 1 }
+	},
+	textSlots: {
+		[TEXT.hero_title]: {
+			label: 'Judul Hero',
+			defaultValue: 'Romeo & Juliet',
+			section: 'hero',
+			defaultFontFamily: 'Great Vibes',
+			defaultTextAlign: 'center'
+		}
+	},
+	styleSlots: {
+		[STYLE.hero_bg]: {
+			label: 'Background Hero',
+			properties: { backgroundColor: '#1c1917', opacity: '0.8' }
+		}
+	},
+	demo: {
+		payload: { nama_mempelai_pria: 'Romeo', nama_mempelai_wanita: 'Juliet' },
+		featureToggle: { show_gallery: true, show_rsvp: true, show_music: true },
+		schedules: [
+			{
+				title: 'Pawiwahan',
+				start_time: '2026-10-10T08:00:00Z',
+				end_time: '2026-10-10T12:00:00Z',
+				location: 'Griya Agung',
+				map_url: 'https://maps.google.com',
+				timezone: 'Asia/Makassar'
+			}
+		],
+		journeys: [
+			{
+				title: 'Pertama Bertemu',
+				date: '14 Februari 2020',
+				content: 'Awal kisah kami dimulai pada hari kasih sayang.',
+				order: 1
+			}
+		]
 	}
 } as const satisfies ThemeManifest;
 ```
 
-> **Why `as const satisfies ThemeManifest`?**
->
-> - `as const` makes TypeScript infer the exact literal types for bucket keys (`'hero_photo' | 'gallery_grid' | 'promo_video'`), enabling autocomplete and compile-time checking.
-> - `satisfies ThemeManifest` ensures the object structurally matches the expected interface without widening the types.
-
----
+> [!IMPORTANT]
+> When defining `demo` payload, pay close attention to strict typing for arrays like `schedules` and `journeys`. For instance, a Schedule requires `map_url` (not `address`), and a Journey strictly requires an `order` field.
 
 ### Step 4: Build the Theme Component
 
-Create `Theme.svelte` — this is the visual heart of your theme:
+Create `Theme.svelte`. Import your manifest and use the context getters and helpers to build the UI safely.
 
 ```svelte
-<!-- src/lib/components/themes/pernikahan/pernikahan_tropical_1/Theme.svelte -->
 <script lang="ts">
-	import { getPernikahanContext } from '$lib/contexts/invitation-context.js';
-	import { getMediaUrl } from '$lib/utils.js';
-	import { createMediaHelper } from '$lib/utils/theme-media.js';
-	import { MANIFEST } from './manifest.js';
+	import { getPernikahanContext } from '$lib/theme-engine/context';
+	import { createMediaHelper } from '$lib/theme-engine/helpers/media';
+	import { createTextHelper } from '$lib/theme-engine/helpers/text';
+	import { createStyleHelper } from '$lib/theme-engine/helpers/style';
+	import SectionEditButton from '$lib/theme-engine/components/section-edit-button.svelte';
+	import { MANIFEST, BUCKET, TEXT, STYLE } from './manifest';
+	import { getMediaUrl } from '$lib/utils';
 
-	// 1. Get the strongly-typed invitation data
-	const { payload, featureToggle, schedules, giftRegistries, mediaMappings } =
-		getPernikahanContext();
-
-	// 2. Create the typed media helper
-	const media = createMediaHelper(MANIFEST.buckets, mediaMappings);
-
-	// 3. Extract media — bucket keys autocomplete and are type-checked!
-	const heroPhoto = media.getFirstUrl('hero_photo'); // string | undefined
-	const galleryImages = media.getAll('gallery_grid'); // MediaMapping[]
-	const promoVideo = media.getFirstUrl('promo_video'); // string | undefined
-
-	// ❌ This would cause a TypeScript compile error:
-	// media.getAll('nonexistent_bucket');
+	const data = getPernikahanContext();
+	const media = createMediaHelper(MANIFEST.buckets, data.mediaMappings, data.isPreview);
+	const text = createTextHelper(MANIFEST.textSlots, data.textOverrides);
+	const style = createStyleHelper(MANIFEST.styleSlots, data.styleOverrides);
 </script>
 
-<div>
-	<!-- Use getMediaUrl() to resolve relative URLs to full URLs -->
-	{#if heroPhoto}
-		<img src={getMediaUrl(heroPhoto)} alt="Hero" />
+<div style={style.css(STYLE.hero_bg)}>
+	<SectionEditButton slotKey={TEXT.hero_title} tab="text" label="Edit Judul" />
+	<SectionEditButton slotKey={STYLE.hero_bg} tab="style" label="Edit Warna" />
+
+	{#if media.has(BUCKET.hero_photo)}
+		<img src={getMediaUrl(media.getFirstUrl(BUCKET.hero_photo))} alt="Hero" />
 	{/if}
 
-	<h1>{payload.groom_name} & {payload.bride_name}</h1>
-
-	<!-- Always respect feature toggles -->
-	{#if featureToggle.show_gallery && galleryImages.length > 0}
-		{#each galleryImages as image}
-			<img src={getMediaUrl(image.url)} alt="Gallery" />
-		{/each}
-	{/if}
-
-	{#each schedules as schedule}
-		<p>{schedule.title} — {schedule.location}</p>
-	{/each}
+	<h1 style={text.fontStyle(TEXT.hero_title)}>
+		{@html text.render(TEXT.hero_title)}
+	</h1>
 </div>
 ```
 
----
-
 ### Step 5: Register the Theme
 
-Open `src/lib/themes/theme-registry.ts` and add your theme:
+Add your theme to `src/lib/theme-engine/registry.ts`:
 
 ```typescript
-import { MANIFEST as PERNIKAHAN_TROPICAL_1 } from '$lib/components/themes/pernikahan/pernikahan_tropical_1/manifest.js';
+import { MANIFEST as PERNIKAHAN_CONTOH_1 } from '$lib/theme-engine/themes/pernikahan/pernikahan_contoh_1/manifest';
 
 const registry: Record<string, RegistryEntry> = {
-	// ... existing themes ...
-
-	pernikahan_tropical_1: {
-		manifest: PERNIKAHAN_TROPICAL_1,
-		load: () => import('$lib/components/themes/pernikahan/pernikahan_tropical_1/Theme.svelte')
+	// ...
+	pernikahan_contoh_1: {
+		manifest: PERNIKAHAN_CONTOH_1,
+		load: () => import('$lib/theme-engine/themes/pernikahan/pernikahan_contoh_1/Theme.svelte')
 	}
 };
 ```
 
-> **Why dynamic import?** The `load` function uses a dynamic `import()` so themes are **lazy-loaded** — only the theme the user is viewing gets downloaded, keeping bundle sizes small.
+---
 
-**That's it!** Your theme is now fully integrated. When a user creates a project with `theme_id: 'pernikahan_tropical_1'`, the backend will validate media uploads against your bucket rules, and the frontend will render your component with type-safe media access.
+## Available Data (`InvitationData`)
+
+Each theme accesses its data via a strictly-typed context getter (e.g., `getPernikahanContext()`, `getUlangTahunContext()`).
+
+| Field                              | Description                                                                 |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| `payload`                          | Strongly typed payload (e.g., `nama_mempelai_pria` for pernikahan)          |
+| `featureToggle`                    | Boolean flags (`show_music`, `show_gallery`, `show_rsvp`, etc.)             |
+| `schedules`                        | Event schedules. Access `firstScheduleDate` for countdowns.                 |
+| `journeys`                         | "Kisah Perjalanan" / milestones list                                        |
+| `mediaMappings`                    | Raw uploaded media (pass this to `createMediaHelper`)                       |
+| `textOverrides` / `styleOverrides` | Raw customizer overrides (pass to text/style helpers)                       |
+| `musicController`                  | Unified music playback API (`isPlaying()`, `play()`, `pause()`, `toggle()`) |
+| `coverState`                       | Cover gate API (`isOpened()`, `open()`)                                     |
+| `initialGuestbook`                 | Pre-fetched guestbook entries for instant rendering                         |
+| `invitationApi`                    | Typed HTTP methods (`submitRSVP`, `submitGuestbook`, `getGuestbook`)        |
 
 ---
 
-## Available Data in a Theme
+## Helper APIs
 
-### Context Getters by Event Type
+The theme engine provides powerful, strongly-typed helpers to merge your Manifest defaults with User Overrides seamlessly.
 
-Each event type has a dedicated context getter that returns `InvitationData` with a **strongly-typed payload**:
+### Media Helper (`createMediaHelper`)
 
-| Event Type     | Context Getter            | Payload Type         |
-| -------------- | ------------------------- | -------------------- |
-| `pernikahan`   | `getPernikahanContext()`  | `PernikahanPayload`  |
-| `ulang_tahun`  | `getUlangTahunContext()`  | `UlangTahunPayload`  |
-| `metatah`      | `getMetatahContext()`     | `MetatahPayload`     |
-| `tigang_sasih` | `getTigangSasihContext()` | `TigangSasihPayload` |
-| `seminar`      | `getSeminarContext()`     | `SeminarPayload`     |
+- `media.getAll(BUCKET.key)`: Returns array of `MediaMapping`.
+- `media.getFirstUrl(BUCKET.key)`: Returns string or undefined.
+- `media.has(BUCKET.key)`: Returns boolean.
 
-All getters are imported from `$lib/contexts/invitation-context.js`.
+### Text Helper (`createTextHelper`)
 
-### InvitationData Fields
+- `text.render(TEXT.key)`: Returns safe, HTML-escaped text wrapped in `<strong>`, `<em>`, or `<u>` tags if the user enabled them. Use `{@html ...}` in Svelte to render it.
+- `text.fontStyle(TEXT.key)`: Returns an inline CSS string containing `font-family` and `text-align` overrides.
+- `text.getFlags(TEXT.key)`: Get raw formatting flags if you need custom handling.
 
-Every theme receives these fields through the context:
+### Style Helper (`createStyleHelper`)
 
-| Field            | Type             | Description                                     |
-| ---------------- | ---------------- | ----------------------------------------------- |
-| `project`        | `Project`        | Full project object (title, slug, status, etc.) |
-| `slug`           | `string`         | The project's URL slug                          |
-| `themeId`        | `string`         | The theme ID (e.g., `pernikahan_elegance_1`)    |
-| `eventType`      | `EventType`      | `'pernikahan'`, `'ulang_tahun'`, etc.           |
-| `payload`        | `PayloadMap[T]`  | Strongly-typed event data (see below)           |
-| `schedules`      | `Schedule[]`     | Event schedules with title, time, location      |
-| `giftRegistries` | `GiftRegistry[]` | Bank/ewallet/physical gift options              |
-| `mediaMappings`  | `MediaMapping[]` | All uploaded media (use `createMediaHelper`)    |
-| `dressCodes`     | `DressCode[]`    | Dress code labels with color swatches           |
-| `liveStreams`    | `LiveStream[]`   | Live stream links (YouTube, Zoom, etc.)         |
-| `featureToggle`  | `FeatureToggle`  | Boolean flags for toggling sections             |
-| `api`            | `InvitationApi`  | Submit RSVP and Guestbook forms directly        |
+- `style.css(STYLE.key)`: Generates inline CSS for properties like `background-color`, `color`, `border-radius`, and `opacity`. Automatically converts camelCase properties to CSS kebab-case.
 
-### Payload Types by Event Type
+### Countdown Helper (`createCountdown`)
 
-```typescript
-// Pernikahan
-interface PernikahanPayload {
-	groom_name: string | null;
-	bride_name: string | null;
-	groom_father: string | null;
-	groom_mother: string | null;
-	bride_father: string | null;
-	bride_mother: string | null;
-	groom_address: string | null;
-	bride_address: string | null;
-}
-
-// Ulang Tahun
-interface UlangTahunPayload {
-	celebrant_name: string | null;
-	current_age: number | null;
-}
-
-// Metatah (Uses Group Type)
-interface MetatahPayload {
-	peserta: Array<{
-		name: string | null;
-		father_name: string | null;
-		mother_name: string | null;
-		photo: string | null;
-	}> | null;
-}
-
-// Tigang Sasih
-interface TigangSasihPayload {
-	baby_name: string | null;
-	father_name: string | null;
-	mother_name: string | null;
-}
-
-// Seminar
-interface SeminarPayload {
-	speaker_name: string | null;
-	seminar_topic: string | null;
-}
-```
-
-### Complex Field Types (Group & Image)
-
-The backend schema supports dynamic field types, including `group` (arrays of objects) and `image` (direct URL fields in the payload, separate from media buckets).
-
-- **Group Fields**: Payload arrays like `peserta` in Metatah are generated dynamically. The builder allows users to add/remove entries up to `max_items`.
-- **Image Fields**: When a payload sub-field is type `image`, the user uploads directly inside the Details form, and the field receives the final uploaded URL path (e.g., `/uploads/image.jpg`). Use `getMediaUrl(path)` to render it in the theme.
-
-### Feature Toggles
-
-Always check feature toggles before rendering optional sections:
-
-| Toggle             | Controls                   |
-| ------------------ | -------------------------- |
-| `show_rsvp`        | RSVP form section          |
-| `show_wishes`      | Guestbook / wishes section |
-| `show_gallery`     | Gallery section            |
-| `show_gifts`       | Gift registry section      |
-| `show_live_stream` | Live streaming section     |
-| `show_music`       | Global music auto-play     |
+Creates a reactive countdown timer to a target date.
 
 ```svelte
-{#if featureToggle.show_gallery && galleryImages.length > 0}
-	<!-- Gallery section -->
-{/if}
+import {createCountdown} from '$lib/theme-engine/helpers/countdown.svelte'; const countdown = createCountdown(data.firstScheduleDate);
+// Usage: // countdown.value.days, countdown.value.hours, etc. // countdown.value.isExpired
 ```
 
-### Interactive APIs (RSVP & Guestbook)
+### Customizer Button (`SectionEditButton`)
 
-The `invitationData` context includes a powerful `api` object. This object provides strongly-typed methods to interact with the backend (like submitting RSVPs or Guestbook entries) without needing to manually pass the `slug` around.
+To allow users to interact with the customizer during preview mode:
 
-Because of this, **themes do not use shared UI components for forms**. Instead, you have complete creative freedom to build your own custom forms, inputs, and loading states that match your theme perfectly, and then call the API underneath.
-
-```typescript
-const { api } = getPernikahanContext();
-
-async function handleRSVP(e: Event) {
-	e.preventDefault();
-
-	try {
-		await api.submitRSVP({
-			name: 'John Doe',
-			attending: true,
-			guest_count: 2
-		});
-		// show success state
-	} catch (err) {
-		// show error state
-	}
-}
+```svelte
+<SectionEditButton slotKey={TEXT.hero_title} tab="text" label="Ubah Teks" class="top-4 right-4" />
 ```
 
-Available API methods:
+It automatically hides itself in live (production) view.
 
-- `api.submitRSVP(data: Omit<RSVPRequest, 'project_id'>) => Promise<RSVP>`
-- `api.getGuestbook(page?: number, limit?: number) => Promise<{ data: Guestbook[], pagination: Pagination }>`
-- `api.submitGuestbook(data: Omit<GuestbookRequest, 'project_id'>) => Promise<Guestbook>`
+### Placeholder Media & Fonts
+
+If your theme requires default media (like fallback photos when a user hasn't uploaded any) or needs to reference available font categories, you should import the constants from `$lib/theme-engine/constants/placeholder` and `$lib/theme-engine/constants/fonts`.
+
+- **`PLACEHOLDERS`**: Contains predefined static image paths organized by aesthetic tones (e.g., `WEDDING_TONE_WARM`, `WEDDING_TONE_COOL`). Useful for showing a complete UI even when users haven't uploaded their assets.
+- **`AVAILABLE_FONTS` / `FontCategory`**: Use these if you need to reference default fonts or filter fonts by category in your theme logic.
+
+**Example Usage**:
+```svelte
+import { PLACEHOLDERS } from '$lib/theme-engine/constants/placeholder';
+
+// Fallback to a warm-toned cover image if the user hasn't uploaded one
+const heroPhotoUrl = media.getFirstUrl(BUCKET.hero_photo) || PLACEHOLDERS.WEDDING_TONE_WARM.cover;
+```
+For a real-world example, refer to the source code of `pernikahan_bali_simple_1`.
 
 ---
 
-## Media Helper API
+## Shared UI Components
 
-`createMediaHelper()` is the recommended way to access media buckets in a theme. Import it from `$lib/utils/theme-media.js`. Note: For inline payload `image` fields, you don't need this tool—just use `getMediaUrl(payload.photo)`.
+While themes are encouraged to build their own unique layouts and forms, the engine provides some generic shared components for standard use cases:
 
-```typescript
-const media = createMediaHelper(MANIFEST.buckets, mediaMappings);
-```
+- **`GenericCover`**: A standard full-screen cover gate that handles the "Buka Undangan" action and auto-plays music.
+  ```svelte
+  import GenericCover from '$lib/theme-engine/components/generic-cover.svelte';
 
-| Method                      | Return Type                 | Description                            |
-| --------------------------- | --------------------------- | -------------------------------------- |
-| `media.getAll(bucket)`      | `MediaMapping[]`            | All items in bucket, sorted by order   |
-| `media.getFirst(bucket)`    | `MediaMapping \| undefined` | First (lowest order) item              |
-| `media.getFirstUrl(bucket)` | `string \| undefined`       | URL of the first item                  |
-| `media.has(bucket)`         | `boolean`                   | Whether any media exists in the bucket |
-| `media.count(bucket)`       | `number`                    | Number of items in the bucket          |
+  <GenericCover invitationData={data} />
+  ```
+- **Form Components**: Though custom forms are recommended, you can reference or use `$lib/theme-engine/components/rsvp-form.svelte` and `guestbook-section.svelte` if you want standard, unstyled logic.
 
-All methods enforce **compile-time bucket key validation** — passing a key that isn't in the manifest causes a TypeScript error.
+### Custom Cover
 
----
-
-## Utilities
-
-### `getMediaUrl(url)`
-
-Resolves a media URL to an absolute URL. Media stored locally on the backend is returned as a relative path (e.g., `/uploads/media/image/abc.jpg`). This function prepends the API base URL.
-
-```typescript
-import { getMediaUrl } from '$lib/utils.js';
-
-// Always wrap URLs with getMediaUrl() for consistent resolution:
-<img src={getMediaUrl(image.url)} alt="Photo" />
-```
-
----
-
-## Backend–Frontend Sync Checklist
-
-When creating or modifying a theme, use this checklist to ensure both sides are in sync:
-
-- [ ] **Theme ID** — `MANIFEST.id` matches `ThemesData[].ID` in the backend seeder
-- [ ] **Event Type** — `MANIFEST.eventType` matches `ThemesData[].EventType`
-- [ ] **Bucket Keys** — every bucket key in `MANIFEST.buckets` has a matching `MediaBucket.Key` in the backend
-- [ ] **Bucket Media Types** — `mediaType` values (`'image'` / `'video'`) match the backend's `MediaType`
-- [ ] **Bucket Max Files** — `maxFiles` values match the backend's `MaxFiles`
-- [ ] **Context Getter** — theme uses the correct context getter for its event type (e.g., `getPernikahanContext()`)
-- [ ] **Theme Registry** — theme is registered in `src/lib/themes/theme-registry.ts`
-- [ ] **Backend Seeder Re-run** — the seeder has been re-run after adding/modifying the backend theme entry
-
----
-
-## Complete Example: Pernikahan Theme
-
-Here is a reference implementation for the `pernikahan_elegance_1` theme.
-
-**Backend seeder** (`momenu-backend-fiber/internal/seeder/theme_data.go`):
-
-```go
-{
-    ID:          "pernikahan_elegance_1",
-    Name:        "Elegance Gold",
-    EventType:   models.EventTypePernikahan,
-    Description: "Tema pernikahan mewah bernuansa emas dan monokrom.",
-    Thumbnail:   "/uploads/themes/elegance.jpg",
-    Price:       pricePtr(99000),
-    MediaBuckets: mustJSON([]models.MediaBucket{
-        {Key: "hero_photo",     Label: "Foto Sampul Utama",  MediaType: models.MediaTypeImage, MaxFiles: 1},
-        {Key: "gallery_grid",   Label: "Galeri Pre-Wedding", MediaType: models.MediaTypeImage, MaxFiles: 20},
-    }),
-},
-```
-
-**Frontend manifest** (`src/lib/components/themes/pernikahan/pernikahan_elegance_1/manifest.ts`):
-
-```typescript
-import type { ThemeManifest } from '$lib/types/theme-manifest';
-
-export const MANIFEST = {
-	id: 'pernikahan_elegance_1',
-	eventType: 'pernikahan',
-	name: 'Elegance Gold',
-	buckets: {
-		hero_photo: { label: 'Foto Sampul Utama', mediaType: 'image', maxFiles: 1 },
-		gallery_grid: { label: 'Galeri Pre-Wedding', mediaType: 'image', maxFiles: 20 }
-	}
-} as const satisfies ThemeManifest;
-```
-
-**Frontend component** (`src/lib/components/themes/pernikahan/pernikahan_elegance_1/Theme.svelte`):
+If `GenericCover` doesn't fit your theme's style, you can create a `Cover.svelte` in your theme directory. A custom cover must read from `coverState.isOpened()` to conditionally render, and call `coverState.open()` when the guest clicks "Buka Undangan". Opening the cover will automatically trigger the music to play.
 
 ```svelte
 <script lang="ts">
-	import { getPernikahanContext } from '$lib/contexts/invitation-context.js';
-	import { getMediaUrl } from '$lib/utils.js';
-	import { createMediaHelper } from '$lib/utils/theme-media.js';
-	import { MANIFEST } from './manifest.js';
+	import { getPernikahanContext } from '$lib/theme-engine/context';
+	import { fly } from 'svelte/transition';
 
-	const { payload, featureToggle, schedules, giftRegistries, mediaMappings } =
-		getPernikahanContext();
-
-	const media = createMediaHelper(MANIFEST.buckets, mediaMappings);
-
-	const heroPhoto = media.getFirstUrl('hero_photo');
-	const galleryImages = media.getAll('gallery_grid');
+	const { payload, guestName, coverState } = getPernikahanContext();
+	let isOpened = $derived(coverState.isOpened());
 </script>
 
-<div>
-	<!-- Cover -->
-	{#if heroPhoto}
-		<img src={getMediaUrl(heroPhoto)} alt="Cover" />
-	{/if}
-
-	<!-- Payload Info -->
-	<h1>{payload.groom_name} & {payload.bride_name}</h1>
-	<p>Anak dari {payload.groom_father} dan {payload.bride_mother}</p>
-
-	<!-- Gallery -->
-	{#if featureToggle.show_gallery && galleryImages.length > 0}
-		{#each galleryImages as image}
-			<img src={getMediaUrl(image.url)} alt="Gallery" />
-		{/each}
-	{/if}
-</div>
+{#if !isOpened}
+	<div out:fly={{ y: '-100%', duration: 1000 }} class="fixed inset-0 z-50 ...">
+		<h1>{payload.nama_panggilan_pria} & {payload.nama_panggilan_wanita}</h1>
+		<p>Kepada: {guestName}</p>
+		<button onclick={() => coverState.open()}>Buka Undangan</button>
+	</div>
+{/if}
 ```
 
-**Registry entry** (`src/lib/themes/theme-registry.ts`):
+## Advanced Patterns
 
-```typescript
-import { MANIFEST as PERNIKAHAN_ELEGANCE_1 } from '$lib/components/themes/pernikahan/pernikahan_elegance_1/manifest.js';
+### Mapping CSS Variables from Style Slots
 
-pernikahan_elegance_1: {
-  manifest: PERNIKAHAN_ELEGANCE_1,
-  load: () => import('$lib/components/themes/pernikahan/pernikahan_elegance_1/Theme.svelte')
-}
+If you are adapting a theme that uses CSS variables for theming (e.g., `--color-1`), you can easily map your strictly-typed `styleSlots` to CSS variables at the root of your component:
+
+```svelte
+<main
+	style="--color-1: {style.get(STYLE.primary).color}; --color-2: {style.get(STYLE.secondary)
+		.backgroundColor};"
+>
+	<div style="background-color: var(--color-2); color: var(--color-1);">
+		<SectionEditButton slotKey={STYLE.primary} tab="style" label="Edit Warna" />
+	</div>
+</main>
 ```
+
+This is an incredibly powerful pattern when migrating static Tailwind/HTML templates into the Momenu engine.
+
+---
+
+## Best Practices
+
+1. **Robust Data Protection (Rock-Solid Implementation)**: Never assume arrays or feature toggles are populated. Every dynamic section must be wrapped in a condition checking BOTH the feature toggle (if applicable) and array length. This prevents the UI from breaking or showing empty sections.
+   ```svelte
+   {#if featureToggle.show_journeys && journeys.length > 0}
+   	<section>...</section>
+   {/if}
+   ```
+2. **Strict Svelte Each Keys**: Always provide a unique key in `{#each}` loops. This is crucial for Svelte's reactivity engine, especially when elements are reordered, added, or deleted (like in Journeys or Schedules).
+   ```svelte
+   {#each giftRegistries as gift (gift.id)}
+   	<GiftCard {gift} />
+   {/each}
+   ```
+   If no unique `id` exists, use the index as a fallback: `{#each colors as color, i (i)}`.
+3. **Mandatory Footer**: Every theme **MUST** include a closing footer section at the bottom of the page. This footer should provide a clear visual conclusion to the invitation, gracefully housing any closing text (`TEXT.closing_text`) and the "Made with Momenu" watermarks or copyright notices.
+4. **Respect Cover State**: Most themes render an interactive `<Cover />` first. Use `coverState.isOpened()` to block scrolling or pause internal theme logic until opened.
+5. **Music Handling**: Never implement manual `<audio>` elements. Always bind a floating button to `musicController.toggle()` and let the Provider manage the global audio lifecycle.
+6. **Lazy-Load Components**: Keep animations and large libraries lightweight so the `load: () => import(...)` in `registry.ts` resolves quickly.
