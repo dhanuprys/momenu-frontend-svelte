@@ -166,10 +166,9 @@
 			? 'opacity-100'
 			: 'opacity-0'} transition-opacity duration-1000 shadow-2xl"
 	>
-		<!-- HERO -->
 		<section
 			id="sampul"
-			class="relative flex h-dvh w-full flex-col justify-end overflow-hidden"
+			class="relative flex h-svh w-full flex-col justify-end overflow-hidden"
 			style={style.css(STYLE.color_secondary)}
 		>
 			<SectionEditButton
@@ -255,7 +254,7 @@
 
 		<!-- INTRO / AYAT -->
 		<section
-			class="relative flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden px-6 py-24 text-center lg:px-32 lg:py-32"
+			class="relative flex min-h-svh w-full flex-col items-center justify-center overflow-hidden px-6 py-24 text-center lg:px-32 lg:py-32"
 			style="background-color: var(--color-2)"
 		>
 			{#if quoteBg}

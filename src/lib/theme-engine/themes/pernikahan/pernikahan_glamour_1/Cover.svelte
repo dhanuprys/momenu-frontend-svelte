@@ -20,7 +20,7 @@
 {#if !isOpened}
 	<div
 		out:fly={{ y: '-100%', duration: 1000 }}
-		class="fixed inset-0 z-50 flex h-dvh w-full flex-col bg-black text-white"
+		class="fixed inset-0 z-50 flex h-svh w-full flex-col bg-black text-white"
 	>
 		<div class="absolute inset-0 z-0 overflow-hidden">
 			{#if coverPhoto}
