@@ -14,7 +14,8 @@
 		Trash2,
 		Play,
 		Pause,
-		Image as ImageIcon
+		ImageIcon,
+		RefreshCw
 	} from '@lucide/svelte';
 	import { config } from '$lib/config/index';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
@@ -92,6 +93,103 @@
 
 	let currentAudio = $state<HTMLAudioElement | null>(null);
 	let playingMusicId = $state<number | null>(null);
+
+	let isExtractingDuration = $state(false);
+
+	function extractDuration(url: string, revokeUrl = false) {
+		isExtractingDuration = true;
+		const audio = new Audio(url);
+
+		const cleanup = () => {
+			isExtractingDuration = false;
+			if (revokeUrl) URL.revokeObjectURL(url);
+		};
+
+		audio.onloadedmetadata = () => {
+			if (audio.duration && audio.duration !== Infinity && !isNaN(audio.duration)) {
+				newMusic.duration_seconds = Math.round(audio.duration);
+				toast.success('Durasi berhasil dideteksi otomatis');
+			} else {
+				toast.error('Gagal mendeteksi durasi otomatis');
+			}
+			cleanup();
+		};
+		audio.onerror = () => {
+			toast.error('Gagal memuat audio untuk mendeteksi durasi');
+			cleanup();
+		};
+	}
+
+	function handleFileChange() {
+		if (musicFiles && musicFiles.length > 0) {
+			const url = URL.createObjectURL(musicFiles[0]);
+			extractDuration(url, true);
+		}
+	}
+
+	function handleUrlChange() {
+		if (audioExternalUrl) {
+			extractDuration(audioExternalUrl, false);
+		}
+	}
+
+	let isRefreshingDurations = $state(false);
+
+	async function getAudioDuration(url: string): Promise<number> {
+		return new Promise((resolve, reject) => {
+			const audio = new Audio(url);
+			audio.onloadedmetadata = () => {
+				if (audio.duration && audio.duration !== Infinity && !isNaN(audio.duration)) {
+					resolve(Math.round(audio.duration));
+				} else {
+					reject(new Error('Invalid duration'));
+				}
+			};
+			audio.onerror = (e) => reject(e);
+		});
+	}
+
+	async function refreshAllDurations() {
+		if (
+			!confirm(
+				'Apakah Anda yakin ingin memindai ulang durasi semua musik? Ini mungkin membutuhkan beberapa saat.'
+			)
+		)
+			return;
+
+		isRefreshingDurations = true;
+		let updatedCount = 0;
+		let failedCount = 0;
+
+		toast.loading('Memulai sinkronisasi durasi...', { id: 'sync-duration' });
+
+		for (const music of musics) {
+			try {
+				const duration = await getAudioDuration(getMediaUrl(music.file_path));
+				if (duration > 0 && duration !== music.duration_seconds) {
+					const updated = await AdminService.updateMusic(music.id, {
+						...music,
+						duration_seconds: duration
+					});
+					musics = musics.map((m) => (m.id === music.id ? updated : m));
+					updatedCount++;
+				}
+			} catch (error) {
+				console.error(`Failed to refresh duration for ${music.title}:`, error);
+				failedCount++;
+			}
+		}
+
+		isRefreshingDurations = false;
+
+		if (failedCount > 0) {
+			toast.success(`Selesai! ${updatedCount} musik diperbarui. ${failedCount} gagal.`, {
+				id: 'sync-duration'
+			});
+		} else {
+			toast.success(`Selesai! ${updatedCount} musik diperbarui.`, { id: 'sync-duration' });
+		}
+	}
 
 	onMount(async () => {
 		try {
@@ -299,266 +397,301 @@
 						class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
 					>
 						<option value="all">Semua Kategori</option>
-						{#each categories as cat}
+						{#each categories as cat (cat.id)}
 							<option value={cat.id}>{cat.name}</option>
 						{/each}
 					</select>
 				</div>
-				<Dialog.Root
-					bind:open={createMusicOpen}
-					onOpenChange={(open) => {
-						if (!open) resetMusicForm();
-					}}
-				>
-					<Dialog.Trigger>
-						<Button>Upload Musik</Button>
-					</Dialog.Trigger>
-					<Dialog.Content class="max-h-[90vh] overflow-y-auto">
-						<Dialog.Header>
-							<Dialog.Title>{isEditingMusic ? 'Edit Musik' : 'Upload Musik'}</Dialog.Title>
-							<Dialog.Description
-								>{isEditingMusic
-									? 'Perbarui data musik latar.'
-									: 'Tambahkan musik latar baru.'}</Dialog.Description
-							>
-						</Dialog.Header>
-						<form onsubmit={handleCreateMusic} class="space-y-4 py-4">
-							<div class="space-y-2">
-								<Label for="music-title">Judul</Label>
-								<Input id="music-title" bind:value={newMusic.title} required />
-							</div>
-							<div class="space-y-2">
-								<Label for="music-artist">Artis</Label>
-								<Input id="music-artist" bind:value={newMusic.artist} required />
-							</div>
-							<div class="space-y-2">
-								<Label for="music-cat">Kategori</Label>
-								<select
-									id="music-cat"
-									bind:value={newMusic.category_id}
-									required
-									class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+				<div class="flex items-center gap-2">
+					<Button variant="outline" onclick={refreshAllDurations} disabled={isRefreshingDurations}>
+						{#if isRefreshingDurations}
+							<div
+								class="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin mr-2"
+							></div>
+						{:else}
+							<RefreshCw class="h-4 w-4 mr-2" />
+						{/if}
+						Sync Durasi
+					</Button>
+					<Dialog.Root
+						bind:open={createMusicOpen}
+						onOpenChange={(open) => {
+							if (!open) resetMusicForm();
+						}}
+					>
+						<Dialog.Trigger>
+							<Button>Upload Musik</Button>
+						</Dialog.Trigger>
+						<Dialog.Content class="max-h-[90vh] overflow-y-auto">
+							<Dialog.Header>
+								<Dialog.Title>{isEditingMusic ? 'Edit Musik' : 'Upload Musik'}</Dialog.Title>
+								<Dialog.Description
+									>{isEditingMusic
+										? 'Perbarui data musik latar.'
+										: 'Tambahkan musik latar baru.'}</Dialog.Description
 								>
-									<option value={0} disabled>Pilih Kategori</option>
-									{#each categories as cat}
-										<option value={cat.id}>{cat.name}</option>
-									{/each}
-								</select>
-							</div>
-							<div class="space-y-2">
-								<Label>Sumber Audio</Label>
-								<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
-									<button
-										type="button"
-										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
-										onclick={() => (audioSourceType = 'file')}
-									>
-										Upload File
-									</button>
-									<button
-										type="button"
-										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
-										onclick={() => (audioSourceType = 'link')}
-									>
-										Tautan Eksternal
-									</button>
+							</Dialog.Header>
+							<form onsubmit={handleCreateMusic} class="space-y-4 py-4">
+								<div class="space-y-2">
+									<Label for="music-title">Judul</Label>
+									<Input id="music-title" bind:value={newMusic.title} required />
 								</div>
+								<div class="space-y-2">
+									<Label for="music-artist">Artis</Label>
+									<Input id="music-artist" bind:value={newMusic.artist} required />
+								</div>
+								<div class="space-y-2">
+									<Label for="music-cat">Kategori</Label>
+									<select
+										id="music-cat"
+										bind:value={newMusic.category_id}
+										required
+										class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+									>
+										<option value={0} disabled>Pilih Kategori</option>
+										{#each categories as cat (cat.id)}
+											<option value={cat.id}>{cat.name}</option>
+										{/each}
+									</select>
+								</div>
+								<div class="space-y-2">
+									<Label>Sumber Audio</Label>
+									<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
+										<button
+											type="button"
+											class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+											onclick={() => (audioSourceType = 'file')}
+										>
+											Upload File
+										</button>
+										<button
+											type="button"
+											class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${audioSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+											onclick={() => (audioSourceType = 'link')}
+										>
+											Tautan Eksternal
+										</button>
+									</div>
 
-								{#if audioSourceType === 'file'}
-									<div class="pt-2">
-										<Input
-											id="music-file"
-											type="file"
-											accept="audio/*"
-											bind:files={musicFiles}
-											required={!isEditingMusic}
-										/>
-										{#if isEditingMusic && newMusic.file_path && audioSourceType === 'file'}
+									{#if audioSourceType === 'file'}
+										<div class="pt-2">
+											<Input
+												id="music-file"
+												type="file"
+												accept="audio/*"
+												bind:files={musicFiles}
+												onchange={handleFileChange}
+												required={!isEditingMusic}
+											/>
+											{#if isEditingMusic && newMusic.file_path && audioSourceType === 'file'}
+												<p class="text-xs text-muted-foreground mt-1">
+													Biarkan kosong jika tidak ingin mengubah file.
+												</p>
+											{/if}
+										</div>
+									{:else}
+										<div class="pt-2 space-y-1">
+											<Input
+												id="music-link"
+												type="url"
+												placeholder="https://example.com/audio.mp3"
+												bind:value={audioExternalUrl}
+												onchange={handleUrlChange}
+												required
+											/>
 											<p class="text-xs text-muted-foreground mt-1">
-												Biarkan kosong jika tidak ingin mengubah file.
+												Masukkan URL langsung (direct link) ke file audio (mp3, wav, dll).
 											</p>
+										</div>
+									{/if}
+								</div>
+								<div class="space-y-2">
+									<Label>Cover Image (Opsional)</Label>
+									<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
+										<button
+											type="button"
+											class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+											onclick={() => (coverSourceType = 'file')}
+										>
+											Upload File
+										</button>
+										<button
+											type="button"
+											class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+											onclick={() => (coverSourceType = 'link')}
+										>
+											Tautan Eksternal
+										</button>
+									</div>
+
+									{#if coverSourceType === 'file'}
+										<div class="pt-2">
+											<Input
+												id="music-cover"
+												type="file"
+												accept="image/*"
+												bind:files={coverFiles}
+											/>
+											{#if isEditingMusic && newMusic.cover_image && coverSourceType === 'file'}
+												<p class="text-xs text-muted-foreground mt-1">
+													Biarkan kosong jika tidak ingin mengubah cover.
+												</p>
+											{/if}
+										</div>
+									{:else}
+										<div class="pt-2 space-y-1">
+											<Input
+												id="cover-link"
+												type="url"
+												placeholder="https://example.com/cover.jpg"
+												bind:value={coverExternalUrl}
+											/>
+											<p class="text-xs text-muted-foreground mt-1">
+												Masukkan URL langsung (direct link) ke gambar cover (jpg, png, dll).
+											</p>
+										</div>
+									{/if}
+								</div>
+								<div class="space-y-2">
+									<div class="flex items-center justify-between">
+										<Label for="music-dur">Durasi (Detik)</Label>
+										{#if isExtractingDuration}
+											<span
+												class="text-[10px] text-primary flex items-center gap-1 animate-pulse font-medium"
+											>
+												<div
+													class="h-3 w-3 rounded-full border-2 border-primary border-t-transparent animate-spin"
+												></div>
+												Mendeteksi...
+											</span>
 										{/if}
 									</div>
-								{:else}
-									<div class="pt-2 space-y-1">
-										<Input
-											id="music-link"
-											type="url"
-											placeholder="https://example.com/audio.mp3"
-											bind:value={audioExternalUrl}
-											required
-										/>
-										<p class="text-xs text-muted-foreground mt-1">
-											Masukkan URL langsung (direct link) ke file audio (mp3, wav, dll).
-										</p>
-									</div>
-								{/if}
-							</div>
-							<div class="space-y-2">
-								<Label>Cover Image (Opsional)</Label>
-								<div class="flex items-center space-x-2 bg-muted p-1 rounded-md w-full">
-									<button
-										type="button"
-										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'file' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
-										onclick={() => (coverSourceType = 'file')}
-									>
-										Upload File
-									</button>
-									<button
-										type="button"
-										class={`flex-1 text-sm py-1.5 rounded-sm transition-all ${coverSourceType === 'link' ? 'bg-background shadow-xs font-medium' : 'text-muted-foreground hover:text-foreground'}`}
-										onclick={() => (coverSourceType = 'link')}
-									>
-										Tautan Eksternal
-									</button>
+									<Input
+										id="music-dur"
+										type="number"
+										bind:value={newMusic.duration_seconds}
+										required
+									/>
 								</div>
-
-								{#if coverSourceType === 'file'}
-									<div class="pt-2">
-										<Input id="music-cover" type="file" accept="image/*" bind:files={coverFiles} />
-										{#if isEditingMusic && newMusic.cover_image && coverSourceType === 'file'}
-											<p class="text-xs text-muted-foreground mt-1">
-												Biarkan kosong jika tidak ingin mengubah cover.
-											</p>
-										{/if}
-									</div>
-								{:else}
-									<div class="pt-2 space-y-1">
-										<Input
-											id="cover-link"
-											type="url"
-											placeholder="https://example.com/cover.jpg"
-											bind:value={coverExternalUrl}
-										/>
-										<p class="text-xs text-muted-foreground mt-1">
-											Masukkan URL langsung (direct link) ke gambar cover (jpg, png, dll).
-										</p>
-									</div>
-								{/if}
-							</div>
-							<div class="space-y-2">
-								<Label for="music-dur">Durasi (Detik)</Label>
-								<Input
-									id="music-dur"
-									type="number"
-									bind:value={newMusic.duration_seconds}
-									required
-								/>
-							</div>
-							<div class="space-y-2">
-								<Label for="music-order">Urutan</Label>
-								<Input id="music-order" type="number" bind:value={newMusic.order} required />
-							</div>
-							<Dialog.Footer class="pt-4">
-								<Button type="button" variant="outline" onclick={() => (createMusicOpen = false)}
-									>Batal</Button
-								>
-								<Button type="submit" disabled={isSubmittingMusic}
-									>{isSubmittingMusic ? 'Menyimpan...' : 'Simpan'}</Button
-								>
-							</Dialog.Footer>
-						</form>
-					</Dialog.Content>
-				</Dialog.Root>
+								<div class="space-y-2">
+									<Label for="music-order">Urutan</Label>
+									<Input id="music-order" type="number" bind:value={newMusic.order} required />
+								</div>
+								<Dialog.Footer class="pt-4">
+									<Button type="button" variant="outline" onclick={() => (createMusicOpen = false)}
+										>Batal</Button
+									>
+									<Button type="submit" disabled={isSubmittingMusic}
+										>{isSubmittingMusic ? 'Menyimpan...' : 'Simpan'}</Button
+									>
+								</Dialog.Footer>
+							</form>
+						</Dialog.Content>
+					</Dialog.Root>
+				</div>
 			</div>
 
 			<div class="rounded-md border bg-card">
-				<Table.Root>
-					<Table.Header>
-						<Table.Row>
-							<Table.Head class="w-15"></Table.Head>
-							<Table.Head>Judul</Table.Head>
-							<Table.Head>Artis</Table.Head>
-							<Table.Head>Kategori</Table.Head>
-							<Table.Head>Durasi</Table.Head>
-							<Table.Head class="text-right">Aksi</Table.Head>
-						</Table.Row>
-					</Table.Header>
-					<Table.Body>
-						{#if loading}
-							{#each Array(5) as _}
-								<Table.Row>
-									<Table.Cell><Skeleton class="h-8 w-8 rounded-full" /></Table.Cell>
-									<Table.Cell><Skeleton class="h-4 w-32" /></Table.Cell>
-									<Table.Cell><Skeleton class="h-4 w-24" /></Table.Cell>
-									<Table.Cell><Skeleton class="h-6 w-16" /></Table.Cell>
-									<Table.Cell><Skeleton class="h-4 w-12" /></Table.Cell>
-									<Table.Cell class="text-right"><Skeleton class="h-8 w-8 ml-auto" /></Table.Cell>
-								</Table.Row>
-							{/each}
-						{:else if musics.length === 0}
+					<Table.Root>
+						<Table.Header>
 							<Table.Row>
-								<Table.Cell colspan={6} class="text-center py-6 text-muted-foreground"
-									>Tidak ada musik ditemukan.</Table.Cell
-								>
+								<Table.Head class="w-15"></Table.Head>
+								<Table.Head>Judul</Table.Head>
+								<Table.Head>Artis</Table.Head>
+								<Table.Head>Kategori</Table.Head>
+								<Table.Head>Durasi</Table.Head>
+								<Table.Head class="text-right">Aksi</Table.Head>
 							</Table.Row>
-						{:else}
-							{#each musics
-								.filter((m) => selectedCategoryFilter === 'all' || m.category_id === selectedCategoryFilter)
-								.sort((a, b) => a.order - b.order) as music}
+						</Table.Header>
+						<Table.Body>
+							{#if loading}
+								{#each Array(5) as _}
+									<Table.Row>
+										<Table.Cell><Skeleton class="h-8 w-8 rounded-full" /></Table.Cell>
+										<Table.Cell><Skeleton class="h-4 w-32" /></Table.Cell>
+										<Table.Cell><Skeleton class="h-4 w-24" /></Table.Cell>
+										<Table.Cell><Skeleton class="h-6 w-16" /></Table.Cell>
+										<Table.Cell><Skeleton class="h-4 w-12" /></Table.Cell>
+										<Table.Cell class="text-right"><Skeleton class="h-8 w-8 ml-auto" /></Table.Cell>
+									</Table.Row>
+								{/each}
+							{:else if musics.length === 0}
 								<Table.Row>
-									<Table.Cell>
-										<div
-											class="relative h-10 w-10 shrink-0 rounded overflow-hidden bg-muted transition-shadow"
-										>
-											{#if music.cover_image}
-												<img
-													src={getMediaUrl(music.cover_image)}
-													alt={music.title}
-													class="h-full w-full object-cover"
-												/>
-											{:else}
-												<div class="h-full w-full flex items-center justify-center bg-primary/10">
-													<MusicIcon class="h-4 w-4 text-primary/50" />
-												</div>
-											{/if}
-											<button
-												class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId ===
-												music.id
-													? 'opacity-100! bg-black/60'
-													: ''}"
-												onclick={(e) => {
-													e.stopPropagation();
-													playAudio(music);
-												}}
-											>
-												{#if playingMusicId === music.id}
-													<Pause class="h-4 w-4 text-white" />
-												{:else}
-													<Play class="h-4 w-4 text-white ml-0.5" />
-												{/if}
-											</button>
-										</div>
-									</Table.Cell>
-									<Table.Cell class="font-medium">{music.title}</Table.Cell>
-									<Table.Cell>{music.artist}</Table.Cell>
-									<Table.Cell>
-										<div
-											class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors bg-secondary text-secondary-foreground"
-										>
-											{categories.find((c) => c.id === music.category_id)?.name ||
-												music.category_id}
-										</div>
-									</Table.Cell>
-									<Table.Cell class="text-muted-foreground">
-										{Math.floor(music.duration_seconds / 60)}:{String(
-											music.duration_seconds % 60
-										).padStart(2, '0')}
-									</Table.Cell>
-									<Table.Cell class="text-right">
-										<Button variant="ghost" size="icon" onclick={() => openEditMusic(music)}>
-											<Edit class="h-4 w-4" />
-										</Button>
-										<Button variant="destructive" size="icon" onclick={() => deleteMusic(music.id)}>
-											<Trash2 class="h-4 w-4" />
-										</Button>
-									</Table.Cell>
+									<Table.Cell colspan={6} class="text-center py-6 text-muted-foreground"
+										>Tidak ada musik ditemukan.</Table.Cell
+									>
 								</Table.Row>
-							{/each}
-						{/if}
-					</Table.Body>
-				</Table.Root>
-			</div>
+							{:else}
+								{#each musics
+									.filter((m) => selectedCategoryFilter === 'all' || m.category_id === selectedCategoryFilter)
+									.sort((a, b) => a.order - b.order) as music (music.id)}
+									<Table.Row>
+										<Table.Cell>
+											<div
+												class="relative h-10 w-10 shrink-0 rounded overflow-hidden bg-muted transition-shadow"
+											>
+												{#if music.cover_image}
+													<img
+														src={getMediaUrl(music.cover_image)}
+														alt={music.title}
+														class="h-full w-full object-cover"
+													/>
+												{:else}
+													<div class="h-full w-full flex items-center justify-center bg-primary/10">
+														<MusicIcon class="h-4 w-4 text-primary/50" />
+													</div>
+												{/if}
+												<button
+													class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity {playingMusicId ===
+													music.id
+														? 'opacity-100! bg-black/60'
+														: ''}"
+													onclick={(e) => {
+														e.stopPropagation();
+														playAudio(music);
+													}}
+												>
+													{#if playingMusicId === music.id}
+														<Pause class="h-4 w-4 text-white" />
+													{:else}
+														<Play class="h-4 w-4 text-white ml-0.5" />
+													{/if}
+												</button>
+											</div>
+										</Table.Cell>
+										<Table.Cell class="font-medium">{music.title}</Table.Cell>
+										<Table.Cell>{music.artist}</Table.Cell>
+										<Table.Cell>
+											<div
+												class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors bg-secondary text-secondary-foreground"
+											>
+												{categories.find((c) => c.id === music.category_id)?.name ||
+													music.category_id}
+											</div>
+										</Table.Cell>
+										<Table.Cell class="text-muted-foreground">
+											{Math.floor(music.duration_seconds / 60)}:{String(
+												music.duration_seconds % 60
+											).padStart(2, '0')}
+										</Table.Cell>
+										<Table.Cell class="text-right">
+											<Button variant="ghost" size="icon" onclick={() => openEditMusic(music)}>
+												<Edit class="h-4 w-4" />
+											</Button>
+											<Button
+												variant="destructive"
+												size="icon"
+												onclick={() => deleteMusic(music.id)}
+											>
+												<Trash2 class="h-4 w-4" />
+											</Button>
+										</Table.Cell>
+									</Table.Row>
+								{/each}
+							{/if}
+						</Table.Body>
+					</Table.Root>
+				</div>
 		</Tabs.Content>
 
 		<Tabs.Content value="category" class="space-y-4">
@@ -652,7 +785,7 @@
 								>
 							</Table.Row>
 						{:else}
-							{#each [...categories].sort((a, b) => a.order - b.order) as cat}
+							{#each [...categories].sort((a, b) => a.order - b.order) as cat (cat.id)}
 								<Table.Row>
 									<Table.Cell class="font-medium">{cat.name}</Table.Cell>
 									<Table.Cell>{cat.slug}</Table.Cell>
