@@ -7,7 +7,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import { Play, Pause, Check, Music as MusicIcon, Search } from '@lucide/svelte';
+	import { Slider } from '$lib/components/ui/slider/index.js';
+	import { Play, Pause, Check, Music as MusicIcon, Search, Timer, Volume2 } from '@lucide/svelte';
 	import { config } from '$lib/config/index';
 	import { getMediaUrl } from '$lib/utils';
 	import { toast } from 'svelte-sonner';
@@ -25,6 +26,9 @@
 	let selectedMusicId = $state<number | null>(null);
 	let savedMusicId = $state<number | null>(null);
 	let savedMusicObj = $state<Music | null>(null);
+
+	let musicStartTime = $state<number | null>(null);
+	let musicEndTime = $state<number | null>(null);
 
 	let searchQuery = $state('');
 	let filteredMusics = $derived(
@@ -44,15 +48,96 @@
 	);
 	let currentAudioTime = $state(0);
 	let currentAudioDuration = $state(0);
+	let isPreviewingRange = $state(false);
 
-	async function loadData() {
+	// Duration of the currently saved music for slider max
+	let selectedMusicDuration = $derived(
+		savedMusicObj?.duration_seconds || 300
+	);
+
+	// Slider value as [start, end] array — derived from musicStartTime/musicEndTime
+	let sliderValues = $state<number[]>([0, 300]);
+
+	// Sync slider when music config or saved music changes
+	$effect(() => {
+		const dur = selectedMusicDuration;
+		sliderValues = [
+			musicStartTime ?? 0,
+			musicEndTime ?? dur
+		];
+	});
+
+	function formatTime(seconds: number): string {
+		if (!seconds || isNaN(seconds) || seconds < 0) return '0:00';
+		const m = Math.floor(seconds / 60);
+		const s = Math.floor(seconds % 60);
+		return `${m}:${s.toString().padStart(2, '0')}`;
+	}
+
+	function handleSliderChange(values: number[]) {
+		const [start, end] = values;
+		musicStartTime = start === 0 ? null : start;
+		musicEndTime = end === selectedMusicDuration ? null : end;
+		handleConfigChange();
+	}
+
+	function previewSelection() {
+		if (!savedMusicObj) return;
+
+		const startSec = Number(musicStartTime ?? 0) || 0;
+		const endSec = Number(musicEndTime ?? selectedMusicDuration) || selectedMusicDuration;
+
+		// If already previewing, stop
+		if (isPreviewingRange) {
+			stopAudio();
+			isPreviewingRange = false;
+			return;
+		}
+
+		// Stop any current playback first
+		stopAudio();
+
+		currentAudio = new Audio(getMediaUrl(savedMusicObj.file_path));
+		currentAudio.currentTime = startSec;
+		isPreviewingRange = true;
+
+		currentAudio.addEventListener('timeupdate', () => {
+			if (!currentAudio) return;
+			currentAudioTime = currentAudio.currentTime;
+			// Stop at end time
+			if (currentAudio.currentTime >= endSec) {
+				stopAudio();
+				isPreviewingRange = false;
+			}
+		});
+		currentAudio.onloadedmetadata = () => {
+			if (currentAudio) {
+				currentAudioDuration = currentAudio.duration || savedMusicObj!.duration_seconds;
+				currentAudio.currentTime = startSec;
+			}
+		};
+		currentAudio.onended = () => {
+			stopAudio();
+			isPreviewingRange = false;
+		};
+
+		currentAudio.play().catch((e) => {
+			if (e.name !== 'AbortError') console.error(e);
+		});
+		playingMusicId = savedMusicObj.id;
+		currentAudioDuration = savedMusicObj.duration_seconds;
+	}
+
+	async function loadData(id: string) {
 		loading = true;
 		try {
-			const proj = await ProjectService.get(projectId);
+			const proj = await ProjectService.get(id);
 			project = proj;
 			selectedMusicId = proj.music_id || null;
 			savedMusicId = proj.music_id || null;
 			savedMusicObj = proj.music || null;
+			musicStartTime = proj.music_config?.start_time ?? null;
+			musicEndTime = proj.music_config?.end_time ?? null;
 
 			const cats = await MusicService.listCategories();
 			categories = cats;
@@ -87,12 +172,14 @@
 		}
 	}
 
-	onMount(() => {
-		loadData();
+	$effect(() => {
+		loadData(projectId);
+	});
 
-		return () => {
-			stopAudio();
-		};
+	onDestroy(() => {
+		stopAudio();
+		if (saveTimeout) clearTimeout(saveTimeout);
+		if (configTimeout) clearTimeout(configTimeout);
 	});
 
 	async function handleCategoryChange(categoryId: number | 'all') {
@@ -120,7 +207,9 @@
 			if (currentAudio) currentAudioDuration = currentAudio.duration || music.duration_seconds;
 		};
 
-		currentAudio.play().catch((e) => console.error(e));
+		currentAudio.play().catch((e) => {
+			if (e.name !== 'AbortError') console.error(e);
+		});
 		currentAudio.onended = () => stopAudio();
 		playingMusicId = music.id;
 		currentAudioTime = 0;
@@ -136,12 +225,15 @@
 		}
 		playingMusicId = null;
 		currentAudioTime = 0;
+		isPreviewingRange = false;
 	}
 
 	function togglePlay() {
 		if (!currentAudio) return;
 		if (currentAudio.paused) {
-			currentAudio.play().catch((e) => console.error(e));
+			currentAudio.play().catch((e) => {
+				if (e.name !== 'AbortError') console.error(e);
+			});
 		} else {
 			currentAudio.pause();
 		}
@@ -155,7 +247,12 @@
 		if (selectedMusicId === id) return;
 		const prevId = selectedMusicId;
 		const prevObj = savedMusicObj;
+		const prevStartTime = musicStartTime;
+		const prevEndTime = musicEndTime;
+
 		selectedMusicId = id;
+		musicStartTime = null;
+		musicEndTime = null;
 
 		// clear previous debounce
 		if (saveTimeout) clearTimeout(saveTimeout);
@@ -168,10 +265,18 @@
 					slug: project.slug,
 					payload: project.payload,
 					sharing_thumbnail: project.sharing_thumbnail,
-					music_id: selectedMusicId
+					music_id: selectedMusicId,
+					music_config: {
+						start_time: musicStartTime ?? undefined,
+						end_time: musicEndTime ?? undefined
+					}
 				});
 				savedMusicId = selectedMusicId;
 				project.music_id = selectedMusicId;
+				project.music_config = {
+					start_time: musicStartTime ?? undefined,
+					end_time: musicEndTime ?? undefined
+				};
 
 				if (selectedMusicId === null) {
 					savedMusicObj = null;
@@ -185,34 +290,80 @@
 				toast.success(`Musik latar diubah ke ${musicName}`, {
 					action: {
 						label: 'Batal',
-						onClick: () => undoSelection(prevId, prevObj)
+						onClick: () => undoSelection(prevId, prevObj, prevStartTime, prevEndTime)
 					}
 				});
 			} catch (e) {
 				toast.error('Gagal menyimpan musik');
 				selectedMusicId = prevId; // revert on error
+				musicStartTime = prevStartTime;
+				musicEndTime = prevEndTime;
 			}
 		}, 500);
 	}
 
-	async function undoSelection(previousId: number | null, previousObj: Music | null) {
+	async function undoSelection(
+		previousId: number | null,
+		previousObj: Music | null,
+		previousStartTime: number | null,
+		previousEndTime: number | null
+	) {
 		if (!project) return;
 		selectedMusicId = previousId;
+		musicStartTime = previousStartTime;
+		musicEndTime = previousEndTime;
 		try {
 			await ProjectService.update(projectId, {
 				title: project.title,
 				slug: project.slug,
 				payload: project.payload,
 				sharing_thumbnail: project.sharing_thumbnail,
-				music_id: previousId
+				music_id: previousId,
+				music_config: {
+					start_time: previousStartTime ?? undefined,
+					end_time: previousEndTime ?? undefined
+				}
 			});
 			savedMusicId = previousId;
 			project.music_id = previousId;
+			project.music_config = {
+				start_time: previousStartTime ?? undefined,
+				end_time: previousEndTime ?? undefined
+			};
 			savedMusicObj = previousObj;
 			toast.success('Pilihan musik dikembalikan');
 		} catch (e) {
 			toast.error('Gagal mengembalikan musik');
 		}
+	}
+
+	let configTimeout: ReturnType<typeof setTimeout>;
+
+	function handleConfigChange() {
+		if (configTimeout) clearTimeout(configTimeout);
+		configTimeout = setTimeout(async () => {
+			if (!project || savedMusicId === null) return;
+			try {
+				await ProjectService.update(projectId, {
+					title: project.title,
+					slug: project.slug,
+					payload: project.payload,
+					sharing_thumbnail: project.sharing_thumbnail,
+					music_id: savedMusicId,
+					music_config: {
+						start_time: musicStartTime ?? undefined,
+						end_time: musicEndTime ?? undefined
+					}
+				});
+				project.music_config = {
+					start_time: musicStartTime ?? undefined,
+					end_time: musicEndTime ?? undefined
+				};
+				toast.success('Pengaturan musik berhasil disimpan');
+			} catch (e) {
+				toast.error('Gagal menyimpan pengaturan musik');
+			}
+		}, 1000);
 	}
 </script>
 
@@ -236,25 +387,23 @@
 				<Skeleton class="h-10 w-24 rounded-full" />
 			</div>
 			<Skeleton class="h-10 w-full max-w-sm" />
-			<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-				{#each Array(6) as _}
-					<Card.Root>
-						<div class="flex p-4 gap-4 items-center">
-							<Skeleton class="h-16 w-16 rounded-md" />
-							<div class="space-y-2 flex-1">
-								<Skeleton class="h-5 w-3/4" />
-								<Skeleton class="h-4 w-1/2" />
-							</div>
+			<div class="flex flex-col gap-1">
+				{#each Array(6) as i}
+					<div class="flex p-2 sm:p-3 items-center gap-3 sm:gap-4 rounded-lg border border-transparent">
+						<Skeleton class="h-12 w-12 sm:h-14 sm:w-14 rounded-md" />
+						<div class="space-y-2 flex-1">
+							<Skeleton class="h-4 w-3/4" />
+							<Skeleton class="h-3 w-1/2" />
 						</div>
-					</Card.Root>
+					</div>
 				{/each}
 			</div>
 		</div>
 	{:else}
-		<div class="flex flex-col gap-6">
-			<!-- Saved Music Section -->
-			<div class="flex flex-col gap-3 mb-2">
-				<div class="flex items-center justify-between max-w-md">
+		<div class="flex flex-col lg:flex-row-reverse gap-8 items-start w-full">
+			<!-- Configuration Sidebar (Right column on desktop) -->
+			<div class="w-full lg:w-[320px] xl:w-[400px] shrink-0 lg:sticky lg:top-24 flex flex-col gap-3">
+				<div class="flex items-center justify-between w-full">
 					<h2 class="text-lg font-semibold tracking-tight">Musik Terpilih</h2>
 					{#if savedMusicId !== null}
 						<Button
@@ -269,7 +418,7 @@
 				</div>
 				{#if savedMusicId === null}
 					<Card.Root
-						class="relative overflow-hidden transition-all border-primary ring-2 ring-primary bg-primary/5 max-w-md"
+						class="relative overflow-hidden transition-all border-primary ring-2 ring-primary bg-primary/5 w-full"
 					>
 						<div class="flex p-4 items-center gap-4">
 							<div
@@ -293,7 +442,7 @@
 						class="relative overflow-hidden transition-all border-primary ring-2 ring-primary bg-primary/5 {playingMusicId ===
 						savedMusicObj.id
 							? 'border-l-4 border-l-primary'
-							: ''} max-w-md"
+							: ''} w-full"
 					>
 						<div class="flex p-3 sm:p-4 items-center gap-3 sm:gap-4">
 							<button
@@ -349,13 +498,98 @@
 							</div>
 						</div>
 					</Card.Root>
+					<!-- Range Slider Config -->
+					<div class="mt-3 w-full bg-muted/30 p-4 sm:p-5 rounded-xl border border-border space-y-4">
+						<!-- Header -->
+						<div class="flex items-center justify-between">
+							<div class="flex items-center gap-2">
+								<Timer class="h-4 w-4 text-muted-foreground" />
+								<span class="text-xs font-semibold text-foreground">Rentang Pemutaran</span>
+							</div>
+							<button
+								class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full transition-colors {isPreviewingRange
+									? 'bg-primary text-primary-foreground'
+									: 'bg-secondary text-secondary-foreground hover:bg-secondary/80'}"
+								onclick={previewSelection}
+								title="Dengarkan cuplikan dari rentang yang dipilih"
+							>
+								{#if isPreviewingRange}
+									<Pause class="h-3 w-3" />
+									Berhenti
+								{:else}
+									<Volume2 class="h-3 w-3" />
+									Dengarkan
+								{/if}
+							</button>
+						</div>
+
+						<!-- Slider -->
+						<div class="space-y-2">
+							<Slider
+								type="multiple"
+								bind:value={
+									() => sliderValues,
+									(v) => {
+										sliderValues = v;
+										handleSliderChange(v);
+									}
+								}
+								min={0}
+								max={selectedMusicDuration}
+								step={1}
+							/>
+							<div class="flex justify-between text-[10px] text-muted-foreground font-medium">
+								<span>{formatTime(sliderValues[0])}</span>
+								<span class="text-foreground font-semibold text-xs">
+									{formatTime(sliderValues[0])} – {formatTime(sliderValues[1])}
+								</span>
+								<span>{formatTime(selectedMusicDuration)}</span>
+							</div>
+						</div>
+
+						<!-- Fine-tune inputs -->
+						<div class="grid grid-cols-2 gap-3 pt-1 border-t border-border/50">
+							<div class="space-y-1">
+								<label for="music-start-time" class="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+									Mulai (detik)
+								</label>
+								<Input
+									id="music-start-time"
+									type="number"
+									min="0"
+									max={selectedMusicDuration}
+									placeholder="0"
+									bind:value={musicStartTime}
+									oninput={handleConfigChange}
+									class="h-8 text-xs"
+								/>
+							</div>
+							<div class="space-y-1">
+								<label for="music-end-time" class="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+									Berhenti (detik)
+								</label>
+								<Input
+									id="music-end-time"
+									type="number"
+									min="0"
+									max={selectedMusicDuration}
+									placeholder={String(selectedMusicDuration)}
+									bind:value={musicEndTime}
+									oninput={handleConfigChange}
+									class="h-8 text-xs"
+								/>
+							</div>
+						</div>
+					</div>
 				{/if}
 			</div>
 
-			<hr class="border-border my-2" />
+			<!-- Main Content (Left column on desktop) -->
+			<div class="flex-1 min-w-0 flex flex-col gap-6 w-full">
+				<hr class="border-border my-2 lg:hidden" />
 
-			<!-- Category Tabs & Search -->
-			<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+				<!-- Category Tabs & Search -->
+				<div class="flex flex-col xl:flex-row gap-4 items-start xl:items-center justify-between">
 				<div class="flex flex-wrap gap-2">
 					<button
 						class="px-4 py-2 rounded-full text-sm font-medium transition-colors border {selectedCategoryId ===
@@ -366,7 +600,7 @@
 					>
 						Semua
 					</button>
-					{#each categories as category}
+					{#each categories as category (category.id)}
 						<button
 							class="px-4 py-2 rounded-full text-sm font-medium transition-colors border {selectedCategoryId ===
 							category.id
@@ -390,12 +624,12 @@
 				</div>
 			</div>
 
-			<!-- Music Grid -->
-			<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			<!-- Music List -->
+			<div class="flex flex-col gap-1">
 				<!-- Empty State for Search/Category -->
 				{#if filteredMusics.length === 0 && searchQuery.trim() !== ''}
 					<div
-						class="col-span-full py-12 text-center flex flex-col items-center justify-center border rounded-xl bg-card border-dashed"
+						class="py-12 text-center flex flex-col items-center justify-center border rounded-xl bg-card border-dashed"
 					>
 						<MusicIcon class="h-12 w-12 text-muted-foreground opacity-20 mb-4" />
 						<h3 class="font-semibold text-lg">Lagu Tidak Ditemukan</h3>
@@ -406,15 +640,17 @@
 					</div>
 				{/if}
 
-				{#each filteredMusics as music}
-					<Card.Root
-						class="relative overflow-hidden cursor-pointer transition-all hover:border-primary/50 {selectedMusicId ===
+				{#each filteredMusics as music (music.id)}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						class="group relative overflow-hidden cursor-pointer transition-all hover:bg-muted/50 rounded-lg {selectedMusicId ===
 						music.id
-							? 'border-primary ring-2 ring-primary bg-primary/5'
-							: ''} {playingMusicId === music.id ? 'border-l-4 border-l-primary' : ''}"
+							? 'bg-primary/5 ring-1 ring-primary/20'
+							: ''} {playingMusicId === music.id ? 'bg-muted/80 border-l-2 border-l-primary rounded-l-none' : ''}"
 						onclick={() => selectMusic(music.id)}
 					>
-						<div class="flex p-3 sm:p-4 items-center gap-3 sm:gap-4">
+						<div class="flex p-2 sm:p-3 items-center gap-3 sm:gap-4">
 							<!-- Cover Image / Play Button -->
 							<div
 								class="relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-lg overflow-hidden bg-muted transition-shadow group-hover:shadow-sm"
@@ -482,8 +718,9 @@
 								</div>
 							{/if}
 						</div>
-					</Card.Root>
+					</div>
 				{/each}
+			</div>
 			</div>
 		</div>
 	{/if}

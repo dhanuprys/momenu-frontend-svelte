@@ -191,6 +191,7 @@ export interface Project {
 	theme?: Theme;
 	music_id?: number | null;
 	music?: Music;
+	music_config?: { start_time?: number; end_time?: number };
 	event_type: EventType;
 	status: ProjectStatus;
 	slug: string;

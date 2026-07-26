@@ -37,10 +37,28 @@
 
 	// ─── Audio Helpers (safe, centralized) ───────────────────────────
 
-	function createAudio(filePath: string): HTMLAudioElement {
+	function createAudio(filePath: string, config?: { start_time?: number; end_time?: number }): HTMLAudioElement {
 		const audio = new Audio(getMediaUrl(filePath));
 		audio.loop = true;
 		audio.preload = 'auto'; // Preload the audio metadata and data
+
+		if (config && (config.start_time != null || config.end_time != null)) {
+			const start = config.start_time ?? 0;
+			
+			audio.addEventListener('loadedmetadata', () => {
+				audio.currentTime = start;
+			});
+			
+			audio.addEventListener('timeupdate', () => {
+				const end = config.end_time;
+				// If we have an end time and we reached it, OR if we naturally reached the end of the track
+				if ((end != null && audio.currentTime >= end) || audio.currentTime >= audio.duration - 0.5) {
+					audio.currentTime = start;
+					audio.play().catch(() => {});
+				}
+			});
+		}
+
 		return audio;
 	}
 
@@ -88,8 +106,9 @@
 			const musicUrl =
 				invitationData.project.music?.file_path ||
 				'https://undangandigitalbali.com/assets/song/gus-teja-romance.mp3';
+			const musicConfig = invitationData.project.music_config || undefined;
 			if (!audioElement) {
-				audioElement = createAudio(musicUrl);
+				audioElement = createAudio(musicUrl, musicConfig);
 			}
 			playAudio();
 		}

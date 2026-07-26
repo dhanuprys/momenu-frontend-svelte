@@ -25,6 +25,7 @@ export interface CreateProjectRequest {
 	title: string;
 	theme_id: string;
 	music_id?: number;
+	music_config?: { start_time?: number; end_time?: number } | null;
 	payload: any;
 }
 
@@ -34,6 +35,7 @@ export interface UpdateProjectRequest {
 	payload: any;
 	sharing_thumbnail: string;
 	music_id?: number | null;
+	music_config?: { start_time?: number; end_time?: number } | null;
 }
 
 export interface UpdateProjectStatusRequest {
