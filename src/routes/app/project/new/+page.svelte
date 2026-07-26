@@ -346,7 +346,7 @@
 			const newProject = await ProjectService.create({
 				title: projectTitle.trim(),
 				theme_id: selectedTheme.id,
-				music_id: selectedMusicId || undefined,
+				music_id: selectedMusicId ?? undefined,
 				payload
 			});
 			goto(`/app/project/${newProject.id}`);

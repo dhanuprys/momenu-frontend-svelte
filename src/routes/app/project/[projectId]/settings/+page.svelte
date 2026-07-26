@@ -105,7 +105,8 @@
 				title: title,
 				slug: slug,
 				payload: project.payload,
-				sharing_thumbnail: finalThumbnail
+				sharing_thumbnail: finalThumbnail,
+				music_id: project.music_id
 			});
 			project.title = title;
 			project.slug = slug;
@@ -368,7 +369,8 @@
 										title: project!.title,
 										slug: project!.slug,
 										sharing_thumbnail: project!.sharing_thumbnail,
-										payload: project!.payload
+										payload: project!.payload,
+										music_id: project!.music_id
 									});
 									toast.success('Pengaturan pratinjau berhasil disimpan');
 								} catch (e) {
