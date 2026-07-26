@@ -26,6 +26,7 @@
 	import MediaInput from '$lib/components/forms/media-input.svelte';
 	import { UploadService } from '$lib/services/upload.service';
 	import QRCode from 'qrcode';
+	import { resolve } from '$app/paths';
 
 	let projectId = $derived($page.params.projectId!);
 	let project = $state<Project | null>(null);
@@ -148,8 +149,8 @@
 		try {
 			await ProjectService.delete(projectId);
 			toast.success('Acara berhasil dihapus');
-			goto('/app');
-		} catch (e) {
+			goto(resolve('/app'));
+		} catch {
 			toast.error('Gagal menghapus acara');
 			deletingProject = false;
 		}

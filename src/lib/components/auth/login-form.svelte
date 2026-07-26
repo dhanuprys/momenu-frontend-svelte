@@ -18,6 +18,7 @@
 	import { Loader2 } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { config } from '$lib/config';
+	import { resolve } from '$app/paths';
 
 	let email = $state('');
 	let password = $state('');
@@ -66,9 +67,9 @@
 
 			const isNewUser = new Date().getTime() - new Date(res.user.created_at).getTime() < 60000;
 			if (isNewUser) {
-				goto('/app/project/new');
+				goto(resolve('/app/project/new'));
 			} else {
-				goto('/app');
+				goto(resolve('/app'));
 			}
 		} catch (error: any) {
 			toast.error(error.response?.data?.message || 'Gagal masuk');

@@ -7,6 +7,7 @@
 	import type { ComponentProps, Snippet } from 'svelte';
 	import { ChevronsUpDown, LogOut, ArrowLeft, User, SunMoon } from '@lucide/svelte';
 	import AppLogo from '$lib/components/brand/app-logo.svelte';
+	import { resolve } from '$app/paths';
 
 	let {
 		ref = $bindable(null),
@@ -29,7 +30,7 @@
 
 	function handleLogout() {
 		authState.clearSession();
-		goto('/login');
+		goto(resolve('/login'));
 	}
 </script>
 
@@ -119,7 +120,7 @@
 							</div>
 						</DropdownMenu.Label>
 						<DropdownMenu.Separator />
-						<DropdownMenu.Item onSelect={() => goto('/app/profile')} class="cursor-pointer">
+						<DropdownMenu.Item onSelect={() => goto(resolve('/app/profile'))} class="cursor-pointer">
 							<User class="mr-2 size-4" />
 							Profil Saya
 						</DropdownMenu.Item>

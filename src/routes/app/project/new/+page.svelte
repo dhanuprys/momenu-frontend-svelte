@@ -47,6 +47,7 @@
 	} from '@lucide/svelte';
 	import { UploadService } from '$lib/services/index';
 	import Skeleton from '$lib/components/ui/skeleton/skeleton.svelte';
+	import { resolve } from '$app/paths';
 
 	// ── Wizard state ──
 	let currentStep = $state(1);
@@ -104,7 +105,7 @@
 			globalError = '';
 			currentStep--;
 		} else {
-			goto('/app');
+			goto(resolve('/app'));
 		}
 	}
 
@@ -349,7 +350,7 @@
 				music_id: selectedMusicId ?? undefined,
 				payload
 			});
-			goto(`/app/project/${newProject.id}`);
+			goto(resolve(`/app/project/${newProject.id}`));
 		} catch (e) {
 			if (e instanceof ApiError) {
 				// Map backend validation errors to individual fields
@@ -513,7 +514,7 @@
 		<h1 class="text-3xl font-bold tracking-tight mb-6">Buat Undangan Baru</h1>
 
 		<div class="flex items-center">
-			{#each [{ num: 1, label: 'Kategori' }, { num: 2, label: 'Tema' }, { num: 3, label: 'Musik' }, { num: 4, label: 'Detail' }] as step, i}
+			{#each [{ num: 1, label: 'Kategori' }, { num: 2, label: 'Tema' }, { num: 3, label: 'Musik' }, { num: 4, label: 'Detail' }] as step, i (i)}
 				<!-- Step circle -->
 				<div class="flex items-center gap-2.5 shrink-0">
 					<div
@@ -581,7 +582,7 @@
 				Tentukan jenis acara untuk menyesuaikan tema dan formulir undangan.
 			</p>
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{#each categories as cat}
+				{#each categories as cat (cat.type)}
 					<button
 						class="relative flex flex-col items-center justify-center p-8 sm:p-10 rounded-2xl border-2 transition-all duration-200 cursor-pointer
 							{selectedEventType === cat.type
@@ -629,7 +630,7 @@
 
 			{#if loadingThemes}
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{#each Array(3) as _}
+					{#each Array(3) as i (i)}
 						<div class="rounded-xl border border-border bg-muted/20 overflow-hidden">
 							<div class="h-48 bg-muted/40 animate-pulse"></div>
 							<div class="p-4 space-y-3">
@@ -657,7 +658,7 @@
 				</div>
 			{:else}
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{#each themes as theme}
+					{#each themes as theme (theme.id)}
 						<button
 							class="text-left relative flex flex-col overflow-hidden rounded-xl border-2 transition-all duration-200 cursor-pointer
 								{selectedTheme?.id === theme.id
@@ -731,7 +732,7 @@
 
 			{#if loadingMusics}
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-					{#each Array(4) as _}
+					{#each Array(4) as i (i)}
 						<Skeleton class="h-[88px] w-full rounded-xl" />
 					{/each}
 				</div>
@@ -779,7 +780,7 @@
 						{/if}
 					</div>
 
-					{#each filteredMusics as music}
+					{#each filteredMusics as music (music.id)}
 						<div
 							role="button"
 							tabindex="0"
@@ -956,13 +957,13 @@
 				</Card.Root>
 
 				<!-- Dynamic Schema Fields -->
-				{#each schema as group}
+				{#each schema as group (group.group_name)}
 					<Card.Root class="mb-6 overflow-hidden">
 						<Card.Header class="bg-muted/30 border-b">
 							<Card.Title>{group.group_name}</Card.Title>
 						</Card.Header>
 						<Card.Content class="space-y-6 pt-6">
-							{#each group.fields as field}
+							{#each group.fields as field (field.key)}
 								{#if field.type === 'group'}
 									<!-- Group field: repeatable items -->
 									<div class="space-y-4">
@@ -986,7 +987,7 @@
 												<Plus class="h-3.5 w-3.5 mr-1" /> Tambah
 											</Button>
 										</div>
-										{#each (formData[field.key] as any[]) || [] as item, idx}
+										{#each (formData[field.key] as any[]) || [] as item, idx (idx)}
 											<div
 												class="p-4 border border-border rounded-xl bg-muted/10 space-y-4 relative"
 											>
@@ -1003,7 +1004,7 @@
 														</button>
 													{/if}
 												</div>
-												{#each field.fields ?? [] as subField}
+												{#each field.fields ?? [] as subField (subField.key)}
 													<div class="grid gap-2">
 														<Label for="{field.key}_{idx}_{subField.key}" class="text-sm">
 															{subField.label}

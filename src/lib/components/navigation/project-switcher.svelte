@@ -11,6 +11,7 @@
 	import type { ProjectStatus } from '$lib/types/enums';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { resolve } from '$app/paths';
 
 	let projects = $state<Project[]>([]);
 	let loading = $state(true);
@@ -33,7 +34,7 @@
 	async function switchProject(id: string) {
 		switching = true;
 		const minWait = new Promise((resolve) => setTimeout(resolve, 2000));
-		await Promise.all([goto(`/app/project/${id}`), minWait]);
+		await Promise.all([goto(resolve(`/app/project/${id}`)), minWait]);
 		switching = false;
 	}
 
@@ -131,7 +132,7 @@
 				{/if}
 				<DropdownMenu.Separator />
 				<DropdownMenu.Item
-					onSelect={() => goto('/app/project/new')}
+					onSelect={() => goto(resolve('/app/project/new'))}
 					class="cursor-pointer text-primary"
 				>
 					+ Buat Acara Baru

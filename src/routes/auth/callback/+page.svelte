@@ -5,6 +5,7 @@
 	import { authState } from '$lib/stores/auth.svelte';
 	import { AuthService } from '$lib/services/index';
 	import { config } from '$lib/config/index';
+	import { resolve } from '$app/paths';
 
 	onMount(async () => {
 		const token = $page.url.searchParams.get('token');
@@ -21,19 +22,19 @@
 
 				const isNewUser = new Date().getTime() - new Date(user.created_at).getTime() < 60000;
 				if (isNewUser) {
-					goto('/app/project/new');
+					goto(resolve('/app/project/new'));
 				} else {
-					goto('/app');
+					goto(resolve('/app'));
 				}
 			} catch (error) {
 				console.error('Failed to fetch user profile', error);
 				// Cleanup on failure
 				localStorage.removeItem(config.TOKEN_KEY);
 				localStorage.removeItem(config.REFRESH_TOKEN_KEY);
-				goto('/login?error=fetch_profile_failed');
+				goto(resolve('/login?error=fetch_profile_failed'));
 			}
 		} else {
-			goto('/login?error=missing_tokens');
+			goto(resolve('/login?error=missing_tokens'));
 		}
 	});
 </script>

@@ -18,6 +18,7 @@
 	import { onMount } from 'svelte';
 	import { config } from '$lib/config';
 	import { authState } from '$lib/stores/auth.svelte';
+	import { resolve } from '$app/paths';
 
 	let name = $state('');
 	let email = $state('');
@@ -72,7 +73,7 @@
 			authState.setSession(res.user, res.token, res.refresh_token);
 
 			toast.success('Pendaftaran berhasil!');
-			goto('/app/project/new');
+			goto(resolve('/app/project/new'));
 		} catch (error: any) {
 			toast.error(error.response?.data?.message || 'Gagal mendaftar');
 			if ((window as any).turnstile && turnstileWidgetId !== null) {

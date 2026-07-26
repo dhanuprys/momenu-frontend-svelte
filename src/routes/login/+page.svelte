@@ -4,10 +4,11 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import SEO from '$lib/components/seo.svelte';
+	import { resolve } from '$app/paths';
 
 	$effect(() => {
 		if (authState.isInitialized && authState.isAuthenticated) {
-			goto('/app');
+			goto(resolve('/app'));
 		}
 	});
 </script>

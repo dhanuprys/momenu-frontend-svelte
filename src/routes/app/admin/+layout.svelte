@@ -7,13 +7,14 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { authState } from '$lib/stores/auth.svelte';
+	import { resolve } from '$app/paths';
 	let { children } = $props();
 
 	$effect(() => {
 		// Frontend Middleware: Redirect if not admin
 		if (authState.isInitialized) {
 			if (!authState.user || !authState.user.is_admin) {
-				goto('/app');
+				goto(resolve('/app'));
 			}
 		}
 	});

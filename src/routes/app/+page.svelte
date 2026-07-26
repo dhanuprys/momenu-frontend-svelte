@@ -9,6 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { getMediaUrl } from '$lib/utils';
 	import AppHeader from '$lib/components/layout/app-header.svelte';
+	import { resolve } from '$app/paths';
 
 	let projects: Project[] = $state([]);
 	let loading = $state(true);
@@ -57,7 +58,7 @@
 			<p class="text-muted-foreground mt-1">Kelola semua undangan dan acara Anda.</p>
 		</div>
 		{#if projects.length > 0 || statusFilter !== 'all'}
-			<Button onclick={() => goto('/app/project/new')}>
+			<Button onclick={() => goto(resolve('/app/project/new'))}>
 				<Plus class="mr-2 h-4 w-4" /> Buat Acara Baru
 			</Button>
 		{/if}
@@ -94,7 +95,7 @@
 					Tidak ada acara dengan status tersebut.
 				{/if}
 			</p>
-			<Button size="lg" onclick={() => goto('/app/project/new')}>
+			<Button size="lg" onclick={() => goto(resolve('/app/project/new'))}>
 				<Plus class="mr-2 h-4 w-4" /> Buat Acara Baru
 			</Button>
 		</div>
