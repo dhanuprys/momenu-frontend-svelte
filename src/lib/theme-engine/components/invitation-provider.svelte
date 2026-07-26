@@ -45,14 +45,22 @@
 		if (config && (config.start_time != null || config.end_time != null)) {
 			const start = config.start_time ?? 0;
 			
-			audio.addEventListener('loadedmetadata', () => {
-				audio.currentTime = start;
-			});
+			const setStart = () => {
+				if (start > 0) audio.currentTime = start;
+			};
+
+			if (audio.readyState >= 1) {
+				setStart();
+			} else {
+				audio.addEventListener('loadedmetadata', setStart);
+			}
 			
 			audio.addEventListener('timeupdate', () => {
 				const end = config.end_time;
-				// If we have an end time and we reached it, OR if we naturally reached the end of the track
-				if ((end != null && audio.currentTime >= end) || audio.currentTime >= audio.duration - 0.5) {
+				if (end != null && end > start && audio.currentTime >= end) {
+					audio.currentTime = start;
+					audio.play().catch(() => {});
+				} else if (audio.duration && audio.currentTime >= audio.duration - 0.5) {
 					audio.currentTime = start;
 					audio.play().catch(() => {});
 				}
@@ -270,7 +278,7 @@
 				const musicUrl =
 					project.music?.file_path ||
 					'https://undangandigitalbali.com/assets/song/gus-teja-romance.mp3';
-				audioElement = createAudio(musicUrl);
+				audioElement = createAudio(musicUrl, project.music_config || undefined);
 			}
 
 			if (isInitial || ThemeComponent === null) {
