@@ -12,6 +12,7 @@
 
 	import ImagePreview from '$lib/theme-engine/components/image-preview.svelte';
 	import SectionEditButton from '$lib/theme-engine/components/section-edit-button.svelte';
+	import MapRenderer from '$lib/theme-engine/components/map-renderer.svelte';
 	
 	let previewImage = $state<string | null>(null);
 
@@ -346,7 +347,7 @@
 
 					<h3 class="font-script text-4xl mb-6 text-yellow-400">Pawiwahan</h3>
 
-					{#each schedules as schedule}
+					{#each schedules as schedule (schedule.id)}
 						<div class="mb-8 last:mb-0">
 							<h4 class="font-bold text-xl mb-2">{schedule.title}</h4>
 							{#if schedule.start_time}
@@ -376,6 +377,12 @@
 								<span class="block italic text-sm mb-1">Bertempat di</span>
 								<p class="font-medium">{schedule.location}</p>
 							</div>
+							{#if schedule.map_url}
+								<MapRenderer
+									mapUrl={schedule.map_url}
+									buttonClass="mt-4 inline-block px-6 py-2 bg-stone-100 text-stone-900 rounded-full text-sm font-semibold hover:bg-white transition-colors"
+								/>
+							{/if}
 						</div>
 					{/each}
 
@@ -493,7 +500,7 @@
 				</h2>
 
 				<div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-					{#each galleryImages as image}
+					{#each galleryImages as image (image.id)}
 						<div
 							use:reveal
 							class="break-inside-avoid overflow-hidden rounded-xl shadow-sm group relative"
@@ -678,7 +685,7 @@
 				</p>
 
 				<div class="grid md:grid-cols-2 gap-6">
-					{#each giftRegistries as gift}
+					{#each giftRegistries as gift (gift.id)}
 						{#if gift.type !== 'physical'}
 							<div
 								use:reveal

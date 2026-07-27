@@ -6,7 +6,7 @@ export const scheduleSchema = z.object({
 	end_time: z.string().optional(),
 	timezone: z.string().min(1, { message: 'Zona waktu wajib diisi' }),
 	location: z.string().optional(),
-	map_url: z.string().url({ message: 'Tautan peta tidak valid' }).optional().or(z.literal(''))
+	map_url: z.string().optional().or(z.literal(''))
 });
 
 export const giftRegistrySchema = z.object({

@@ -15,6 +15,7 @@
 	import { Plus, MapPin, Clock, CalendarDays, Edit2, Trash2 } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 	import PageComposer from '$lib/components/layout/page-composer.svelte';
+	import MapRenderer from '$lib/theme-engine/components/map-renderer.svelte';
 
 	let projectId = $derived($page.params.projectId!);
 	let schedules = $state<Schedule[]>([]);
@@ -205,7 +206,7 @@
 
 	{#if loading}
 		<div class="flex flex-col gap-4 max-w-3xl">
-			{#each Array(2) as _}
+			{#each Array(2) as i}
 				<Card.Root>
 					<Card.Header>
 						<Skeleton class="h-6 w-1/2" />
@@ -271,17 +272,19 @@
 							</div>
 						</div>
 
-						{#if schedule.location}
+						{#if schedule.location || schedule.map_url}
 							<div class="flex gap-3 text-sm">
 								<MapPin class="h-5 w-5 text-muted-foreground shrink-0" />
-								<div>
-									<div class="text-foreground">{schedule.location}</div>
+								<div class="flex-1 min-w-0">
+									{#if schedule.location}
+										<div class="text-foreground">{schedule.location}</div>
+									{/if}
 									{#if schedule.map_url}
-										<a
-											href={schedule.map_url}
-											target="_blank"
-											class="text-primary hover:underline text-xs mt-1 inline-block">Lihat Peta</a
-										>
+										<MapRenderer
+											mapUrl={schedule.map_url}
+											buttonClass="text-primary hover:underline text-xs mt-1 inline-block"
+											iframeContainerClass="w-full aspect-video rounded-md overflow-hidden border mt-2"
+										/>
 									{/if}
 								</div>
 							</div>
@@ -359,12 +362,12 @@
 			</div>
 
 			<div class="space-y-2">
-				<Label for="map_url">Tautan Peta (Google Maps)</Label>
+				<Label for="map_url">Tautan Peta (Link URL / Kode Embed Iframe)</Label>
 				<Input
 					id="map_url"
-					type="url"
+					type="text"
 					bind:value={formData.map_url}
-					placeholder="https://maps.google.com/..."
+					placeholder="https://maps.app.goo.gl/... ATAU kode iframe"
 				/>
 			</div>
 

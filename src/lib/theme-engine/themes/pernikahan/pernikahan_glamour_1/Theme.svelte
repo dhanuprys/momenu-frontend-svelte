@@ -11,6 +11,7 @@
 	import SimpleGuestbook from './components/SimpleGuestbook.svelte';
 	import SectionEditButton from '$lib/theme-engine/components/section-edit-button.svelte';
 	import ImagePreview from '$lib/theme-engine/components/image-preview.svelte';
+	import MapRenderer from '$lib/theme-engine/components/map-renderer.svelte';
 	import Cover from './Cover.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 
@@ -540,29 +541,28 @@
 											</div>
 
 											{#if schedule.map_url}
-												<a
-													target="_blank"
-													rel="noopener noreferrer"
-													href={schedule.map_url}
-													aria-label="Lihat Peta"
-													class="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md px-4 py-3 text-sm font-semibold transition-all border border-white/20"
+											<MapRenderer
+												mapUrl={schedule.map_url}
+												buttonClass="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md px-4 py-3 text-sm font-semibold transition-all border border-white/20"
+												iframeContainerClass="w-full aspect-video rounded-xl overflow-hidden shadow-sm border border-white/20 mt-4"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="18"
+													height="18"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
 												>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="18"
-														height="18"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														stroke-width="2"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														class="size-5"
-													><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path><path
-															d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0"
-														></path></svg>
-													<span>Lihat Peta</span>
-												</a>
+													<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+													<circle cx="12" cy="10" r="3" />
+												</svg>
+												Lihat Peta
+											</MapRenderer>
+
 											{/if}
 										</div>
 									</div>

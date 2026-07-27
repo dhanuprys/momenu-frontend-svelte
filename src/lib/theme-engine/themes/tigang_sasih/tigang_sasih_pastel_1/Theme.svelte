@@ -9,6 +9,7 @@
 	import { Loader2 } from '@lucide/svelte';
 
 	import GenericCover from '$lib/theme-engine/components/generic-cover.svelte';
+	import MapRenderer from '$lib/theme-engine/components/map-renderer.svelte';
 
 	const invitationData = getTigangSasihContext();
 	const {
@@ -135,7 +136,7 @@
 					? 'grid-cols-1 max-w-lg mx-auto'
 					: 'md:grid-cols-2'} gap-8"
 			>
-				{#each schedules as schedule}
+				{#each schedules as schedule (schedule.id)}
 					<div class="bg-white p-8 rounded-2xl shadow-sm border border-pink-100">
 						<h3 class="text-xl font-bold mb-4">{schedule.title}</h3>
 						<p class="text-gray-600 mb-2">
@@ -146,13 +147,10 @@
 						</p>
 						<p class="text-gray-600 mb-4">{schedule.location}</p>
 						{#if schedule.map_url}
-							<a
-								href={schedule.map_url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="inline-block px-6 py-2 bg-pink-600 text-white rounded-full text-sm hover:bg-pink-500 transition-colors"
-								>Lihat Peta</a
-							>
+							<MapRenderer
+								mapUrl={schedule.map_url}
+								buttonClass="inline-block px-6 py-2 bg-pink-600 text-white rounded-full text-sm hover:bg-pink-500 transition-colors"
+							/>
 						{/if}
 					</div>
 				{/each}
@@ -166,7 +164,7 @@
 			<div class="max-w-6xl mx-auto px-6 space-y-12">
 				<h2 class="text-3xl font-bold text-center text-pink-700">Galeri</h2>
 				<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-					{#each babyImages as image}
+					{#each babyImages as image (image.id)}
 						<div class="aspect-square overflow-hidden rounded-xl">
 							<img
 								src={getMediaUrl(image.url)}
@@ -189,7 +187,7 @@
 					? 'grid-cols-1 max-w-md mx-auto'
 					: 'sm:grid-cols-2'} gap-6"
 			>
-				{#each giftRegistries as gift}
+				{#each giftRegistries as gift (gift.id)}
 					<div class="bg-white p-6 rounded-2xl shadow-sm border border-pink-100">
 						<h3 class="font-bold text-lg mb-2">{gift.provider_name}</h3>
 						{#if gift.type === 'physical'}

@@ -9,6 +9,7 @@
 	import { Loader2 } from '@lucide/svelte';
 
 	import GenericCover from '$lib/theme-engine/components/generic-cover.svelte';
+	import MapRenderer from '$lib/theme-engine/components/map-renderer.svelte';
 
 	const invitationData = getMetatahContext();
 	const {
@@ -150,7 +151,7 @@
 					? 'grid-cols-2 max-w-2xl mx-auto'
 					: 'grid-cols-2 md:grid-cols-3'} gap-8"
 		>
-			{#each peserta as person, i}
+			{#each peserta as person, i (i)}
 				<div
 					class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 flex flex-col items-center"
 				>
@@ -192,7 +193,7 @@
 					? 'grid-cols-1 max-w-lg mx-auto'
 					: 'md:grid-cols-2'} gap-8"
 			>
-				{#each schedules as schedule}
+				{#each schedules as schedule (schedule.id)}
 					<div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
 						<h3 class="text-xl font-bold mb-4">{schedule.title}</h3>
 						<p class="text-stone-600 mb-2">
@@ -203,13 +204,10 @@
 						</p>
 						<p class="text-stone-600 mb-4">{schedule.location}</p>
 						{#if schedule.map_url}
-							<a
-								href={schedule.map_url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="inline-block px-6 py-2 bg-stone-800 text-white rounded-full text-sm hover:bg-stone-700 transition-colors"
-								>Lihat Peta</a
-							>
+							<MapRenderer 
+								mapUrl={schedule.map_url} 
+								buttonClass="inline-block px-6 py-2 bg-stone-800 text-white rounded-full text-sm hover:bg-stone-700 transition-colors"
+							/>
 						{/if}
 					</div>
 				{/each}
@@ -223,7 +221,7 @@
 			<div class="max-w-6xl mx-auto px-6 space-y-12">
 				<h2 class="text-3xl font-bold text-center text-stone-700">Galeri Upacara</h2>
 				<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-					{#each ceremonyImages as image}
+					{#each ceremonyImages as image (image.id)}
 						<div class="aspect-square overflow-hidden rounded-xl">
 							<img
 								src={getMediaUrl(image.url)}
@@ -293,7 +291,7 @@
 								bind:value={rsvpGuestCount}
 								class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none appearance-none"
 							>
-								{#each [1, 2, 3, 4, 5] as n}<option value={n}>{n}</option>{/each}
+								{#each [1, 2, 3, 4, 5] as n (n)}<option value={n}>{n}</option>{/each}
 							</select>
 						</div>
 					{/if}

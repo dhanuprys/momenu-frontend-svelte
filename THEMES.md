@@ -356,3 +356,4 @@ This is an incredibly powerful pattern when migrating static Tailwind/HTML templ
 4. **Respect Cover State**: Most themes render an interactive `<Cover />` first. Use `coverState.isOpened()` to block scrolling or pause internal theme logic until opened.
 5. **Music Handling**: Never implement manual `<audio>` elements. Always bind a floating button to `musicController.toggle()` and let the Provider manage the global audio lifecycle.
 6. **Lazy-Load Components**: Keep animations and large libraries lightweight so the `load: () => import(...)` in `registry.ts` resolves quickly.
+7. **Svelte 5 Snippets (`children`)**: When passing default content to a component (like `<MapRenderer>`, buttons, or wrappers), you do not need to explicitly wrap the content in `{#snippet children()}` and `{/snippet}`. In Svelte 5, any default elements placed inside a component's tags are automatically treated as the `children` snippet.

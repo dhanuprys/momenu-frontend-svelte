@@ -9,6 +9,7 @@
 	import { Loader2 } from '@lucide/svelte';
 
 	import GenericCover from '$lib/theme-engine/components/generic-cover.svelte';
+	import MapRenderer from '$lib/theme-engine/components/map-renderer.svelte';
 
 	const invitationData = getSeminarContext();
 	const {
@@ -136,7 +137,7 @@
 		<section class="py-20 px-6 max-w-4xl mx-auto text-center space-y-12">
 			<h2 class="text-3xl font-bold text-slate-700">Pembicara</h2>
 			<div class="flex flex-wrap justify-center gap-8">
-				{#each speakerPhotos as photo}
+				{#each speakerPhotos as photo (photo.id)}
 					<div class="w-36 h-36 rounded-full overflow-hidden border-4 border-slate-200 shadow-lg">
 						<img src={getMediaUrl(photo.url)} alt="Speaker" class="w-full h-full object-cover" />
 					</div>
@@ -151,7 +152,7 @@
 			<div class="max-w-4xl mx-auto px-6 text-center space-y-12">
 				<h2 class="text-3xl font-bold text-slate-700">Agenda</h2>
 				<div class="space-y-6">
-					{#each schedules as schedule, i}
+					{#each schedules as schedule (schedule.id)}
 						<div
 							class="bg-slate-50 p-8 rounded-2xl border border-slate-100 flex flex-col md:flex-row md:items-center gap-6 text-left"
 						>
@@ -171,13 +172,11 @@
 								<p class="text-slate-600 text-sm">{schedule.location}</p>
 							</div>
 							{#if schedule.map_url}
-								<a
-									href={schedule.map_url}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="inline-block px-6 py-2 bg-slate-800 text-white rounded-full text-sm hover:bg-slate-700 transition-colors shrink-0"
-									>Peta</a
-								>
+								<MapRenderer
+									mapUrl={schedule.map_url}
+									buttonClass="inline-block px-6 py-2 bg-slate-800 text-white rounded-full text-sm hover:bg-slate-700 transition-colors shrink-0"
+									buttonText="Peta"
+								/>
 							{/if}
 						</div>
 					{/each}
@@ -194,7 +193,7 @@
 				Tidak bisa hadir langsung? Saksikan secara online:
 			</p>
 			<div class="flex flex-wrap justify-center gap-4">
-				{#each liveStreams as stream}
+				{#each liveStreams as stream (stream.id)}
 					<a
 						href={stream.url}
 						target="_blank"
