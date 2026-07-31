@@ -514,7 +514,7 @@
 		<h1 class="text-3xl font-bold tracking-tight mb-6">Buat Undangan Baru</h1>
 
 		<div class="flex items-center">
-			{#each [{ num: 1, label: 'Kategori' }, { num: 2, label: 'Tema' }, { num: 3, label: 'Musik' }, { num: 4, label: 'Detail' }] as step, i (i)}
+			{#each [{ num: 1, label: 'Kategori' }, { num: 2, label: 'Tema' }, { num: 3, label: 'Musik' }, { num: 4, label: 'Detail' }] as step, i (step.label)}
 				<!-- Step circle -->
 				<div class="flex items-center gap-2.5 shrink-0">
 					<div
@@ -630,7 +630,7 @@
 
 			{#if loadingThemes}
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{#each Array(3) as i (i)}
+					{#each Array(3) as _}
 						<div class="rounded-xl border border-border bg-muted/20 overflow-hidden">
 							<div class="h-48 bg-muted/40 animate-pulse"></div>
 							<div class="p-4 space-y-3">
@@ -732,7 +732,7 @@
 
 			{#if loadingMusics}
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-					{#each Array(4) as i (i)}
+					{#each Array(4) as _}
 						<Skeleton class="h-[88px] w-full rounded-xl" />
 					{/each}
 				</div>
